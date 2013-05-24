@@ -64,7 +64,7 @@ Manupulációk esetében három csoportot különböztetünk meg:
    - **BaseExpander**: Kiterjesztésre használható osztály, elsődleges feladata olyan esetben van, ahol egy rekordot többszöröznénk meg.
 
 ### Komponens ábra
-<img src="components.png" alt="Folyamat" style="width: 100%;"/>
+<img src="docs/components.png" alt="Folyamat" style="width: 100%;"/>
 
 ## Telepítés
 Hagyományos Python csomagként a telepítést legegyszerűbben a következő parancs kiadásával tehetjük meg a mETL könyvtárában állva:
