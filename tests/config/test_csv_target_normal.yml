@@ -1,0 +1,4 @@
+base: tests/config/test_basic_target.yml
+
+target:
+  type: CSV

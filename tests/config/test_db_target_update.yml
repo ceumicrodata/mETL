@@ -1,0 +1,13 @@
+base: tests/config/test_basic_target.yml
+
+source:
+  resource: tests/test_sources/test_fwt_source_diff.txt
+
+target:
+  type: Database
+  url: sqlite:///tests/target
+  table: result
+  addIDKey: false
+  createTable: true
+  replaceTable: false
+  truncateTable: false

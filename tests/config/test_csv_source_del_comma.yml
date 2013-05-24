@@ -1,0 +1,4 @@
+base: tests/config/test_tsv_source.yml
+source:
+  source: CSV
+  resource: tests/test_sources/test_csv_source_del_comma.csv

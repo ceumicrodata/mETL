@@ -1,0 +1,5 @@
+base: tests/config/test_csv_target_normal.yml
+
+target:
+  delimiter: "|"
+  addHeader: false

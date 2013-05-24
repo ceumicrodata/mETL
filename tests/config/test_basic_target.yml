@@ -1,0 +1,4 @@
+base: tests/config/test_fwt_source.yml
+
+target:
+  resource: tests/target

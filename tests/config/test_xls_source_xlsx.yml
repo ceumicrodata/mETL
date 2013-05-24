@@ -1,0 +1,3 @@
+base: tests/config/test_xls_source_xls.yml
+source:
+  resource: tests/test_sources/test_xls_source_xlsx.xlsx

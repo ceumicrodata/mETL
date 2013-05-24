@@ -1,0 +1,19 @@
+base: tests/config/test_basic_source.yml
+source:
+  source: TSV
+  resource: tests/test_sources/test_tsv_source.tsv
+  skipRows: 1
+  map:
+    id: 0
+    name: 1
+    name_search: 1
+    district_id: 2
+    district: 2
+    district_roman: 2
+    region_id: 3
+    lat: 4
+    lng: 5
+    minlat: 6
+    minlng: 7
+    maxlat: 8
+    maxlng: 9

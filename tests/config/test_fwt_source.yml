@@ -1,0 +1,19 @@
+base: tests/config/test_basic_source.yml
+source:
+  source: FixedWidthText
+  resource: tests/test_sources/test_fwt_source.txt
+  skipRows: 1
+  map:
+    id: '0:12'
+    name: '12:47'
+    name_search: '12:47'
+    district_id: '47:58'
+    district: '47:58'
+    district_roman: '47:58'
+    region_id: '58:64'
+    lat: '64:77'
+    lng: '77:90'
+    minlat: '90:103'
+    minlng: '103:116'
+    maxlat: '116:129'
+    maxlng: '129:142'

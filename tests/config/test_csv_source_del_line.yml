@@ -1,0 +1,4 @@
+base: tests/config/test_csv_source_del_comma.yml
+source:
+  resource: tests/test_sources/test_csv_source_del_line.csv
+  delimiter: "|"

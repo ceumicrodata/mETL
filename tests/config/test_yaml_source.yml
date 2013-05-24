@@ -1,0 +1,4 @@
+base: tests/config/test_json_source.yml
+source:
+  source: Yaml
+  itemName: item

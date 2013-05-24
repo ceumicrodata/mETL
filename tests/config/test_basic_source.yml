@@ -1,0 +1,110 @@
+source:
+  fields:
+    - name: id
+      type: Integer
+      key: true
+    - name: formatted_name
+      key: true
+    - name: name
+      type: String
+    - name: name_search
+    - name: district_id
+      type: Integer
+    - name: district
+      type: Integer
+      finalType: String
+      transforms:
+        - transform: ConvertType
+          fieldType: String
+        - transform: Map
+          values:
+            '1': Budavár
+            '2': null
+            '3': 'Óbuda-Békásmegyer'
+            '4': Újpest
+            '5': 'Belváros-Lipótváros'
+            '6': Terézváros
+            '7': Erzsébetváros
+            '8': Józsefváros
+            '9': Ferencváros
+            '10': Kőbánya
+            '11': Újbuda
+            '12': Hegyvidék
+            '13': 'Angyalföld-Újlipótváros'
+            '14': Zugló
+            '15': null
+            '16': null
+            '17': Rákosmente
+            '18': 'Pestszentlőrinc-Pestszentimre'
+            '19': Kispest
+            '20': Pestszenterzsébet
+            '21': Csepel
+            '22': 'Budafok-Tétény'
+            '23': Soroksár
+    - name: district_search
+    - name: district_copy
+    - name: district_roman
+      type: Integer
+      finalType: String
+      transforms:
+        - transform: ConvertType
+          fieldType: String
+        - transform: tests.test_source.convertToRomanNumber
+    - name: region_id
+      type: Integer
+    - name: lat
+      type: Float
+    - name: lng
+      type: Float
+    - name: minlat
+      type: Float
+    - name: minlng
+      type: Float
+    - name: maxlat
+      type: Float
+    - name: maxlng
+      type: Float
+
+manipulations:
+  - filter: DropByCondition
+    condition: IsMatchByRegexp
+    regexp: '^.*\-.*$'
+    fieldNames: name 
+  - modifier: Set
+    fieldNames: 
+      - district_search
+      - district_copy
+    value: '%(district)s'
+  - modifier: TransformField
+    fieldNames: district_copy
+    transforms:
+      - statement: IFNot
+        condition: IsEmpty
+        then:
+          - transform: Set
+            value: '%(self)s, '
+      - statement: ENDIF
+  - modifier: TransformField
+    fieldNames: 
+      - name_search
+      - district_search
+    transforms:
+      - transform: Clean
+      - transform: LowerCase
+      - transform: Homogenize
+  - modifier: Set
+    fieldNames: formatted_name
+    value: '%(district_roman)s kerület, %(district_copy)s%(name)s'
+  - filter: tests.test_source.DropIfSameNameAndDistrict
+  - filter: DropField
+    fieldNames:
+      - name_search
+      - district_copy
+      - district_search
+      - district_roman
+      - district_id
+      - region_id
+
+target:
+  type: Static
+  silence: true

@@ -1,0 +1,12 @@
+base: tests/config/test_basic_source.yml
+source:
+  source: Database
+  url: sqlite:///tests/test_sources/test_db_source.db
+  table: test
+  map:
+    id: varosresz_id
+    name: nev
+    name_search: nev
+    district: district_id
+    district_roman: district_id
+    region_id: terkod

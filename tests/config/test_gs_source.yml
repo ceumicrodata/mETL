@@ -1,0 +1,11 @@
+base: tests/config/test_basic_source.yml
+source:
+  source: GoogleSpreadsheet
+  spreadsheetKey: 0ApA_54tZDwKTdHNGNVFRX3g1aE12bXhzckRzd19aNnc
+  map:
+    id: varosreszid
+    name: nev
+    name_search: nev
+    district: districtid
+    district_roman: districtid
+    region_id: terkod

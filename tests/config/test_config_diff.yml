@@ -1,0 +1,54 @@
+source:
+  source: Static
+  sourceRecords:
+    - [ 'El Agent', 'El Agent@metl-test-data.com', 2008, 2008 ]
+    - [ 'Serious Electron', 'Serious Electron@metl-test-data.com', 2008, 2013 ]
+    - [ 'Brave Wizard', 'Brave Wizard@metl-test-data.com', 2008, 2008 ]
+    - [ 'Forgotten Itchy Emperor', 'Forgotten Itchy Emperor@metl-test-data.com', 2008, 2013 ]
+    - [ 'The Moving Monkey', 'The Moving Monkey@metl-test-data.com', 2008, 2008 ]
+    - [ 'Evil Ghostly Brigadier', 'Evil Ghostly Brigadier@metl-test-data.com', 2008, 2013 ]
+    - [ 'Strangely Oyster', 'Strangely Oyster@metl-test-data.com', 2008, 2008 ]
+    - [ 'Anaconda Silver', 'Anaconda Silver@metl-test-data.com', 2006, 2008 ]
+    - [ 'Hawk Tough', 'Hawk Tough@metl-test-data.com', 2004, 2008 ]
+    - [ 'The Disappointed Craw', 'The Disappointed Craw@metl-test-data.com', 2008, 2013 ]
+    - [ 'The Raven', 'The Raven@metl-test-data.com', 1999, 2008 ]
+    - [ 'Ruby Boomerang', 'Ruby Boomerang@metl-test-data.com', 2008, 2008 ]
+    - [ 'Skunk Tough', 'Skunk Tough@metl-test-data.com', 2010, 2008 ]
+    - [ 'The Nervous Forgotten Major', 'The Nervous Forgotten Major@metl-test-data.com', 2008, 2013 ]
+    - [ 'Bursting Furious Puppet', 'Bursting Furious Puppet@metl-test-data.com', 2011, 2008 ]
+    - [ 'Neptune Eagle', 'Neptune Eagle@metl-test-data.com', 2011, 2013 ]
+    - [ 'The Skunk', 'The Skunk@metl-test-data.com', 2008, 2013 ]
+    - [ 'Lone Demon', 'Lone Demon@metl-test-data.com', 2008, 2008 ]
+    - [ 'The Skunk', 'The Skunk@metl-test-data.com', 1999, 2008 ]
+    - [ 'Gamma Serious Spear', 'Gamma Serious Spear@metl-test-data.com', 2008, 2008 ]
+    - [ 'Sleepy Dirty Sergeant', 'Sleepy Dirty Sergeant@metl-test-data.com', 2008, 2008 ]
+    - [ 'Red Monkey', 'Red Monkey@metl-test-data.com', 2008, 2008 ]
+    - [ 'Striking Tiger', 'Striking Tiger@metl-test-data.com', 2005, 2008 ]
+    - [ 'Sliding Demon', 'Sliding Demon@metl-test-data.com', 2011, 2008 ]
+    - [ 'Lone Commander', 'Lone Commander@metl-test-data.com', 2008, 2013 ]
+    - [ 'Dragon Insane', 'Dragon Insane@metl-test-data.com', 2013, 2013 ]
+    - [ 'Demon Skilled', 'Demon Skilled@metl-test-data.com', 2011, 2004 ]
+    - [ 'Vulture Lucky', 'Vulture Lucky@metl-test-data.com', 2003, 2008 ]
+  map:
+    name: 0
+    year: 2
+  defaultValues:
+    name: 'Empty Name'
+  fields:
+    - name: name
+      type: String
+      key: true
+    - name: time
+      type: Date
+      finalType: String
+      transforms:
+        - transform: ConvertType
+          fieldType: String
+        - transform: ReplaceByRegexp
+          regexp: '^([0-9]{4}-[0-9]{2})-[0-9]{2}$'
+          to: '$1'
+    - name: year
+      type: Integer
+
+target:
+  type: Static

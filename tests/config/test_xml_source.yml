@@ -1,0 +1,5 @@
+base: tests/config/test_json_source.yml
+source:
+  source: XML
+  resource: tests/test_sources/test_xml_source.xml
+  itemName: item

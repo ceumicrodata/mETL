@@ -1,0 +1,5 @@
+base: tests/config/test_tsv_source.yml
+source:
+  source: XLS
+  resource: tests/test_sources/test_xls_source_xls.xls
+  sheetName: Sheet1
