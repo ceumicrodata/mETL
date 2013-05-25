@@ -73,7 +73,7 @@ Hagyományos Python csomagként a telepítést legegyszerűbben a következő pa
 Csomagot ezt követően az alábbi paranccsal tesztelhetjük:
 `python setup.py test`
 
-Következő függőségekkel rendelkezik: xlrd, gdata, demjson, pyyaml, elementtree, celementtree, sqlalchemy, xlwt, pyxml, tarr, nltk, xlutils
+Következő függőségekkel rendelkezik: xlrd, gdata, demjson, pyyaml, sqlalchemy, xlwt, pyxml, tarr, nltk, xlutils
 
 ### Mac OSX
 Telepítés előtt a következő csomagok feltételére lesz szükség, mely a következő:
@@ -91,7 +91,6 @@ Telepítés előtt a `python-setuptools` meglétét ellenőrizni kell, illetve h
 Csomagok nagy része probléma nélkül feltelepül a számítógépre, azonban a folyamat előtt pár csomag meglétéről manuálisan kell gondoskodni.
 
 - [PyXML telepítése](http://www.somethinkodd.com/oddthinking/2009/10/31/windows-installer-for-pyxml-0-8-4-for-python-2-6-x/)
-- elementTree telepítése
 
 ## Futtatás
 Konzol scriptek gyűjteménye a program, amely emiatt bármilyen rendszerbe könnyen beépíthető, és akár cron script-ek segítségével időzíthető is. 

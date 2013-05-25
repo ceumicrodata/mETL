@@ -2,7 +2,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '0.1.4'
+version = '0.1.4.1'
 
 setup(
     name = 'mETL',
@@ -28,9 +28,7 @@ setup(
         'gdata',
         'demjson',
         'pyyaml',
-        'elementtree',
-        'celementtree',
-        'sqlalchemy',
+        'sqlalchemy>=0.8',
         'xlwt',
         'pyxml',
         'tarr',

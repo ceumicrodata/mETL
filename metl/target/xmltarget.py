@@ -19,13 +19,13 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, <see http://www.gnu.org/licenses/>.
 """
 
-import metl.target.base, cElementTree as ElementTree
-from xml.etree import ElementTree as ETree
+import metl.target.base
+from xml.etree import ElementTree
 from xml.dom import minidom
 
 def prettify( element, encoding ):
 
-    rough_string = ETree.tostring( element, encoding )
+    rough_string = ElementTree.tostring( element, encoding )
     reparsed = minidom.parseString( rough_string )
     return reparsed.toprettyxml( indent = 2*' ' )
 

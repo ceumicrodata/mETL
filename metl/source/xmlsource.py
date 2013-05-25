@@ -20,7 +20,7 @@ along with this program. If not, <see http://www.gnu.org/licenses/>.
 """
 
 import metl.source.base, codecs, re
-import cElementTree as ElementTree
+from xml.etree import ElementTree
 
 class XmlListConfig(list):
        
@@ -28,7 +28,7 @@ class XmlListConfig(list):
     def __init__( self, aList, tagname ):
                 
         for element in aList:
-            if element:
+            if len( element ):
                 if len( element ) == 1 or element[0].tag != element[1].tag:
                     self.append( XmlDictConfig( element ) )
                     
@@ -82,7 +82,7 @@ class XmlDictConfig(dict):
             self.update( dict( parent_element.items() ) )
             
         for element in parent_element:
-            if element:
+            if len( element ):
                 if len( element ) == 1 or element[0].tag != element[1].tag:
                     aDict = XmlDictConfig( element )
                     
