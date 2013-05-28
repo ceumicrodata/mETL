@@ -2,7 +2,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '0.1.4.1'
+version = '0.1.4.2'
 
 setup(
     name = 'mETL',
@@ -23,6 +23,9 @@ setup(
     author = 'Bence Faludi',
     author_email = 'b.faludi@mito.hu',
     license = 'GPL',
+    dependency_links = [
+        'https://github.com/krisztianfekete/tarr/archive/master.zip#egg=tarr-0.1.0-dev'
+    ],
     install_requires = [
         'xlrd',
         'gdata',
@@ -30,9 +33,8 @@ setup(
         'pyyaml',
         'sqlalchemy>=0.8',
         'xlwt',
-        'pyxml',
-        'tarr',
         'nltk',
+        'tarr',
         'xlutils'
     ],
     test_suite = "tests"
