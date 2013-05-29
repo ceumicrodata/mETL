@@ -73,7 +73,7 @@ Hagyományos Python csomagként a telepítést legegyszerűbben a következő pa
 Csomagot ezt követően az alábbi paranccsal tesztelhetjük:
 `python setup.py test`
 
-Következő függőségekkel rendelkezik: xlrd, gdata, demjson, pyyaml, sqlalchemy, xlwt, pyxml, tarr, nltk, xlutils
+Következő függőségekkel rendelkezik: xlrd, gdata, demjson, pyyaml, sqlalchemy, xlwt, tarr, nltk, xlutils
 
 ### Mac OSX
 Telepítés előtt a következő csomagok feltételére lesz szükség, mely a következő:
@@ -1657,6 +1657,7 @@ JSON állományok esetén használatos cél típus. Inicializálásának paramé
 
 - **rootIterator**: Változó neve, amiben összeszeretnénk gyűjteni a rekordokat. Megadása nem kötelező, üresen hagyása esetén a JSON állomány csak egy listát fog tartalmazni.
 - **flat**: Amennyiben csak egy field létezik, kérhetjük hogy az értékek csak felsorolva jelenjenek meg a mező megnevezése nélkül ezzel az opcióval. Alapértelmezetten nem használjuk.
+- **compact**: Formázott JSON generálása. Alapértelmezetten az értéke hamis, egy sorba történik a JSON generálása.
 
   Üresen hagyva:
   

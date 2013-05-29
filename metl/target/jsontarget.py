@@ -23,12 +23,13 @@ import metl.target.base, demjson
 
 class JSONTarget( metl.target.base.FileTarget ):
 
-    init = ['rootIterator','flat']
+    init = ['rootIterator','flat','compact']
 
-    def __init__( self, reader, rootIterator = None, flat = False, *args, **kwargs ):
+    def __init__( self, reader, rootIterator = None, flat = False, compact = True, *args, **kwargs ):
         
         self.rootIterator = rootIterator
         self.flat         = flat
+        self.compact      = compact
         self.records      = None
 
         super( JSONTarget, self ).__init__( reader, *args, **kwargs )
@@ -44,7 +45,17 @@ class JSONTarget( metl.target.base.FileTarget ):
     # void
     def finalize( self ):
 
-        self.file_pointer.write( demjson.encode( self.records if self.rootIterator is None else { self.rootIterator: self.records } ) )
+        base = self.records if self.rootIterator is None else { self.rootIterator: self.records }
+        if self.compact:
+            self.file_pointer.write( 
+                demjson.encode( base ) 
+            )
+
+        else:
+            self.file_pointer.write(
+                demjson.JSON( compactly = False ).encode( base )
+            )
+
         return super( JSONTarget, self ).finalize()
 
     # void
