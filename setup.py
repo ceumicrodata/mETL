@@ -2,7 +2,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '0.1.4.3'
+version = '0.1.4.4'
 
 setup(
     name = 'mETL',
@@ -24,7 +24,7 @@ setup(
     author_email = 'b.faludi@mito.hu',
     license = 'GPL',
     dependency_links = [
-        'https://github.com/krisztianfekete/tarr/archive/master.zip#egg=tarr-0.1.0-dev'
+        'https://github.com/ceumicrodata/tarr/archive/tarr-0.1.1.zip'
     ],
     install_requires = [
         'xlrd',
