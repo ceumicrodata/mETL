@@ -2,7 +2,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '0.1.4.4'
+version = '0.1.4.5'
 
 setup(
     name = 'mETL',
@@ -27,6 +27,7 @@ setup(
         'https://github.com/ceumicrodata/tarr/archive/tarr-0.1.1.zip'
     ],
     install_requires = [
+        'python-dateutil',
         'xlrd',
         'gdata',
         'demjson',
