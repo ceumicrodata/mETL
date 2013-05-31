@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, <see http://www.gnu.org/licenses/>.
 """
 
-import unittest, tarr, metl.filter.base, hashlib, os
+import unittest, tarr, metl.filter.base, hashlib, os, sys
 from metl.manager import Manager
 from metl.configparser import ConfigParser
 from metl.config import Config
@@ -75,7 +75,10 @@ class Test_Target( unittest.TestCase ):
 
     def test_xml_target( self ):
 
-        self.assertEqual( self.getHashForFile('tests/config/test_xml_target.yml'), '02e4bf1d0f6c0fc8672b5f5dabb9c284' )
+        if tuple(sys.version_info)[:3] <= (2, 7, 2):
+            self.assertEqual( self.getHashForFile('tests/config/test_xml_target.yml'), '02e4bf1d0f6c0fc8672b5f5dabb9c284' )
+        else:
+            self.assertEqual( self.getHashForFile('tests/config/test_xml_target.yml'), '26c26dd40b05a59b2db2d9562912d1ed' )
 
     def test_xls_target_empty( self ):
 
