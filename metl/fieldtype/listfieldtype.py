@@ -33,6 +33,9 @@ class ListFieldType( metl.fieldtype.base.FieldType ):
     # int
     def getConvertedValue( self, value ):
 
+        if type( value ) in ( str, unicode ):
+            return [ value ]
+
         try:
             return list( value )
 
