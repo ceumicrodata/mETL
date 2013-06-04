@@ -28,7 +28,7 @@ def openResource( resource, mode, encoding = None ):
 
         parts = urlparse.urlparse( resource )
 
-        if parts.scheme in ( '', 'file' ):
+        if parts.scheme in ( '', 'file' ) or len( parts.scheme ) == 1:
             if mode and encoding:
                 file_pointer = codecs.open( resource, mode, encoding )
 
