@@ -50,6 +50,8 @@ class Test_FieldMap( unittest.TestCase ):
                 { 'item': 'itemname' },
                 { 'item': 'seconditemname' }
             ],
+            'strvalue': 'many',
+            'strlist': [ 'many', 'list', 'item' ],
             'root': 'R'
         }
 
@@ -72,7 +74,12 @@ class Test_FieldMap( unittest.TestCase ):
             'list': 'filtered/*/value',
             'listpart': 'filtered/0:-1/value',
             'emptylistref': 'emptylist/~0/item',
-            'notemptylistref': 'notemptylist/~0/item'
+            'notemptylistref': 'notemptylist/~0/item',
+            'strvalue': 'strvalue',
+            'strvalue1': 'strvalue/!/0',
+            'strvalue2': 'strvalue/!/1',
+            'strlist1': 'strlist/!/0',
+            'strlist2': 'strlist/!/1'
         }).getValues( self.python_dict )
 
         self.assertEqual( values['list_first'], 'many' )
@@ -86,6 +93,11 @@ class Test_FieldMap( unittest.TestCase ):
         self.assertEqual( values['list'], ['good','normal','bad'] )
         self.assertEqual( values['emptylistref'], 'itemname' )
         self.assertEqual( values['notemptylistref'], 'itemname' )
+        self.assertEqual( values['strvalue'], 'many' )
+        self.assertEqual( values['strvalue1'], 'many' )
+        self.assertIsNone( values['strvalue2'] )
+        self.assertEqual( values['strlist1'], 'many' )
+        self.assertEqual( values['strlist2'], 'list' )
 
     def test_python_list( self ):
 

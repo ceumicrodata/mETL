@@ -37,18 +37,28 @@ class FieldMap( object ):
         current_object = obj
         try:
             for rule_part in unicode( rule ).split('/'):
+
+                if rule_part == '!':
+                    if type( current_object ) not in ( list, tuple ) and not isinstance( current_object, list ) and not isinstance( current_object, tuple ):
+                        current_object = [ current_object ]
+
+                    continue
+
                 if type( current_object ) == dict or isinstance( current_object, dict ): 
                     if rule_part in current_object:
                         current_object = current_object[ rule_part ]
 
-                    elif rule_part.count('~') == 1:
+                    elif rule_part[0] == '~':
                         current_object = current_object
+
+                    elif rule_part == '!':
+                        current_object = [ current_object ]
 
                     else:
                         current_object = current_object[ int( rule_part ) ]
 
                 elif type( current_object ) in ( list, tuple ) or isinstance( current_object, list ) or isinstance( current_object, tuple ):
-                    if rule_part.count('~') == 1:
+                    if rule_part[0] == '~':
                         rule_part = rule_part[1:]
 
                     if rule_part.count('=') == 1:
