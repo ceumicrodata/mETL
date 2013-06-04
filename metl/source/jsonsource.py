@@ -38,6 +38,9 @@ class JSONSource( metl.source.base.FileSource ):
         if self.rootIterator is not None and type( d ) == dict:
             d = d[ self.rootIterator ]
 
+        if type( d ) == dict:
+            d = [ d ]
+
         return d
 
     # FieldSet
