@@ -62,6 +62,7 @@ Manupulációk esetében három csoportot különböztetünk meg:
    - **Append**: Mostanival teljesen megegyező forrásállomány beszúrása a folyamatba az aktuális után.
    - **AppendBySource**: Másik forrás állomány tartalma szúrható az eredeti forrás után.
    - **BaseExpander**: Kiterjesztésre használható osztály, elsődleges feladata olyan esetben van, ahol egy rekordot többszöröznénk meg.
+   - **ListExpander**: Lista típusú elemet bont értékei alapján külön sorokba.
 
 ### Komponens ábra
 <img src="components.png" alt="Folyamat" style="width: 100%;"/>
@@ -562,6 +563,7 @@ Minden mező kötelezően rendelkezik egy típussal. A következő típusokat ke
 - **Datetime**: Dátim és idő típus.
 - **Float**: Tört szám mező típus.
 - **Integer**: Egész szám mező típus.
+- **List**: Lista típus bármilyen adat tárolására. Csak JSON és XML forrásba írható.
 - **String**: Szöveges mező típus.
 - **Text**: Hosszú szöveges mező típus.
 
@@ -1238,6 +1240,8 @@ Ennek fényében nézzünk egy komplexebb példát, amely alapján könnyebben m
              { 'item': 'itemname' },
              { 'item': 'seconditemname' }
          ],
+		 'strvalue': 'many',
+         'strlist': [ 'many', 'list', 'item' ],
          'root': 'R'
     }
     
@@ -1251,10 +1255,15 @@ Ennek fényében nézzünk egy komplexebb példát, amely alapján könnyebben m
          'filtered': 'filtered/name=second/value',
          'list': 'filtered/*/value',
          'emptylistref': 'emptylist/~0/item',
-         'notemptylistref': 'notemptylist/~0/item'
+         'notemptylistref': 'notemptylist/~0/item',
+         'strvalue': 'strvalue',
+         'strvalue1': 'strvalue/!/0',
+         'strvalue2': 'strvalue/!/1',
+         'strlist1': 'strlist/!/0',
+         'strlist2': 'strlist/!/1'
      }).getValues( python_dict ) )
      
-     # {'list_first': 'many', 'not_existing': None, 'dict': 'dictionary', 'tuple_last_first': 3, 'list_last': 'item', 'root': 'R', 'filtered': 'normal', 'list': ['good','normal','bad', 'emptylistref': 'itemname', 'notemptylistref': 'itemname' ]}
+     # {'list_first': 'many', 'not_existing': None, 'dict': 'dictionary', 'tuple_last_first': 3, 'list_last': 'item', 'root': 'R', 'filtered': 'normal', 'list': ['good','normal','bad', 'emptylistref': 'itemname', 'notemptylistref': 'itemname', 'strvalue': 'many', 'strvalue1': 'many', 'strvalue2': None, 'strlist1': 'many', 'strlist2': 'list' ]}
      
 Azonban több adatforrás esetén, mint például `CSV`, `TSV`, `XLS` listák érkeznek. Megjegyzésképpen, `CSV` és `TSV`-ként a `headerRow` paraméter megadásával elérhető, hogy Ők is a fenti formátumban kapjanak lapított értékeket.
 
@@ -1268,7 +1277,12 @@ Azonban több adatforrás esetén, mint például `CSV`, `TSV`, `XLS` listák é
     
     # {'last': 'item', 'not_existing': None, 'first': 'many'}
     
+Fontosabb operátorok:
 
+ - `/`: Elválaszt egy szintet az bejeárási útvonalban.
+ - `*`: Lista elem várásakor az összes elemet bejárja. List típus használata, és JSON vagy XML céltípus javasolt, ha ebben a formában szeretnénk eltárolni és nem szöveggé konvertálva. XML és JSON forrás használata esetén használatos leggyakrabban.
+ - `~`: Próba operátor (List 2 Dict), amennyiben lehet a szinten lista illetve dict is, akkor használjuk, ha létezik a lista megmondhatjuk mire vagyunk kiváncsiak, ha dict van nem történik semmi, megyünk tovább az útvonalon a következő elemtől. XML és JSON forrás esetén használatos.
+ - `!`: Konvertáló operátor (Dict 2 List), amely akkor használatos ha mindenképpen listát szeretnénk kapni, de nem tudjuk hogy azt fogunk-e kapni. XML forrás esetén használatos.
 
 ### Manipulációk (Manipulation)
 Miután a teljes sor feldolgozásra került, és a mezőkbe bekerültek az értékek s lefutottak a mező szintű transzformációk van lehetőség manipulálni a teljes, tisztított értékeket azok összefüggései alapján. Három kulcsszó használható, ezek a `modifier`, `filter`, `expand`, mindegyik egy-egy típust jelöl. Feladataink során többnyire őket fogjuk használni, ha komplexebb feladat elvégzése a cél. (pl.: API kommunikáció). Manipulációs lépések **bármilyen sorrendben jöhetnek** egymás után, függetlenül típusoktól. Ha az egyik végzett, átadja eredményét a következőnek, és így tovább, amíg `Target` objektumhoz nem ér.
@@ -1577,7 +1591,44 @@ Kiegészítésre használatos osztály, amely önmagában nem működőképes. F
 				fs.getField('PHONES').setValue( phone )
 				
 				yield fs
-				
+
+##### ListExpander
+Lista típusú elemet bont értékei alapján külön sorokba. `BaseExpander`-ből származik, így működésileg nagyon közel van hozzá. Paraméterei:
+
+ - **listFieldName**: Lista típusú elem neve, amely értékeit külön sorokba kell tördelni.
+ - **expandedFieldName**: Hova írjuk a lista elem aktuális értékét. Adható neki típus további típuskonverzió végett.
+ 
+Fontos, hogy a két mező soha nem lehet azonos. Ha utólag nincs szükség a lista elemre, egy `filter` lépéssel eltávolítható a feleslegessé váló mező.
+
+	source:
+	  resource: 589739.json
+	  source: JSON
+	  fields:
+	    - name: ID
+	      type: Integer
+	      map: response/user/id
+	    - name: FIRST
+	      map: response/user/firstName
+	    - name: LAST
+	      map: response/user/lastName
+	    - name: FRIENDS
+	      map: response/user/friends/groups/0/items/*/id
+	      type: List
+	    - name: FRIEND
+	      type: Integer
+	
+	manipulations:
+	  - expand: ListExpander
+	    listFieldName: FRIENDS
+	    expandedFieldName: FRIEND
+	  - filter: DropField
+	    fieldNames: FRIENDS
+	
+	target:
+	  type: JSON
+	  resource: result.json
+	  compact: false
+	
 	      
 ### Célállomány (Target)
 Miután megtörtént a forrás állományból az adatok beolvasása, illesztése, transzformációja, és végigmentek az adatok a manipulációs lépéseken a `Target`-hez kerül a beolvasott, véglegesített sor. Ő fogja kiírni és létrehozni az állományt a végleges adatokkal.

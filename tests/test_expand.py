@@ -28,8 +28,10 @@ from metl.fieldset import FieldSet
 from metl.fieldmap import FieldMap
 from metl.fieldtype.stringfieldtype import StringFieldType
 from metl.fieldtype.integerfieldtype import IntegerFieldType
+from metl.fieldtype.listfieldtype import ListFieldType
 from metl.expand.appendbysourceexpand import AppendBySourceExpand
 from metl.expand.appendexpand import AppendExpand
+from metl.expand.listexpanderexpand import ListExpanderExpand
 from metl.source.staticsource import StaticSource
 from metl.source.csvsource import CSVSource
 
@@ -196,6 +198,34 @@ class Test_Expand( unittest.TestCase ):
         self.assertEqual( len( records ), 6 )
         self.assertEqual( records[0].getField('NUMBERS').getValue(), 'First' )
         self.assertEqual( records[-1].getField('NUMBERS').getValue(), 'Sixth' )
+
+    def test_listexpander( self ):
+
+        static_source = StaticSource(
+            FieldSet([
+                Field( 'namelist', ListFieldType() ),
+                Field( 'email', StringFieldType() ),
+                Field( 'year', IntegerFieldType() ),
+                Field( 'name', StringFieldType() )
+            ], 
+            FieldMap({
+                'namelist': 0,
+                'email': 1,
+                'year': 2
+            }))
+        )
+        static_source.setResource([
+            [ list('El Agent'), 'El Agent@metl-test-data.com', 2008 ],
+            [ list('Serious Electron'), 'Serious Electron@metl-test-data.com', 2008 ],
+            [ list('Brave Wizard'), 'Brave Wizard@metl-test-data.com', 2008 ]
+        ])
+
+        expand = ListExpanderExpand( static_source, 'namelist', 'name' ).initialize()
+        records = [ r for r in expand.getRecords() ]
+
+        self.assertEqual( len( records ), len(list('El Agent')) + len(list('Serious Electron')) + len(list('Brave Wizard')) )
+        self.assertEqual( records[-1].getField('name').getValue(), 'd' )
+        self.assertEqual( records[-1].getField('email').getValue(), 'Brave Wizard@metl-test-data.com' )
 
 if __name__ == '__main__':
     unittest.main()
