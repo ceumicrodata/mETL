@@ -27,7 +27,7 @@ import metl.source.base, codecs, xlrd, datetime
 class XLSSource( metl.source.base.FileSource ):
 
     init = ['skipRows']
-    resource_init = ['resource','sheetName','encoding']
+    resource_init = ['resource','sheetName','encoding','username','password','realm','host']
 
     # void
     def __init__( self, fieldset, skipRows = 0, **kwargs ):
@@ -50,7 +50,14 @@ class XLSSource( metl.source.base.FileSource ):
     # void
     def initialize( self ):
 
-        self.file_pointer, self.file_closable = metl.source.base.openResource( self.getResource(), 'r' )
+        self.file_pointer, self.file_closable = metl.source.base.openResource( 
+            self.getResource(), 
+            'r',
+            username = self.htaccess_username,
+            password = self.htaccess_password,
+            realm = self.htaccess_realm,
+            host = self.htaccess_host
+        )
         self.workbook = xlrd.open_workbook(
             file_contents = self.file_pointer.read(),
             encoding_override = self.getEncoding()

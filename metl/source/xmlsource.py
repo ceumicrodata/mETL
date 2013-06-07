@@ -123,9 +123,15 @@ class XMLSource( metl.source.base.FileSource ):
     # void
     def initialize( self ):
 
-        super( XMLSource, self ).initialize()
-        self.file_pointer, self.file_closable = metl.source.base.openResource( self.getResource(), 'rb' )
-        return self
+        self.file_pointer, self.file_closable = metl.source.base.openResource( 
+            self.getResource(), 
+            'rb',
+            username = self.htaccess_username,
+            password = self.htaccess_password,
+            realm = self.htaccess_realm,
+            host = self.htaccess_host
+        )
+        return self.base_initialize()
 
     # list
     def getRecordsList( self ):

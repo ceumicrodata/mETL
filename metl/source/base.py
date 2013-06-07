@@ -21,7 +21,7 @@ along with this program. If not, <see http://www.gnu.org/licenses/>.
 
 import metl.reader, os, copy, urlparse, codecs, urllib2, demjson
 
-def openResource( resource, mode, encoding = None ):
+def openResource( resource, mode, encoding = None, realm = None, host = None, username = None, password = None ):
 
     if type( resource ) in ( str, unicode ):
         file_closable = True
@@ -35,8 +35,14 @@ def openResource( resource, mode, encoding = None ):
             else:
                 file_pointer = codecs.open( resource, mode )
 
-        else:
+        elif username is None or password is None or realm is None or host is None:
             file_pointer = urllib2.urlopen( resource )
+
+        else:
+            authinfo = urllib2.HTTPBasicAuthHandler() 
+            authinfo.add_password( realm, host, username, password ) 
+            opener = urllib2.build_opener(authinfo) 
+            file_pointer = opener.open( resource )
 
     else:
         file_closable = False
@@ -136,7 +142,7 @@ class Source( metl.reader.Reader ):
 
 class FileSource( Source ):
 
-    resource_init = ['resource','encoding']
+    resource_init = ['resource','encoding','username','password','realm','host']
 
     # void
     def __init__( self, fieldset, *args, **kwargs ):
@@ -151,7 +157,13 @@ class FileSource( Source ):
     # void
     def initialize( self ):
 
-        self.file_pointer, self.file_closable = openResource( self.getResource(), 'r', self.getEncoding() )
+        self.file_pointer, self.file_closable = openResource( 
+            self.getResource(), 
+            'r', 
+            self.getEncoding(),
+            username = self.htaccess_username,
+            password = self.htaccess_password
+        )
         return super( FileSource, self ).initialize()
 
     # void
@@ -163,13 +175,18 @@ class FileSource( Source ):
         return super( FileSource, self ).finalize()
 
     # void
-    def setResource( self, resource, encoding = 'utf-8' ):
+    def setResource( self, resource, encoding = 'utf-8', username = None, password = None, realm = None, host = None ):
 
         self.resource = os.path.abspath( resource ) \
             if os.path.exists( os.path.abspath( resource ) ) \
             else resource
 
         self.encoding = encoding
+        self.htaccess_username = username
+        self.htaccess_password = password
+        self.htaccess_realm = realm
+        self.htaccess_host = host
+
         return self
 
     # unicode

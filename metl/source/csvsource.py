@@ -63,7 +63,14 @@ class CSVSource( metl.source.base.FileSource ):
     # void
     def initialize( self ):
 
-        self.file_pointer, self.file_closable = metl.source.base.openResource( self.getResource(), 'rb' )
+        self.file_pointer, self.file_closable = metl.source.base.openResource( 
+            self.getResource(), 
+            'rb',
+            username = self.htaccess_username,
+            password = self.htaccess_password,
+            realm = self.htaccess_realm,
+            host = self.htaccess_host
+        )
         self.file_reader  = UnicodeReader( 
             self.file_pointer, 
             delimiter = self.delimiter, 
