@@ -120,10 +120,17 @@ class XMLSource( metl.source.base.FileSource ):
 
         super( XMLSource, self ).__init__( fieldset, **kwargs )
 
+    # void
+    def initialize( self ):
+
+        super( XMLSource, self ).initialize()
+        self.file_pointer, self.file_closable = metl.source.base.openResource( self.getResource(), 'rb' )
+        return self
+
     # list
     def getRecordsList( self ):
 
-        tree = ElementTree.parse( self.getResource() )
+        tree = ElementTree.parse( self.file_pointer )
         root = tree.getroot()
         ret  = XmlDictConfig(root)
 
