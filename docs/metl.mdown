@@ -563,7 +563,7 @@ Minden mező kötelezően rendelkezik egy típussal. A következő típusokat ke
 - **Datetime**: Dátim és idő típus.
 - **Float**: Tört szám mező típus.
 - **Integer**: Egész szám mező típus.
-- **List**: Lista típus bármilyen adat tárolására. Csak JSON és XML forrásba írható.
+- **List**: Lista típus bármilyen adat tárolására.
 - **String**: Szöveges mező típus.
 - **Text**: Hosszú szöveges mező típus.
 
@@ -577,6 +577,8 @@ Példa Python oldalról:
 Szerepeltetése YAML konfigurációs állományban:
 
 	type: Date
+	
+A legérdekesebb típus a `List`, mivel nehéz elképzelni bizonyos állományok esetében. `XML`-ben, `JSON`-ban eredeti formájában fog tárolódni, `CSV`, `TSV`-ben a Python list lesz szöveggé konvertálva, `Database` cél esetén pedig az adatbázisban `VARCHAR` mezőben `JSON`-ként kerül tárolásra. 
 
 #### Mező transzformációk (Transforms)
 TARR csomag felhasználásval történik a mező transzformációk kezelése az mETL-en belül. Hagyományos listát vár, amely tartalmazhat transzformációkat és programszerkezeteket is egyaránt. Konfigurációs oldalon azonban van lehetőség a then szerkeszet felhasználásával picit rendszerezni a lépéseket, hogy könnyebben olvashatóbb maradhasson.
@@ -1596,9 +1598,10 @@ Kiegészítésre használatos osztály, amely önmagában nem működőképes. F
 Lista típusú elemet bont értékei alapján külön sorokba. `BaseExpander`-ből származik, így működésileg nagyon közel van hozzá. Paraméterei:
 
  - **listFieldName**: Lista típusú elem neve, amely értékeit külön sorokba kell tördelni.
- - **expandedFieldName**: Hova írjuk a lista elem aktuális értékét. Adható neki típus további típuskonverzió végett.
+ - **expandedFieldName**: Hova írjuk a lista elem aktuális értékét. Adható neki típus további típuskonverzió végett. 
+ - **expanderMap**: Akkor használatos, ha egy lista értékét több mezőbe szeretnénk belírni. Ilyenkor adhatunk minden mezőhöz egy-egy map-et, arról hogy a listán belül honnan szedje az értékeket.
  
-Fontos, hogy a két mező soha nem lehet azonos. Ha utólag nincs szükség a lista elemre, egy `filter` lépéssel eltávolítható a feleslegessé váló mező.
+Fontos, hogy a két mező soha nem lehet azonos. Ha utólag nincs szükség a lista elemre, egy `filter` lépéssel eltávolítható a feleslegessé váló mező. Az `expandedFieldName` és `expanderMap` egyike közelező.
 
 	source:
 	  resource: 589739.json
@@ -1629,6 +1632,104 @@ Fontos, hogy a két mező soha nem lehet azonos. Ha utólag nincs szükség a li
 	  resource: result.json
 	  compact: false
 	
+Nézzünk egy komplexebb példát a felhasználására:
+
+	source:
+	  source: JSON
+	  rootIterator: features
+	  resource: hucitystreet.geojson
+	  fields:
+	    - name: id
+	      type: Integer
+	      map: id
+	      key: true
+	    - name: osm_id
+	      type: Float
+	      map: properties/osm_id
+	    - name: name
+	      map: properties/name
+	    - name: ref
+	      map: properties/ref
+	    - name: type
+	      map: properties/type
+	    - name: oneway
+	      type: Boolean
+	      map: properties/oneway
+	    - name: bridge
+	      type: Boolean
+	      map: properties/bridge
+	    - name: tunnel
+	      type: Boolean
+	      map: properties/tunnel
+	    - name: maxspeed
+	      map: properties/maxspeed
+	    - name: telkod
+	      map: properties/TEL_KOD
+	    - name: telnev
+	      map: properties/TEL_NEV
+	    - name: kistkod
+	      map: properties/KIST_KOD
+	    - name: kistnev
+	      map: properties/KIST_NEV
+	    - name: megynev
+	      map: properties/MEGY_NEV
+	    - name: regnev
+	      map: properties/REG_NEV
+	    - name: regkod
+	      map: properties/REG_KOD
+	    - name: geometry
+	      type: List
+	      map: geometry/coordinates
+	
+	target:
+	  type: Database
+	  url: postgresql://metl:metl@localhost:5432/metl
+	  table: osm_streets
+	  createTable: true
+	  replaceTable: true
+	  truncateTable: true
+	  addIDKey: false
+
+Itt az adatbázisban a `geometry` mező értéke `JSON` lesz. Szeretnénk egy másik táblába szétbontani ezt a listát `latitude` és `longitude` koordinátánként. Jelenleg a `geometry` mezőben ilyen értékek szerepelnek: 	
+
+	[[17.6874552,46.7871465],[17.6865955,46.7870049],[17.6846158,46.7866786],[17.6834977,46.7864944],[17.6822251,46.7862847],[17.6815319,46.7861705],[17.6811473,46.7861071],[17.6795989,46.785852],[17.6774482,46.7854976],[17.6739061,46.7849139],[17.6729351,46.7847539],[17.6720789,46.7846318]]
+ 
+Ezt pedig a következő konfigurációval akarjuk megvalósítani:
+
+	source:
+	  source: Database
+	  url: postgresql://metl:metl@localhost:5432/metl
+	  table: osm_streets
+	  fields:
+	    - name: street_id
+	      type: Integer
+	      map: id
+	    - name: latitude
+	      type: Float
+	    - name: longitude
+	      type: Float
+	    - name: geometry
+	      type: List
+	      map: geometry
+	
+	manipulations:
+	  - expand: ListExpander
+	    listFieldName: geometry
+	    expanderMap:
+	      latitude: 0
+	      longitude: 1
+	  - filter: DropField
+	    fieldNames: geometry
+	
+	target:
+	  type: Database
+	  url: postgresql://metl:metl@localhost:5432/metl
+	  table: osm_coords
+	  createTable: true
+	  replaceTable: true
+	  truncateTable: true
+	
+Itt kiolvassuk az előbb betöltött `geometry` mező értékét egy listába, majd a `ListExpander` segítségével definiáljuk, hogy a `geometry` mezőt bejárva, a `latitude` és `longitude` mezőbe mit is írjunk pontosan. Ezzel a megvalósítással létrehoztunk egy táblát és hozzá egy kapcsolótáblát.
 	      
 ### Célállomány (Target)
 Miután megtörtént a forrás állományból az adatok beolvasása, illesztése, transzformációja, és végigmentek az adatok a manipulációs lépéseken a `Target`-hez kerül a beolvasott, véglegesített sor. Ő fogja kiírni és létrehozni az állományt a végleges adatokkal.

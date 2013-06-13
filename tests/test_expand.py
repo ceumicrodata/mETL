@@ -28,6 +28,7 @@ from metl.fieldset import FieldSet
 from metl.fieldmap import FieldMap
 from metl.fieldtype.stringfieldtype import StringFieldType
 from metl.fieldtype.integerfieldtype import IntegerFieldType
+from metl.fieldtype.floatfieldtype import FloatFieldType
 from metl.fieldtype.listfieldtype import ListFieldType
 from metl.expand.appendbysourceexpand import AppendBySourceExpand
 from metl.expand.appendexpand import AppendExpand
@@ -226,6 +227,35 @@ class Test_Expand( unittest.TestCase ):
         self.assertEqual( len( records ), len(list('El Agent')) + len(list('Serious Electron')) + len(list('Brave Wizard')) )
         self.assertEqual( records[-1].getField('name').getValue(), 'd' )
         self.assertEqual( records[-1].getField('email').getValue(), 'Brave Wizard@metl-test-data.com' )
+
+    def test_listexpander_map( self ):
+
+        static_source = StaticSource(
+            FieldSet([
+                Field( 'city', StringFieldType() ),
+                Field( 'geometry', ListFieldType() ),
+                Field( 'latitude', FloatFieldType() ),
+                Field( 'longitude', FloatFieldType() )
+            ], 
+            FieldMap({
+                'city': 0,
+                'geometry': 1
+            }))
+        )
+        static_source.setResource([
+            [ 'Balatonlelle', [[17.6874552,46.7871465],[17.6865955,46.7870049],[17.6846158,46.7866786],[17.6834977,46.7864944],[17.6822251,46.7862847],[17.6815319,46.7861705],[17.6811473,46.7861071],[17.6795989,46.785852],[17.6774482,46.7854976],[17.6739061,46.7849139],[17.6729351,46.7847539],[17.6720789,46.7846318]] ],
+            [ 'Balatonlelle', [[17.6871206,46.7880197],[17.6874552,46.7871465]] ],
+            [ 'Balatonboglar', "[[17.6709959,46.7843474],[17.6710995,46.7840514],[17.6711443,46.7838791],[17.6711725,46.7837746],[17.6713146,46.7831483]]" ]
+        ])
+
+        expand = ListExpanderExpand( static_source, 'geometry', expanderMap = { 'latitude': 1, 'longitude': 0 } ).initialize()
+        records = [ r for r in expand.getRecords() ]
+
+        self.assertEqual( len( records ), 19 )
+        self.assertEqual( records[10].getField('city').getValue(), 'Balatonlelle' )
+        self.assertEqual( records[10].getField('latitude').getValue(), 46.7847539 )
+        self.assertEqual( records[-1].getField('city').getValue(), 'Balatonboglar' )
+        self.assertEqual( records[-1].getField('longitude').getValue(), 17.6713146 )
 
 if __name__ == '__main__':
     unittest.main()

@@ -27,6 +27,7 @@ from metl.fieldtype.floatfieldtype import FloatFieldType
 from metl.fieldtype.integerfieldtype import IntegerFieldType
 from metl.fieldtype.stringfieldtype import StringFieldType
 from metl.fieldtype.textfieldtype import TextFieldType
+from metl.fieldtype.listfieldtype import ListFieldType
 from metl.exception import *
 
 class Test_FieldType( unittest.TestCase ):
@@ -39,6 +40,16 @@ class Test_FieldType( unittest.TestCase ):
         self.assertFalse( ft.getValue( 0 ) )
         self.assertTrue( ft.getValue( True ) )
         self.assertFalse( ft.getValue( False ) )
+
+    def test_list_field_type( self ):
+
+        ft = ListFieldType()
+
+        self.assertEqual( ft.getValue('monkey'), [ 'monkey' ] )
+        self.assertEqual( ft.getValue('[{"animal":"monkey","country":"hungary"}]'),[{'animal':'monkey','country':'hungary'}])
+        self.assertEqual( ft.getValue('{"animal":"monkey","country":"hungary"}'),[{'animal':'monkey','country':'hungary'}])
+        self.assertEqual( ft.getValue([1,2,3]), [1,2,3] )
+        self.assertEqual( ft.getValue(set([1,2,3,3,3,3])), [1,2,3] )
 
     def test_date_field_type( self ):
 

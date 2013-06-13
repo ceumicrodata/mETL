@@ -19,12 +19,30 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, <see http://www.gnu.org/licenses/>.
 """
 
-import sqlalchemy, metl.fieldtype.base
+import sqlalchemy, metl.fieldtype.base, demjson
+from sqlalchemy.types import TypeDecorator, VARCHAR
+
+class JSONType(TypeDecorator):
+
+    impl = VARCHAR
+
+    def process_bind_param(self, value, dialect):
+
+        if value is not None:
+            value = demjson.encode(value)
+
+        return value
+
+    def process_result_value(self, value, dialect):
+        if value is not None:
+            value = demjson.decode(value)
+
+        return value
 
 class ListFieldType( metl.fieldtype.base.FieldType ):
             
     field_types = [ list ]
-    alchemy_map = None
+    alchemy_map = JSONType
   
     def getPreConvertValue( self, value ):
 
@@ -34,7 +52,14 @@ class ListFieldType( metl.fieldtype.base.FieldType ):
     def getConvertedValue( self, value ):
 
         if type( value ) in ( str, unicode ):
-            return [ value ]
+            try:
+                converted = demjson.decode( value )
+                if type( converted ) == list:
+                    return converted
+                else:
+                    return [ converted ]
+            except:
+                return [ value ]
 
         try:
             return list( value )

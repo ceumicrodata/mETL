@@ -23,13 +23,14 @@ import metl.expand.baseexpanderexpand, metl.fieldmap
 
 class ListExpanderExpand( metl.expand.baseexpanderexpand.BaseExpanderExpand ):
 
-    init = ['listFieldName','expandedFieldName']
+    init = ['listFieldName','expandedFieldName','expanderMap']
 
     # void
-    def __init__( self, reader, listFieldName, expandedFieldName, *args, **kwargs ):
+    def __init__( self, reader, listFieldName, expandedFieldName = None, expanderMap = None, *args, **kwargs ):
 
         self.listFieldName = listFieldName
         self.expandedFieldName = expandedFieldName
+        self.expanderMap = expanderMap
         super( ListExpanderExpand, self ).__init__( reader, *args, **kwargs )
 
     def expand( self, record ):
@@ -38,6 +39,14 @@ class ListExpanderExpand( metl.expand.baseexpanderexpand.BaseExpanderExpand ):
             fs = self.getFieldSetPrototypeCopy().clone()
             fs.setFieldMap( metl.fieldmap.FieldMap( dict( zip( fs.getFieldNames(), fs.getFieldNames() ) ) ) )
             fs.setValues( record.getValues() )
-            fs.getField( self.expandedFieldName ).setValue( listValue )
+
+            if self.expandedFieldName is not None:
+                fs.getField( self.expandedFieldName ).setValue( listValue )
+
+            if self.expanderMap is not None:
+                for k,v in self.expanderMap.items():
+                    fs.getField( k ).setValue(
+                        metl.fieldmap.FieldMap({ k: v }).getValues( listValue ).get( k )
+                    )
 
             yield fs
