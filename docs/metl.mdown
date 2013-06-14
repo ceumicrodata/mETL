@@ -61,8 +61,10 @@ Manupulációk esetében három csoportot különböztetünk meg:
 
    - **Append**: Mostanival teljesen megegyező forrásállomány beszúrása a folyamatba az aktuális után.
    - **AppendBySource**: Másik forrás állomány tartalma szúrható az eredeti forrás után.
+   - **Field**: Paraméterül megadott oszlopokat egy másik oszlopba gyűjt össze az oszlop értékeivel.
    - **BaseExpander**: Kiterjesztésre használható osztály, elsődleges feladata olyan esetben van, ahol egy rekordot többszöröznénk meg.
    - **ListExpander**: Lista típusú elemet bont értékei alapján külön sorokba.
+   - **Melt**: Megadott oszlopokat rögzíti és a többi oszlopot kulcs-érték párok alapján jeleníti meg. 
 
 ### Komponens ábra
 <img src="components.png" alt="Folyamat" style="width: 100%;"/>
@@ -1580,6 +1582,78 @@ Példa YAML konfigurációra:
 	    - name: NAME
 	      type: String
 
+
+##### Field
+Paraméterül megadott oszlopokat egy másik oszlopba gyűjt össze az oszlop értékeivel. Akkor használhatjuk ha egy statisztika pár sorát egymás alá szeretnénk felsorolni kulcs-érték formában, úgy hogy közben meghagyjuk az összes eredeti oszlopot. Inicializálása:
+
+- **fieldNamesAndLabels**: Mezők és hozzájuk tartozó megnevezések, amelyeket össze akarunk vonni két oszlopba.
+- **valueFieldName**: Annak a mezőnek a neve, ahova az oszlop értéke beírásra kerül.
+- **labelFieldName**: Annak a mezőnek a neve, ahova az érték oszlopának megnevezése bírásra kerül.
+
+Példa a következő állomány:
+
+	Year	CZ	HU	SK	PL
+	1999	32	694	129	230
+	1999	395	392	297	453
+	1999	635	812	115	97
+	…
+
+Amelyhez a következő konfigurációt készítjük el:
+	
+	source:
+	  source: TSV
+	  resource: input1.csv
+	  skipRows: 1
+	  fields:
+	    - name: year
+	      type: Integer
+	      map: 0
+	    - name: country
+	    - name: count
+	      type: Integer
+	    - name: cz
+	      type: Integer
+	      map: 1
+	    - name: hu
+	      type: Integer
+	      map: 2
+	    - name: sk
+	      type: Integer
+	      map: 3
+	    - name: pl
+	      type: Integer
+	      map: 4
+	
+	manipulations:
+	  - expand: Field
+	    fieldNamesAndLabels:
+	      cz: Czech
+	      hu: Hungary
+	      sk: Slovak
+	      pl: Poland
+	    valueFieldName: count
+	    labelFieldName: country
+	  - filter: DropField
+	    fieldNames:
+	      - cz
+	      - hu
+	      - sk
+	      - pl
+	
+	target:
+	  type: TSV
+	  resource: output1.csv
+
+Ezzel a következő eredményt kaphatjuk meg.
+
+	year	country	count
+	1999	Slovak	129
+	1999	Czech	32
+	1999	Poland	230
+	1999	Hungary	694
+	1999	Slovak	297
+	1999	Czech	395
+
 ##### BaseExpander
 Kiegészítésre használatos osztály, amely önmagában nem működőképes. Feladata akkor van, amikor egy sorból szeretnénk több sort létrehozni a folyamatban. A prototípus lekérdezésénél a `clone()` metódusról ne feledkezzünk el!
 
@@ -1730,6 +1804,61 @@ Ezt pedig a következő konfigurációval akarjuk megvalósítani:
 	  truncateTable: true
 	
 Itt kiolvassuk az előbb betöltött `geometry` mező értékét egy listába, majd a `ListExpander` segítségével definiáljuk, hogy a `geometry` mezőt bejárva, a `latitude` és `longitude` mezőbe mit is írjunk pontosan. Ezzel a megvalósítással létrehoztunk egy táblát és hozzá egy kapcsolótáblát.
+
+##### Melt
+Megadott oszlopokat rögzíti és a többi oszlopot kulcs-érték párok alapján jeleníti meg. **A folyamat során a nem rögzített és nem kulcs-értéket tartalmazó mezők egytől-egyig törlődnek**. Ha nincs szükség a mezők eltávolítására, és csak pár mezők akarunk összeolvasztani, használjuk a `Field` bővítőt. Iniclaizálása:
+
+Nézzük meg a következő input állományt:
+
+	first	height	last	weight	iq
+	John	5.5	    Doe	    130	    102
+	Mary	6.0	    Bo	    150	    98
+
+Példa konfigurációs állomány:
+
+	source:
+	  source: TSV
+	  resource: input2.csv
+	  skipRows: 1
+	  fields:
+	    - name: first
+	      map: 0
+	    - name: height
+	      type: Float
+	      map: 1
+	    - name: last
+	      map: 2
+	    - name: weight
+	      type: Integer
+	      map: 3
+	    - name: iq
+	      type: Integer
+	      map: 4
+	    - name: quantity
+	    - name: value
+	
+	manipulations:
+	  - expand: Melt
+	    fieldNames:
+	      - first
+	      - last
+	    valueFieldName: value
+	    labelFieldName: quantity
+	
+	target:
+	  type: TSV
+	  resource: output2.csv
+	  
+Amely hatására a következő jön létre:
+
+	first	last	quantity	value
+	John	Doe	    iq	        102
+	John	Doe	    weight	    130
+	John	Doe	    height	    5.5
+	Mary	Bo	    iq	        98
+	Mary	Bo	    weight	    150
+	Mary	Bo	    height	    6.0
+
 	      
 ### Célállomány (Target)
 Miután megtörtént a forrás állományból az adatok beolvasása, illesztése, transzformációja, és végigmentek az adatok a manipulációs lépéseken a `Target`-hez kerül a beolvasott, véglegesített sor. Ő fogja kiírni és létrehozni az állományt a végleges adatokkal.

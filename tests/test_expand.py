@@ -33,6 +33,8 @@ from metl.fieldtype.listfieldtype import ListFieldType
 from metl.expand.appendbysourceexpand import AppendBySourceExpand
 from metl.expand.appendexpand import AppendExpand
 from metl.expand.listexpanderexpand import ListExpanderExpand
+from metl.expand.fieldexpand import FieldExpand
+from metl.expand.meltexpand import MeltExpand
 from metl.source.staticsource import StaticSource
 from metl.source.csvsource import CSVSource
 
@@ -227,6 +229,93 @@ class Test_Expand( unittest.TestCase ):
         self.assertEqual( len( records ), len(list('El Agent')) + len(list('Serious Electron')) + len(list('Brave Wizard')) )
         self.assertEqual( records[-1].getField('name').getValue(), 'd' )
         self.assertEqual( records[-1].getField('email').getValue(), 'Brave Wizard@metl-test-data.com' )
+
+    def test_field( self ):
+
+        static_source = StaticSource(
+            FieldSet([
+                Field( 'year', IntegerFieldType() ),
+                Field( 'country', StringFieldType() ),
+                Field( 'count', IntegerFieldType() ),
+                Field( 'cz', IntegerFieldType() ),
+                Field( 'hu', IntegerFieldType() ),
+                Field( 'sk', IntegerFieldType() ),
+                Field( 'pl', IntegerFieldType() )
+            ], 
+            FieldMap({
+                'year': 0,
+                'cz': 1,
+                'hu': 2,
+                'sk': 3,
+                'pl': 4
+            }))
+        )
+        static_source.setResource([
+            [1999,32,694,129,230],
+            [1999,395,392,297,453],
+            [1999,635,812,115,97]
+        ])
+
+        expand = FieldExpand( 
+            static_source, 
+            fieldNamesAndLabels = {
+                'cz': 'Czech',
+                'hu': 'Hungary',
+                'sk': 'Slovak',
+                'pl': 'Poland',
+            },
+            valueFieldName = 'count',
+            labelFieldName = 'country'
+        ).initialize()
+
+        records = [ r for r in expand.getRecords() ]
+
+        self.assertEqual( len( records ), 12 )
+        self.assertEqual( records[-1].getField('year').getValue(), 1999 )
+        self.assertEqual( records[-1].getField('count').getValue(), 812 )
+        self.assertEqual( records[-1].getField('pl').getValue(), 97 )
+        self.assertEqual( records[-1].getField('country').getValue(), 'Hungary' )
+
+    def test_melt( self ):
+
+        static_source = StaticSource(
+            FieldSet([
+                Field( 'first', StringFieldType() ),
+                Field( 'height', FloatFieldType() ),
+                Field( 'last', StringFieldType() ),
+                Field( 'weight', IntegerFieldType() ),
+                Field( 'iq', IntegerFieldType() ),
+                Field( 'quantity', StringFieldType() ),
+                Field( 'value', FloatFieldType() )
+            ], 
+            FieldMap({
+                'first': 0,
+                'height': 1,
+                'last': 2,
+                'weight': 3,
+                'iq': 4
+            }))
+        )
+        static_source.setResource([
+            ['John',5.5,'Doe',130,102],
+            ['Mary',6.0,'Bo',150,98]
+        ])
+
+        expand = MeltExpand( 
+            static_source, 
+            fieldNames = ['first','last'],
+            valueFieldName = 'value',
+            labelFieldName = 'quantity'
+        ).initialize()
+
+        records = [ r for r in expand.getRecords() ]
+
+        self.assertEqual( len( records ), 6 )
+        self.assertEqual( len( records[0].getFieldNames() ), 4)
+        self.assertEqual( records[-1].getField('first').getValue(), 'Mary' )
+        self.assertEqual( records[-1].getField('last').getValue(), 'Bo' )
+        self.assertEqual( records[-1].getField('quantity').getValue(), 'height' )
+        self.assertEqual( records[-1].getField('value').getValue(), 6.0 )
 
     def test_listexpander_map( self ):
 
