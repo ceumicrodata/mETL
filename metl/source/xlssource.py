@@ -50,14 +50,8 @@ class XLSSource( metl.source.base.FileSource ):
     # void
     def initialize( self ):
 
-        self.file_pointer, self.file_closable = metl.source.base.openResource( 
-            self.getResource(), 
-            'r',
-            username = self.htaccess_username,
-            password = self.htaccess_password,
-            realm = self.htaccess_realm,
-            host = self.htaccess_host
-        )
+        super( XLSSource, self ).initialize()
+
         self.workbook = xlrd.open_workbook(
             file_contents = self.file_pointer.read(),
             encoding_override = self.getEncoding()
@@ -70,6 +64,10 @@ class XLSSource( metl.source.base.FileSource ):
         self.rowCount = self.sheet.nrows
 
         return self.base_initialize()
+
+    def getEncoding( self ):
+
+        return None
 
     # list
     def getRecordsList( self ):

@@ -19,95 +19,7 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, <see http://www.gnu.org/licenses/>.
 """
 
-import metl.source.base, codecs, re
-from xml.etree import ElementTree
-
-class XmlListConfig(list):
-       
-    # void
-    def __init__( self, aList, tagname ):
-                
-        for element in aList:
-            if len( element ):
-                if len( element ) == 1 or element[0].tag != element[1].tag:
-                    self.append( XmlDictConfig( element ) )
-                    
-                elif element[0].tag == element[1].tag:
-                    self.append( XmlListConfig( element, element[0].tag ) )
-            
-            elif element.items():
-                aDict = dict( element.items() )
-                if element.text:
-                    text = element.text.strip()
-                    if text:
-                        aDict.update({ element.tag: text })
-                
-                if element.tag == tagname:
-                    self.append( aDict )
-
-            elif element.text:
-                text = element.text.strip()
-                if text:
-                    if element.tag == tagname:
-                        self.append( text )
-
-class XmlListDictConfig(dict):
-
-    def __init__( self, aList ):
-
-        if len( aList ) == 0:
-            return
-
-        if len( aList ) == 1:
-            self[tag] = XmlListConfig( aList, aList[0].tag )
-
-        element_tags = set([])
-        for idx in xrange( 1, len( aList ) ):
-            if aList[ idx - 1 ].tag == aList[ idx ].tag:
-                element_tags.add( aList[ idx ].tag ) 
-
-        for tag in element_tags:
-            self[ tag ] = XmlListConfig( aList, tag )
-
-class XmlDictConfig(dict):
-
-    # void
-    def __init__( self, parent_element ):
-        
-        childrenNames = []
-        for child in parent_element.getchildren():
-            childrenNames.append( child.tag )
-
-        if parent_element.items():
-            self.update( dict( parent_element.items() ) )
-            
-        for element in parent_element:
-            if len( element ):
-                if len( element ) == 1 or element[0].tag != element[1].tag:
-                    aDict = XmlDictConfig( element )
-                    
-                else:
-                    aDict = XmlListDictConfig( element )
-                    
-                if element.items():
-                    aDict.update( dict( element.items() ) )
-
-                if childrenNames.count(element.tag) > 1:
-                    try:
-                        currentValue = self[element.tag]
-                        currentValue.append(aDict)
-                        self.update({element.tag: currentValue})
-                    except:
-                        self.update({ element.tag: [ aDict ] })
-
-                else:
-                     self.update({element.tag: aDict})
-
-            elif element.items():
-                self.update({ element.tag: dict( element.items() ) })
-
-            elif element.text:
-                self.update({element.tag: element.text.strip()})
+import metl.source.base, codecs, re, xml2dict
 
 class XMLSource( metl.source.base.FileSource ):
 
@@ -120,33 +32,22 @@ class XMLSource( metl.source.base.FileSource ):
 
         super( XMLSource, self ).__init__( fieldset, **kwargs )
 
-    # void
-    def initialize( self ):
+    def getEncoding( self ):
 
-        self.file_pointer, self.file_closable = metl.source.base.openResource( 
-            self.getResource(), 
-            'rb',
-            username = self.htaccess_username,
-            password = self.htaccess_password,
-            realm = self.htaccess_realm,
-            host = self.htaccess_host
-        )
-        return self.base_initialize()
+        return None
 
     # list
     def getRecordsList( self ):
 
-        tree = ElementTree.parse( self.file_pointer )
-        root = tree.getroot()
-        ret  = XmlDictConfig(root)
+        data = xml2dict.XML2Dict().parseFile( self.file_pointer )
 
-        if self.itemName is not None:
-            ret = ret[ self.itemName ]
+        if type( data ) == dict and self.itemName is not None:
+            return data[ self.itemName ]
 
-        if type( ret ) != list:
-            ret = [ ret ]
-        
-        return ret
+        elif type( data ) == dict and self.itemName is None:
+            return [ data ]
+
+        return data
 
     # FieldSet
     def getTransformedRecord( self, record ):

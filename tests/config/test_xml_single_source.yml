@@ -1,0 +1,17 @@
+base: tests/config/test_basic_source.yml
+source:
+  source: XML
+  resource: tests/test_sources/test_xml_single_source.xml
+  map:
+    id: varosresz_id/text
+    name: nev/text
+    name_search: nev/text
+    district: district_id/text
+    district_roman: district_id/text
+    region_id: terkod/text
+    maxlng: maxlng/text
+    maxlat: maxlat/text
+    minlat: minlat/text
+    minlng: minlng/text
+    lat: lat/text
+    lng: lng/text

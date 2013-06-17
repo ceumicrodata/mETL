@@ -1,4 +1,38 @@
-# mETL
+
+# Change Log
+
+### Version 0.1.6
+- .0: Changed XML converter to <a href="https://github.com/bfaludi/XML2Dict">xml2dict</a> package. 
+
+   **IMPORTANT**: It has a new XML mapping technique, all XML source map must be updated!
+   
+   * For element's value: path/for/xml/element/**text**
+   * For element's attribute: path/for/xml/element/attributename
+
+- .0: Fixed a bug in XML sources when multiple list element founded at sub-sub-sub level.
+- .0: Fixed a bug with htaccess file opening in CSV, TSV, Yaml, JSON sources.
+
+### Version 0.1.5
+- .0: htaccess file opening support.
+- .1: List type JSON support for database target and source.
+- .1: ListExpander with map ability.
+
+### Version 0.1.4
+- .0: First public release.
+- .1: Remove elementtree and cElementTree dependencies.
+- .2: TARR dependency link added, PyXML dependency removed.
+- .3: JSON target get a compact format parameter to create pretty printed files.
+- .4: Update TARR dependency.
+- .5: Add missing dependency: python-dateutil
+- .6: Fixed xml test case after 2.7.2 python version.
+- .7: Fixed List type converter for string or unicode data. It will not split the string!
+- .8: Fixed JSON source when no root iterator given and the resource file is contains only one dictionary.
+- .9: Added a new operator `!` to convert dictionart into list in mapping process.
+- .10: Fixed a bug in Windows when want to open a resource with absolute path.
+- .11: Added ListExpander to expand list information into single fields.
+- .12: XML source open via http and https protocols.
+
+# Documentation
 
 ## Alapok
 Az mETL egy olyan **ETL eszköz**, amely kifejezetten a CEU számára szükséges választási adatok adatok betöltésére jött létre. Természetesen a program ennél sokkal általánosabb körű, gyakorlatilag bármilyen adat betöltésre alkalmazható. A program fejlesztése **Python**-ban történt, az optimális memóriahasználat maximális figyelembevételével a **Brewery** eszköz képességeinek felmérést követően.
@@ -61,7 +95,10 @@ Manupulációk esetében három csoportot különböztetünk meg:
 
    - **Append**: Mostanival teljesen megegyező forrásállomány beszúrása a folyamatba az aktuális után.
    - **AppendBySource**: Másik forrás állomány tartalma szúrható az eredeti forrás után.
+   - **Field**: Paraméterül megadott oszlopokat egy másik oszlopba gyűjt össze az oszlop értékeivel.
    - **BaseExpander**: Kiterjesztésre használható osztály, elsődleges feladata olyan esetben van, ahol egy rekordot többszöröznénk meg.
+   - **ListExpander**: Lista típusú elemet bont értékei alapján külön sorokba.
+   - **Melt**: Megadott oszlopokat rögzíti és a többi oszlopot kulcs-érték párok alapján jeleníti meg. 
 
 ### Komponens ábra
 <img src="docs/components.png" alt="Folyamat" style="width: 100%;"/>
@@ -73,7 +110,7 @@ Hagyományos Python csomagként a telepítést legegyszerűbben a következő pa
 Csomagot ezt követően az alábbi paranccsal tesztelhetjük:
 `python setup.py test`
 
-Következő függőségekkel rendelkezik: xlrd, gdata, demjson, pyyaml, sqlalchemy, xlwt, tarr, nltk, xlutils
+Következő függőségekkel rendelkezik: xlrd, gdata, demjson, pyyaml, sqlalchemy, xlwt, tarr, nltk, xlutils, xml2dict
 
 ### Mac OSX
 Telepítés előtt a következő csomagok feltételére lesz szükség, mely a következő:
@@ -88,7 +125,7 @@ Ezt követően minden csomag megfelelően feltelepítésre kerül.
 Telepítés előtt a `python-setuptools` meglétét ellenőrizni kell, illetve hiányzása esetén `apt-get install`-al telepíteni.
 
 ### Windows
-Csomagok nagy része probléma nélkül feltelepül a számítógépre, azonban a folyamat előtt pár csomag meglétéről manuálisan kell gondoskodni.
+Minden csomag könnyedén feltelepíthető!
 
 ## Futtatás
 Konzol scriptek gyűjteménye a program, amely emiatt bármilyen rendszerbe könnyen beépíthető, és akár cron script-ek segítségével időzíthető is. 
@@ -150,3 +187,23 @@ Konzol scriptek gyűjteménye a program, amely emiatt bármilyen rendszerbe kön
    - `-m`: Konfigurációs állomány a módosult elemek kulcsainak kiírására.
    - `-u`: Konfigurációs állomány a módosulatlan elemek kulcsainak kiírására.
    - `-d`: Konfigurációs állomány a törölt elemek kulcsainak kiírására.
+ 
+## Működés
+
+Az eszköz egy **YAML fájlt használ konfigurációnak**, ami leírja a teljes végrehajtás útját, és az összes elvégzendő transzformációs lépést.
+
+**Rövid működése egy átlagos programnak a következőképpen néz ki:**
+
+1. A program beolvassa a megadott forrás állományt.
+2. Soronként egy illesztés felhasználásával betölti megfelelő mezőkbe a sor értékeit.
+3. Mezőkön egyesével hívódnak meg a tetszőleges bonyolultságú transzformációk.
+4. Végleges, transzformációkon átjutott sor kerül az első manipulációhoz, ahol a további szűrések, módosítások már a teljes sor értékeire érvényben lehetnek. Minden manipuláció a következő manipulációs lépés számára adja át a már konvertált és feldolgozott sort.
+5. Cél típushoz kerülés után, megtörténik a végleges sor kiíársa a megadott típusú állományba.
+
+Nézzük meg a működés során használt összes komponenset részletesen, majd pedig nézzük meg a felsorolt lépésekből, hogyan tudunk konfigurációs YAML állományokat készíteni.
+
+Az alábbi dokumentáció két témakört igyekszik lefedni, egyrészt definiálja, hogy a YAML konfigurációban hogyan tudjuk leírni a szükséges feladatokat, illetve egy rövid betekintést ad példákon keresztül a Python oldali kódba és legfontosabb metódusokba, hogy ha az alap eszköz funkció készlete kevésnek bizonyulna, hogyan tudunk gyorsan és egyszerűen kiegészítő feltételeket, módosítókat készíteni.
+
+### Működési ábra
+<img src="docs/workflow.png" alt="Folyamat" style="width: 100%;"/>
+

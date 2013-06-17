@@ -2,7 +2,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '0.1.5.2'
+version = '0.1.6.0'
 
 setup(
     name = 'mETL',
@@ -24,7 +24,8 @@ setup(
     author_email = 'b.faludi@mito.hu',
     license = 'GPL',
     dependency_links = [
-        'https://github.com/ceumicrodata/tarr/archive/tarr-0.1.1.zip'
+        'https://github.com/ceumicrodata/tarr/archive/tarr-0.1.1.zip',
+        'https://github.com/bfaludi/XML2Dict/archive/master.zip#egg=xml2dict-0.1'
     ],
     install_requires = [
         'python-dateutil',
@@ -36,7 +37,8 @@ setup(
         'xlwt',
         'nltk',
         'tarr',
-        'xlutils'
+        'xlutils',
+        'xml2dict'
     ],
     test_suite = "tests"
 )

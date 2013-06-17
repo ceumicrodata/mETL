@@ -57,7 +57,11 @@ class Test_Source( unittest.TestCase ):
     def test_json_source( self ):
 
         self.cfg_file = 'tests/config/test_json_source.yml'
-    
+
+    def test_json_source_list( self ):
+
+        self.cfg_file = 'tests/config/test_json_source_list.yml'
+
     def test_xml_source( self ):
 
         self.cfg_file = 'tests/config/test_xml_source.yml'

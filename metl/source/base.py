@@ -162,7 +162,9 @@ class FileSource( Source ):
             'r', 
             self.getEncoding(),
             username = self.htaccess_username,
-            password = self.htaccess_password
+            password = self.htaccess_password,
+            realm = self.htaccess_realm,
+            host = self.htaccess_host
         )
         return super( FileSource, self ).initialize()
 

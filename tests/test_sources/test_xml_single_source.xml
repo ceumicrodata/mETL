@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<item>
+  <maxlng>
+    19.0613420893
+  </maxlng>
+  <minlng>
+    19.0478767813
+  </minlng>
+  <district_id>
+    3
+  </district_id>
+  <terkod>
+    120
+  </terkod>
+  <minlat>
+    47.5373529319
+  </minlat>
+  <maxlat>
+    47.5600603189
+  </maxlat>
+  <lat>
+    47.5487066254
+  </lat>
+  <lng>
+    19.0546094353
+  </lng>
+  <nev>
+    Óbudaisziget
+  </nev>
+  <varosresz_id>
+    1
+  </varosresz_id>
+</item>
