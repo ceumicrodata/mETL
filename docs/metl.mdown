@@ -45,6 +45,7 @@ Manupulációk esetében három csoportot különböztetünk meg:
    Módosítók azok az objektumok, amelyek egy teljes sort (rekordot) kapnak, és mindig egy teljes sorral térnek vissza. Azonban a folyamataik során érték módosításokat végeznek a különböző mezők összefüggő értékeinek felhasználásával.
    
    - **Set**: Érték beállítást végez fix érték séma, függvény, vagy másik forrás felhasználásával.
+   - **SetWithMap**: Érték beállítást végez összetett típus esetén megadott map segítéségével.
    - **TransformField**: Hagyományos mező szintű transzformáció hívható általa a manipulációs lépés során. 
    
 2. **Filter**
@@ -565,6 +566,7 @@ Példa Python oldalról:
 Minden mező kötelezően rendelkezik egy típussal. A következő típusokat kezeli jelenleg az mETL:
 
 - **Boolean**: Igaz-Hamis mező.
+- **Complex**: Összetett típus, bármilyen adat tárolására. Dict/List esetén érdemes használni, ha később még teendőnk van az adott értékkel.
 - **Date**: Dátum típus.
 - **Datetime**: Dátim és idő típus.
 - **Float**: Tört szám mező típus.
@@ -1446,6 +1448,47 @@ Használatának módjai:
 			    	[ sr.getField('EMAIL').getValue() for sr in scope.getSourceRecords() ] \
 			    else 'Not found same email address'
 
+##### SetWithMap
+Érték beállítást végez egy összetett típus bejárásának segítségével.
+
+- **fieldNamesWithMap**: Mező nevek és map útvonalak, amiken végre kell hajtani a beállítást.
+- **complexFieldName**: Összetett mező neve, amiből ki akarjuk venni az értékeket. Ennek típusa lehet `List` vagy `Complex`.
+
+Minden `fieldNames`-ben feltüntetett mezőre egyesével végrehajtjuk a transzformációkat.
+
+Példa YAML konfigurációra:
+
+	source:
+	  source: JSON
+	  fields:
+	    - name: LISTITEMS
+	      map: response/tips/items/*
+	      type: List
+	    - name: LISTELEMENT
+	      type: Complex
+	    - name: CREATEDAT
+	      type: Integer
+	    - name: TEXT
+	    - name: CATEGORIES
+	      type: List
+	
+	manipulations:
+	  - expand: ListExpander
+	    listFieldName: LISTITEMS
+	    expandedFieldName: LISTELEMENT
+	  - modifier: SetWithMap
+	    fieldNamesWithMap: 
+	      CREATEDAT: createdAt
+	      TEXT: text
+	      CATEGORIES: venue/categories/*/id
+	    complexFieldName: LISTELEMENT
+	    map: 0/createdAt
+	  - filter: DropField
+	    fieldNames:
+	      - LISTELEMENT
+	      - LISTITEMS
+
+	    
 ##### TransformField
 Hagyományos mező szintű transzformáció hívható általa a manipulációs lépés során. Inicializálásának paraméterei:
 

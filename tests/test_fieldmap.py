@@ -72,6 +72,8 @@ class Test_FieldMap( unittest.TestCase ):
             'dict': 'first/of/all',
             'filtered': 'filtered/name=second/value',
             'list': 'filtered/*/value',
+            'listendingwstar': 'filtered/*',
+            'listendingwostar': 'filtered',
             'listpart': 'filtered/0:-1/value',
             'emptylistref': 'emptylist/~0/item',
             'notemptylistref': 'notemptylist/~0/item',
@@ -98,6 +100,7 @@ class Test_FieldMap( unittest.TestCase ):
         self.assertIsNone( values['strvalue2'] )
         self.assertEqual( values['strlist1'], 'many' )
         self.assertEqual( values['strlist2'], 'list' )
+        self.assertEqual( values['listendingwstar'], values['listendingwostar'] )
 
     def test_python_list( self ):
 

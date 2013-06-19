@@ -49,6 +49,7 @@ from metl.fieldtype.integerfieldtype import *
 from metl.fieldtype.stringfieldtype import *
 from metl.fieldtype.textfieldtype import *
 from metl.fieldtype.listfieldtype import *
+from metl.fieldtype.complexfieldtype import *
 from metl.filter.base import *
 from metl.filter.dropbyconditionfilter import *
 from metl.filter.dropbysourcefilter import *
@@ -84,6 +85,7 @@ from metl.transform.addtransform import *
 from metl.transform.subtransform import *
 from metl.modifier.base import *
 from metl.modifier.setmodifier import SetModifier
+from metl.modifier.setwithmapmodifier import SetWithMapModifier
 from metl.modifier.transformfieldmodifier import TransformFieldModifier
 from metl.source.base import *
 from metl.source.csvsource import *

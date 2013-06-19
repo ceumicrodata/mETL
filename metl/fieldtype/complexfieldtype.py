@@ -21,30 +21,23 @@ along with this program. If not, <see http://www.gnu.org/licenses/>.
 
 import sqlalchemy, metl.fieldtype.base, demjson
 
-class ListFieldType( metl.fieldtype.base.FieldType ):
+class ComplexFieldType( metl.fieldtype.base.FieldType ):
             
-    field_types = [ list ]
+    field_types = [ dict, list ]
     alchemy_map = metl.fieldtype.base.JSONType
-  
-    def getPreConvertValue( self, value ):
-
-        return value is None
 
     # int
     def getConvertedValue( self, value ):
 
+        return value
+
+    def getConvertedValue( self, value ):
+
         if type( value ) in ( str, unicode ):
             try:
-                converted = demjson.decode( value )
-                if type( converted ) == list:
-                    return converted
-                else:
-                    return [ converted ]
+                return demjson.decode( value )
+
             except:
-                return [ value ]
+                return value
 
-        try:
-            return list( value )
-
-        except:
-            return [ value ]
+        return value

@@ -20,6 +20,24 @@ along with this program. If not, <see http://www.gnu.org/licenses/>.
 """
 
 from metl.exception import *
+from sqlalchemy.types import TypeDecorator, VARCHAR
+
+class JSONType(TypeDecorator):
+
+    impl = VARCHAR
+
+    def process_bind_param(self, value, dialect):
+
+        if value is not None:
+            value = demjson.encode(value)
+
+        return value
+
+    def process_result_value(self, value, dialect):
+        if value is not None:
+            value = demjson.decode(value)
+
+        return value
 
 class FieldType( object ):
     

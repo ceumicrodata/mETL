@@ -69,6 +69,9 @@ class FieldMap( object ):
 
                     elif rule_part == '*':
                         new_object = []
+                        if len( rule[ rule.index( rule_part ) + len( rule_part ) + 1: ] ) == 0:
+                            return current_object
+                            
                         for item in current_object:
                             new_object.append( self.getFieldValue( 
                                 item, 

@@ -11,6 +11,8 @@
 
 - .0: Fixed a bug in XML sources when multiple list element founded at sub-sub-sub level.
 - .0: Fixed a bug with htaccess file opening in CSV, TSV, Yaml, JSON sources.
+- .1: Fixed a bug where map ending was *
+- .1: Added SetWithMap modifier and Complex type
 
 ### Version 0.1.5
 - .0: htaccess file opening support.
