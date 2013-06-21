@@ -13,6 +13,9 @@
 - .0: Fixed a bug with htaccess file opening in CSV, TSV, Yaml, JSON sources.
 - .1: Fixed a bug where map ending was *
 - .1: Added SetWithMap modifier and Complex type
+- .2: Fixed a bug in List expander when field's value was empty.
+- .2: Split transform could split a list items too.
+- .2: Clean transform removes new lines. 
 
 ### Version 0.1.5
 - .0: htaccess file opening support.

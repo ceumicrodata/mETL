@@ -40,6 +40,7 @@ class CleanTransform( metl.transform.base.Transform ):
             return field
 
         sentence = field.getValue().strip()
+        sentence = re.sub(ur'[\n\r]+', ' ', sentence )
         for char in self.stopChars:
             sentence = sentence.replace( char, u' ' )
 

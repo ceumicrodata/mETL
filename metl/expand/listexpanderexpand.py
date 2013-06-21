@@ -35,7 +35,7 @@ class ListExpanderExpand( metl.expand.baseexpanderexpand.BaseExpanderExpand ):
 
     def expand( self, record ):
 
-        for listValue in record.getField( self.listFieldName ).getValue():
+        for listValue in record.getField( self.listFieldName ).getValue() or []:
             fs = self.getFieldSetPrototypeCopy().clone()
             fs.setFieldMap( metl.fieldmap.FieldMap( dict( zip( fs.getFieldNames(), fs.getFieldNames() ) ) ) )
             fs.setValues( record.getValues() )

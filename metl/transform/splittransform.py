@@ -26,7 +26,7 @@ class SplitTransform( metl.transform.base.Transform ):
     init = ['idx','chars']
 
     # void
-    def __init__( self, idx, chars = None, *args, **kwargs ):
+    def __init__( self, idx = None, chars = None, *args, **kwargs ):
 
         self.idx = idx
         self.chars = chars
@@ -38,7 +38,15 @@ class SplitTransform( metl.transform.base.Transform ):
         if field.getValue() is None:
             return field
 
-        if self.idx.count(u':') == 1:
+        if self.idx is None:
+            if type( field.getValue() ) == list and len( field.getValue() ) > 0:
+                v = field.getValue()[0]
+            else:
+                v = field.getValue()
+
+            field.setValue( v.split( self.chars ) )
+
+        elif self.idx.count(u':') == 1:
             pts = self.idx.split(u':')
             field.setValue( u' '.join( field.getValue().split( self.chars )[ int( pts[0] ) : int( pts[1] ) ] ) )
 
