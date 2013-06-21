@@ -84,9 +84,14 @@ from metl.transform.splittransform import *
 from metl.transform.addtransform import *
 from metl.transform.subtransform import *
 from metl.modifier.base import *
-from metl.modifier.setmodifier import SetModifier
-from metl.modifier.setwithmapmodifier import SetWithMapModifier
-from metl.modifier.transformfieldmodifier import TransformFieldModifier
+from metl.modifier.setmodifier import *
+from metl.modifier.setwithmapmodifier import *
+from metl.modifier.transformfieldmodifier import *
+from metl.modifier.ordermodifier import *
+# from metl.aggregator.base import *
+# from metl.aggregator.countaggregator import *
+# from metl.aggregator.avgaggregator import *
+# from metl.aggregator.sumaggregator import *
 from metl.source.base import *
 from metl.source.csvsource import *
 from metl.source.databasesource import *
@@ -114,5 +119,4 @@ from metl.reader import *
 from metl.tarrdispatcher import *
 from metl.writer import *
 from metl.migration import *
-
 

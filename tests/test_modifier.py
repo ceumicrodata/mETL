@@ -30,6 +30,7 @@ from metl.condition.ismatchbyregexpcondition import IsMatchByRegexpCondition
 from metl.modifier.setmodifier import SetModifier
 from metl.modifier.transformfieldmodifier import TransformFieldModifier
 from metl.transform.replacebyregexptransform import ReplaceByRegexpTransform
+from metl.modifier.ordermodifier import OrderModifier
 from metl.source.staticsource import StaticSource
 
 class Test_Modifier( unittest.TestCase ):
@@ -137,6 +138,25 @@ class Test_Modifier( unittest.TestCase ):
             [ 'Western Ogre', 'Western Ogre@metl-test-data.com', 1998, 2004 ],
             [ 'Sergeant Strawberry', 'Sergeant Strawberry@metl-test-data.com', 2006, 2008 ]
         ])
+
+    def test_order_modifier( self ):
+
+        records = [ r for r in OrderModifier(
+            self.reader,
+            fieldNamesAndOrder = [ { 'year': 'DESC' }, { 'name': 'ASC' } ]
+        ).initialize().getRecords() ]
+
+        self.assertEqual( len( records ), 85 )
+
+        self.assertEqual( records[-1].getField('year').getValue(), 1998 )
+        self.assertEqual( records[-4].getField('year').getValue(), 1999 )
+        self.assertEqual( records[0].getField('year').getValue(), 2013 )
+
+        self.assertEqual( records[-1].getField('name').getValue(), 'Western Ogre' )
+        self.assertEqual( records[-2].getField('name').getValue(), 'The Sergeant' )
+        self.assertEqual( records[-3].getField('name').getValue(), 'The Admiral' )
+        self.assertEqual( records[-4].getField('name').getValue(), 'The Skunk' )
+        self.assertEqual( records[0].getField('name').getValue(), 'Dragon Insane' )
 
     def test_transform_field_modifier( self ):
 

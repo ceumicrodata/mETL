@@ -16,6 +16,7 @@
 - .2: Fixed a bug in List expander when field's value was empty.
 - .2: Split transform could split a list items too.
 - .2: Clean transform removes new lines. 
+- .3: Added Order modifier.
 
 ### Version 0.1.5
 - .0: htaccess file opening support.
@@ -83,7 +84,9 @@ Manupulációk esetében három csoportot különböztetünk meg:
 
    Módosítók azok az objektumok, amelyek egy teljes sort (rekordot) kapnak, és mindig egy teljes sorral térnek vissza. Azonban a folyamataik során érték módosításokat végeznek a különböző mezők összefüggő értékeinek felhasználásával.
    
+   - **Order**: Sorrendbe rendezi a sorokat a megadott feltételeknek megfelelően.
    - **Set**: Érték beállítást végez fix érték séma, függvény, vagy másik forrás felhasználásával.
+   - **SetWithMap**: Érték beállítást végez összetett típus esetén megadott map segítéségével.
    - **TransformField**: Hagyományos mező szintű transzformáció hívható általa a manipulációs lépés során. 
    
 2. **Filter**
