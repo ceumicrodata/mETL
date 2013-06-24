@@ -217,7 +217,7 @@ class ConfigParser( object ):
             if 'source' in transformConfig:
                 source_obj = self.loadSourceObject( transformConfig )
                 source_obj.initialize()
-                params['sourceRecords'] = source_obj.getRecords()
+                params['sourceRecords'] = [ r for r in source_obj.getRecords() ]
                 source_obj.finalize()
             try:
                 obj = obj( **params )
@@ -243,7 +243,7 @@ class ConfigParser( object ):
                     'branch_instruction': condition_obj 
                 } ) )
 
-        if transformType in ( 'Filter', 'Expand', 'Modifier' ):
+        if transformType in ( 'Filter', 'Expand', 'Modifier', 'Aggregator' ):
             params = getMore( transformConfig, obj.init, only = True )
             if 'condition' in transformConfig:
                 params['condition'] = self.getObject( 
@@ -283,6 +283,8 @@ class ConfigParser( object ):
                 self.readers.append( self.getObject( 'Expand', cfg ) )
             if 'modifier' in cfg:
                 self.readers.append( self.getObject( 'Modifier', cfg ) )
+            if 'aggregator' in cfg:
+                self.readers.append( self.getObject( 'Aggregator', cfg ) )
 
     # list<dict>
     def getFlatTransformConfig( self, cfg ):

@@ -17,6 +17,7 @@
 - .2: Split transform could split a list items too.
 - .2: Clean transform removes new lines. 
 - .3: Added Order modifier.
+- .4: Added basic aggregator functions.
 
 ### Version 0.1.5
 - .0: htaccess file opening support.
@@ -78,7 +79,7 @@ Fejlesztés folyamán igyekeztünk a leggyakoribb transzformációs lépésekkel
 - **Title**: Minden szót nagy kezdőbetűssé alakít.
 - **UpperCase**: Nagybetűssé alakítás.
 
-Manupulációk esetében három csoportot különböztetünk meg:
+Manupulációk esetében négy csoportot különböztetünk meg:
 
 1. **Modifier**
 
@@ -107,6 +108,14 @@ Manupulációk esetében három csoportot különböztetünk meg:
    - **BaseExpander**: Kiterjesztésre használható osztály, elsődleges feladata olyan esetben van, ahol egy rekordot többszöröznénk meg.
    - **ListExpander**: Lista típusú elemet bont értékei alapján külön sorokba.
    - **Melt**: Megadott oszlopokat rögzíti és a többi oszlopot kulcs-érték párok alapján jeleníti meg. 
+
+4. **Aggregator**
+
+   Adatok összekapcsolására és csoportokba rendezésére használjuk.
+   
+   - **Avg**: Átlag érték meghatározásához használható.
+   - **Count**: Számosságok kalkulációjához használjuk.
+   - **Sum**: Összérték meghatározásához használható.
 
 ### Komponens ábra
 <img src="docs/components.png" alt="Folyamat" style="width: 100%;"/>

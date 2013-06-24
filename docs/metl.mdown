@@ -38,7 +38,7 @@ Fejlesztés folyamán igyekeztünk a leggyakoribb transzformációs lépésekkel
 - **Title**: Minden szót nagy kezdőbetűssé alakít.
 - **UpperCase**: Nagybetűssé alakítás.
 
-Manupulációk esetében három csoportot különböztetünk meg:
+Manupulációk esetében négy csoportot különböztetünk meg:
 
 1. **Modifier**
 
@@ -67,6 +67,15 @@ Manupulációk esetében három csoportot különböztetünk meg:
    - **BaseExpander**: Kiterjesztésre használható osztály, elsődleges feladata olyan esetben van, ahol egy rekordot többszöröznénk meg.
    - **ListExpander**: Lista típusú elemet bont értékei alapján külön sorokba.
    - **Melt**: Megadott oszlopokat rögzíti és a többi oszlopot kulcs-érték párok alapján jeleníti meg. 
+
+4. **Aggregator**
+
+   Adatok összekapcsolására és csoportokba rendezésére használjuk.
+   
+   - **Avg**: Átlag érték meghatározásához használható.
+   - **Count**: Számosságok kalkulációjához használjuk.
+   - **Sum**: Összérték meghatározásához használható.
+
 
 ### Komponens ábra
 <img src="components.png" alt="Folyamat" style="width: 100%;"/>
@@ -1296,7 +1305,7 @@ Fontosabb operátorok:
  - `!`: Konvertáló operátor (Dict 2 List), amely akkor használatos ha mindenképpen listát szeretnénk kapni, de nem tudjuk hogy azt fogunk-e kapni. XML forrás esetén használatos.
 
 ### Manipulációk (Manipulation)
-Miután a teljes sor feldolgozásra került, és a mezőkbe bekerültek az értékek s lefutottak a mező szintű transzformációk van lehetőség manipulálni a teljes, tisztított értékeket azok összefüggései alapján. Három kulcsszó használható, ezek a `modifier`, `filter`, `expand`, mindegyik egy-egy típust jelöl. Feladataink során többnyire őket fogjuk használni, ha komplexebb feladat elvégzése a cél. (pl.: API kommunikáció). Manipulációs lépések **bármilyen sorrendben jöhetnek** egymás után, függetlenül típusoktól. Ha az egyik végzett, átadja eredményét a következőnek, és így tovább, amíg `Target` objektumhoz nem ér.
+Miután a teljes sor feldolgozásra került, és a mezőkbe bekerültek az értékek s lefutottak a mező szintű transzformációk van lehetőség manipulálni a teljes, tisztított értékeket azok összefüggései alapján. Négy kulcsszó használható, ezek a `modifier`, `filter`, `expand`, `aggregator` mindegyik egy-egy típust jelöl. Feladataink során többnyire őket fogjuk használni, ha komplexebb feladat elvégzése a cél. (pl.: API kommunikáció). Manipulációs lépések **bármilyen sorrendben jöhetnek** egymás után, függetlenül típusoktól. Ha az egyik végzett, átadja eredményét a következőnek, és így tovább, amíg `Target` objektumhoz nem ér.
 
 	manipulations:
 	  - filter: DropByCondition
@@ -1725,6 +1734,58 @@ Példa YAML konfigurációra:
 	  valueFieldName: value
 	  labelFieldName: quantity
 
+#### Csoportosító (Aggregator)
+Csoportok képzésére és azokból információk kalkulálására használjuk. Az Aggregator-ok gyakran viselkednek Filter, és Modifier-ként is, hiszen gyakran törölnek sorokat, oszlopokat, és módosítanak és gyűjtenek össze bizonyos értékeket. Az ilyen műveletek mindig `aggregator` kulcsszóval kezdődnek.
+
+##### Avg
+Átlag érték meghatározására használható. Inicializálása:
+
+- **fieldNames**: Mely mezők számítanak a csoportba. Ezek az értékek distinct formában fognak szerepelni ezt követően!
+- **targetFieldName**: Melyik mezőbe írjuk a számosságot.
+- **valueFieldName**: Mely mező értékét adjuk össze.
+- **listFieldName**: Lista mező neve, amibe azon sorokat menthetjük, akik beleszámítanak a számosságba. Megadása nem kötelező.
+
+A `fieldNames`, `targetFieldName`, `listFieldName` kivételével a többi oszlopot törli az csoportosító.
+
+Példa YAML konfigurációra:
+
+	- aggregator: Avg
+	  fieldNames: author
+	  targetFieldName: avgprice
+	  valueFieldName: price
+	  
+##### Count
+Számosság meghatárázására használható. Inicializálása:
+
+-  **fieldNames**: Mely mezők számítanak a csoportba. Ezek az értékek distinct formában fognak szerepelni ezt követően!
+-  **targetFieldName**: Melyik mezőbe írjuk a számosságot
+-  **listFieldName**: Lista mező neve, amibe azon sorokat menthetjük, akik beleszámítanak a számosságba. Megadása nem kötelező.
+
+A `fieldNames`, `targetFieldName`, `listFieldName` kivételével a többi oszlopot törli az csoportosító.
+
+Példa YAML konfigurációra:
+
+	- aggregator: Count
+	  fieldNames: word
+	  targetFieldName: count
+	  listFieldName: matches
+
+##### Sum
+Érték összeadására használható. Inicializálása:
+
+-  **fieldNames**: Mely mezők számítanak a csoportba. Ezek az értékek distinct formában fognak szerepelni ezt követően!
+-  **targetFieldName**: Melyik mezőbe írjuk a számosságot.
+- **valueFieldName**: Mely mező értékét adjuk össze.
+-  **listFieldName**: Lista mező neve, amibe azon sorokat menthetjük, akik beleszámítanak a számosságba. Megadása nem kötelező.
+
+A `fieldNames`, `targetFieldName`, `listFieldName` kivételével a többi oszlopot törli az csoportosító.
+
+Példa YAML konfigurációra:
+
+	- aggregator: Sum
+	  fieldNames: author
+	  targetFieldName: sumprice
+	  valueFieldName: price
 	      
 ### Célállomány (Target)
 Miután megtörtént a forrás állományból az adatok beolvasása, illesztése, transzformációja, és végigmentek az adatok a manipulációs lépéseken a `Target`-hez kerül a beolvasott, véglegesített sor. Ő fogja kiírni és létrehozni az állományt a végleges adatokkal.
