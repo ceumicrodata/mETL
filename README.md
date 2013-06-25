@@ -18,6 +18,7 @@
 - .2: Clean transform removes new lines. 
 - .3: Added Order modifier.
 - .4: Added basic aggregator functions.
+- .5: Added dinamicSheetField attribute to XLS target to group your data in different sheets.
 
 ### Version 0.1.5
 - .0: htaccess file opening support.

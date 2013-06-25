@@ -24,7 +24,7 @@ import metl.target.base, xlwt, xlrd, metl.source.base, xlutils.copy, os
 class XLSTarget( metl.target.base.FileTarget ):
 
     init = ['addHeader']
-    resource_init = ['resource','sheetName','encoding','replaceFile','truncateSheet']
+    resource_init = ['resource','sheetName','dinamicSheetField','encoding','replaceFile','truncateSheet']
     
     # void
     def __init__( self, reader, addHeader = True, *args, **kwargs ):
@@ -33,33 +33,60 @@ class XLSTarget( metl.target.base.FileTarget ):
         self.sheetName    = None
         self.workbook     = None
         self.old_workbook = None
-        self.worksheet    = None
+        self.worksheet    = {}
+        self.rowIndex     = {}
         self.colNumber    = None
         self.replace      = None
         self.truncate     = None
+        self.dinamicSheetField = None
 
         super( XLSTarget, self ).__init__( reader, *args, **kwargs )
 
     # bool
-    def isExistsSheet( self ):
+    def isExistsSheet( self, sheetName ):
 
         if self.old_workbook is None:
             return False
 
         try:
-            return self.old_workbook.sheet_by_name( self.sheetName ) is not None
+            return self.old_workbook.sheet_by_name( sheetName ) is not None
         except:
             return False
 
     # void
-    def setResource( self, resource, sheetName, replaceFile = True, truncateSheet = True, encoding = 'utf-8' ):
+    def setResource( self, resource, sheetName, replaceFile = True, truncateSheet = True, dinamicSheetField = None, encoding = 'utf-8' ):
 
         self.replaceFile    = replaceFile
         self.truncateSheet  = truncateSheet
         self.sheetName      = sheetName
+        self.dinamicSheetField = dinamicSheetField
 
         return super( XLSTarget, self ).setResource( resource, encoding )
         
+    def initSheet( self, sheetName ):
+
+        if sheetName in self.worksheet:
+            return
+
+        self.rowIndex[ sheetName ] = self.old_workbook.sheet_by_name( sheetName ).nrows \
+            if self.isExistsSheet( sheetName ) and not self.truncateSheet \
+            else 0
+
+        self.worksheet[ sheetName ] = self.workbook.add_sheet( sheetName ) \
+            if not self.isExistsSheet( sheetName ) \
+            else self.workbook.get_sheet( self.old_workbook.sheet_by_name( sheetName ).sheet_selected - 1 )
+
+        if self.isExistsSheet( sheetName ) and self.truncateSheet:
+            for colIndex in xrange( self.colNumber ):
+                for rowIndex in xrange( self.old_workbook.sheet_by_name( sheetName ).nrows ):
+                    self.worksheet[ sheetName ].write( rowIndex, colIndex, None )
+
+        if self.addHeader and self.rowIndex[ sheetName ] == 0:
+            for colIndex in range( self.colNumber ):
+                self.worksheet[ sheetName ].write( self.rowIndex[ sheetName ], colIndex, self.fieldNames[ colIndex ] )
+
+            self.rowIndex[ sheetName ] += 1
+
     # void
     def initialize( self ):
 
@@ -77,27 +104,10 @@ class XLSTarget( metl.target.base.FileTarget ):
             )
             self.workbook = xlutils.copy.copy( self.old_workbook )
 
-        self.rowIndex = self.old_workbook.sheet_by_name( self.sheetName ).nrows \
-            if self.isExistsSheet() and not self.truncateSheet \
-            else 0
+        self.fieldNames = self.getFieldSetPrototypeCopy().getFieldNames()
+        self.colNumber  = len( self.fieldNames )
 
-        self.worksheet = self.workbook.add_sheet( self.sheetName ) \
-            if not self.isExistsSheet() \
-            else self.workbook.get_sheet( self.old_workbook.sheet_by_name( self.sheetName ).sheet_selected - 1 )
-
-        fieldNames     = self.getFieldSetPrototypeCopy().getFieldNames()
-        self.colNumber = len( fieldNames )
-
-        if self.isExistsSheet() and self.truncateSheet:
-            for colIndex in range( self.colNumber ):
-                for rowIndex in range( self.old_workbook.sheet_by_name( self.sheetName ).nrows ):
-                    self.worksheet.write( rowIndex, colIndex, None )
-
-        if self.addHeader and self.rowIndex == 0:
-            for colIndex in range( self.colNumber ):
-                self.worksheet.write( self.rowIndex, colIndex, fieldNames[ colIndex ] )
-
-            self.rowIndex += 1
+        self.initSheet( self.sheetName )
 
         return self
 
@@ -115,7 +125,16 @@ class XLSTarget( metl.target.base.FileTarget ):
 
         value = record.getValuesList()
 
-        for colIndex in range( self.colNumber ):
-            self.worksheet.write( self.rowIndex, colIndex, value[ colIndex ] )
+        for colIndex in xrange( self.colNumber ):
+            self.worksheet[ self.sheetName ].write( self.rowIndex[ self.sheetName ], colIndex, value[ colIndex ] )
+        
+        self.rowIndex[ self.sheetName ] += 1
 
-        self.rowIndex += 1
+        if self.dinamicSheetField is not None:
+            sheetName = record.getField( self.dinamicSheetField ).getValue()
+            if sheetName is not None:
+                self.initSheet( sheetName )
+                for colIndex in xrange( self.colNumber ):
+                    self.worksheet[ sheetName ].write( self.rowIndex[ sheetName ], colIndex, value[ colIndex ] )
+        
+                self.rowIndex[ sheetName ] += 1

@@ -1932,6 +1932,7 @@ Cél helyszínének megadásához szükséges további paraméterek:
 - **sheetName**: XLS állományban a munkalap neve, amibe az írást szeretnénk végrehajtani.
 - **replaceFile**: Cseréljük-e a le az egész XLS állományt. így ha már volt korábban ilyen állományunk akár több munkalappal, úgy értékei elvesznek. Alapértelmezetten lecseréljük, ahogy minden más céltípus alapértelmezetten működik.
 - **truncateSheet**: Ürítse-e a munkalapot. Logikusan ha a `replaceFile` értéke igaz, akkor ennek a paraméternek nincsen jelentősége, azonban ellenkező esetben nagyon is sok szerepe van hogy a munkalap legvégére kezdjünk írni, vagy pedig cseréljük le a munkalapot az új adatokra. Alapértelmezetten a munkalapot cseréljük.
+- **dinamicSheetField**: Amennyiben a fő mezőn kívül szeretnénk további munkalapokat is létrehozni az adatok szétszórásával, akkor itt annak a mezőnek a nevét kell megadni, amely alapján szeretnénk az adatokat csoportosítani. Az itt megadott mező értéke lesz a munkalap neve. Megadása nem kötelező!
 
 Ha nem létező munkalapot adunk meg, a folyamat automatikusan létrehozza azt, ahogy az egész XLS állományt is.
 

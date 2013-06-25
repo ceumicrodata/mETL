@@ -94,6 +94,10 @@ class Test_Target( unittest.TestCase ):
         self.assertEqual( self.getHashForFile('tests/config/test_xls_target_continue_sheet.yml', delete = False ), '7670fcfa0a0b0f1ccfd420f0bd7dbe66' )
         self.assertEqual( self.getHashForFile('tests/config/test_xls_target_continue_sheet.yml' ), '4d80b0c97abcaea892504a094451f45e' )
 
+    def test_xls_target_dinamic_sheets( self ):
+
+        self.assertEqual( self.getHashForFile('tests/config/test_xls_target_dynamic.yml'), 'c5d2bc718817370dd83813ee5a16536c' )
+
     def test_db_target_not_exist_table( self ):
 
         with self.assertRaises( ResourceNotExistsError ):
