@@ -54,6 +54,7 @@ from metl.filter.base import *
 from metl.filter.dropbyconditionfilter import *
 from metl.filter.dropbysourcefilter import *
 from metl.filter.dropfieldfilter import *
+from metl.filter.keepbyconditionfilter import *
 from metl.manager import *
 from metl.statement.elifnotstatement import *
 from metl.statement.elifstatement import *
@@ -88,10 +89,10 @@ from metl.modifier.setmodifier import *
 from metl.modifier.setwithmapmodifier import *
 from metl.modifier.transformfieldmodifier import *
 from metl.modifier.ordermodifier import *
-# from metl.aggregator.base import *
-# from metl.aggregator.countaggregator import *
-# from metl.aggregator.avgaggregator import *
-# from metl.aggregator.sumaggregator import *
+from metl.aggregator.base import *
+from metl.aggregator.countaggregator import *
+from metl.aggregator.avgaggregator import *
+from metl.aggregator.sumaggregator import *
 from metl.source.base import *
 from metl.source.csvsource import *
 from metl.source.databasesource import *

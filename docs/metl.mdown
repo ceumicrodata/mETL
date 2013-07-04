@@ -56,6 +56,7 @@ Manupulációk esetében négy csoportot különböztetünk meg:
    - **DropByCondition**: Feltétel alapján dönthető el a rekord sorsa.
    - **DropBySource**: Másik forrás állományban történő szereplés dönt a rekord sorsáról.
    - **DropField**: Rekord számot ugyan nem csökkent, de mezők törölhetőek a segítségével.
+   - **KeepByCondition**: Feltétel alapján dönthető el a rekord sorsa.
 
 3. **Expand**
 
@@ -1617,6 +1618,15 @@ Példa YAML konfigurációra:
 	    - district_roman
 	    - district_id
 	    - region_id
+	    
+##### KeepByCondition
+Feltétel alapján dönthető el a rekord sorsa. Inicializálásának paraméterei a következők:
+
+- **condition**: Már korábban is ismertetett feltétel, az összes paraméterével.
+- **fieldNames**: Mely mező(k)re szeretnénk a vizsgálatot értelmezni.
+- **operation**: Milyen feltétel van a mezők kiértékelése között. Alapértelmezetten `AND` feltétel.
+
+Szinte egy az egyben megegyezik a `DropByCondition` függvénnyel, azzal a különbséggel hogy itt a rekord akkor nem kerül filterezésre ha teljesül rá a feltétel!
 
 #### Bővítő (Expand)
 Bővítésre használjuk, ha további értékeket szeretnénk a jelenlegi forrás után helyezni.

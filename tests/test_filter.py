@@ -30,6 +30,7 @@ from metl.condition.isequalcondition import IsEqualCondition
 from metl.filter.dropbyconditionfilter import DropByConditionFilter
 from metl.filter.dropbysourcefilter import DropBySourceFilter
 from metl.filter.dropfieldfilter import DropFieldFilter
+from metl.filter.keepbyconditionfilter import KeepByConditionFilter
 from metl.source.staticsource import StaticSource
 
 class Test_Filter( unittest.TestCase ):
@@ -197,17 +198,6 @@ class Test_Filter( unittest.TestCase ):
             fieldNames = [ 'year', 'after_year' ]
         ).initialize().getRecords() ]
         
-        self.assertEqual( len( records ), 59 )
-        self.assertEqual( records[-1].getField('name').getValue(), 'Western Ogre' )
-
-    def test_drop_by_condition_filter_and( self ):
-
-        records = [ r for r in DropByConditionFilter( 
-            self.reader,
-            condition = IsEqualCondition( 2008 ),
-            fieldNames = [ 'year', 'after_year' ]
-        ).initialize().getRecords() ]
-        
         self.assertEqual( len( records ), 58 )
         self.assertEqual( records[-1].getField('name').getValue(), 'Western Ogre' )
 
@@ -222,6 +212,40 @@ class Test_Filter( unittest.TestCase ):
         
         self.assertEqual( len( records ), 19 )
         self.assertEqual( records[-1].getField('name').getValue(), 'Western Ogre' )
+
+    def test_keep_by_condition_filter( self ):
+
+        records = [ r for r in KeepByConditionFilter( 
+            self.reader,
+            condition = IsEqualCondition( 2008 ),
+            fieldNames = 'year'
+        ).initialize().getRecords() ]
+        
+        self.assertEqual( len( records ), 44 )
+        self.assertEqual( records[-1].getField('name').getValue(), 'Sergeant Strawberry' )
+
+    def test_keep_by_condition_filter_and( self ):
+
+        records = [ r for r in KeepByConditionFilter( 
+            self.reader,
+            condition = IsEqualCondition( 2008 ),
+            fieldNames = [ 'year', 'after_year' ]
+        ).initialize().getRecords() ]
+        
+        self.assertEqual( len( records ), 27 )
+        self.assertEqual( records[-1].getField('name').getValue(), 'Sergeant Strawberry' )
+
+    def test_keep_by_condition_filter_or( self ):
+
+        records = [ r for r in KeepByConditionFilter( 
+            self.reader,
+            condition = IsEqualCondition( 2008 ),
+            fieldNames = [ 'year', 'after_year' ],
+            operation = 'OR'
+        ).initialize().getRecords() ]
+        
+        self.assertEqual( len( records ), 66 )
+        self.assertEqual( records[-1].getField('name').getValue(), 'Sergeant Strawberry' )
 
     def test_drop_field_filter( self ):
 
