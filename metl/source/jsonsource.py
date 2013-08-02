@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, <see http://www.gnu.org/licenses/>.
 """
 
-import metl.source.base, codecs, demjson
+import metl.source.base, codecs, demjson, metl.fieldmap
 
 class JSONSource( metl.source.base.FileSource ):
 
@@ -28,20 +28,21 @@ class JSONSource( metl.source.base.FileSource ):
     # void
     def __init__( self, fieldset, rootIterator = None, **kwargs ):
 
-        self.rootIterator = rootIterator
+        self.rootIterator = self.setRootIterator( rootIterator )
         super( JSONSource, self ).__init__( fieldset, **kwargs )
+
+    def setRootIterator( self, rootIterator ):
+
+        if rootIterator is not None:
+            return rootIterator + '/!'
+       
+        return '!'
 
     # list
     def getRecordsList( self ):
 
         d = demjson.decode( self.file_pointer.read() )
-        if self.rootIterator is not None and type( d ) == dict:
-            d = d[ self.rootIterator ]
-
-        if type( d ) == dict:
-            d = [ d ]
-
-        return d
+        return metl.fieldmap.FieldMap({ 'root': self.rootIterator }).getValues( d ).get('root')
 
     # FieldSet
     def getTransformedRecord( self, record ):

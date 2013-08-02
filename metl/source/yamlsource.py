@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, <see http://www.gnu.org/licenses/>.
 """
 
-import metl.source.base, codecs, yaml
+import metl.source.base, codecs, yaml, metl.fieldset
 
 class YamlSource( metl.source.base.FileSource ):
 
@@ -28,14 +28,21 @@ class YamlSource( metl.source.base.FileSource ):
     # void
     def __init__( self, fieldset, rootIterator, **kwargs ):
 
-        self.rootIterator = rootIterator
-
+        self.rootIterator = self.setRootIterator( rootIterator )
         super( YamlSource, self ).__init__( fieldset, **kwargs )
+
+    def setRootIterator( self, rootIterator ):
+
+        if rootIterator is not None:
+            return rootIterator + '/!'
+       
+        return '!'
 
     # list
     def getRecordsList( self ):
 
-        return yaml.load( self.file_pointer )[ self.rootIterator ]
+        d = yaml.load( self.file_pointer )
+        return metl.fieldmap.FieldMap({ 'root': self.rootIterator }).getValues( d ).get('root')
 
     # FieldSet
     def getTransformedRecord( self, record ):

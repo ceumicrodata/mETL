@@ -28,9 +28,15 @@ class XMLSource( metl.source.base.FileSource ):
     # void
     def __init__( self, fieldset, itemName = None, **kwargs ):
 
-        self.itemName = itemName
-
+        self.itemName = self.setRootIterator( itemName )
         super( XMLSource, self ).__init__( fieldset, **kwargs )
+
+    def setRootIterator( self, rootIterator ):
+
+        if rootIterator is not None:
+            return rootIterator + '/!'
+       
+        return '!'
 
     def getEncoding( self ):
 
@@ -39,15 +45,8 @@ class XMLSource( metl.source.base.FileSource ):
     # list
     def getRecordsList( self ):
 
-        data = xml2dict.XML2Dict().parseFile( self.file_pointer )
-
-        if type( data ) == dict and self.itemName is not None:
-            return data[ self.itemName ]
-
-        elif type( data ) == dict and self.itemName is None:
-            return [ data ]
-
-        return data
+        d = xml2dict.XML2Dict().parseFile( self.file_pointer )
+        return metl.fieldmap.FieldMap({ 'root': self.itemName }).getValues( d ).get('root')
 
     # FieldSet
     def getTransformedRecord( self, record ):
