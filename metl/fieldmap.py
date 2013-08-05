@@ -109,10 +109,12 @@ class FieldMap( object ):
             return None
 
     # dict
-    def getValues( self, obj ):
+    def getValues( self, obj, base = None ):
 
         ret_dict = {}
         for field_name, rule in self.getRules().items():
-            ret_dict[ field_name ] = self.getFieldValue( obj, rule )
+            ret_dict[ field_name ] = self.getFieldValue( obj, rule ) \
+                if not unicode( rule ).startswith('/') \
+                else self.getFieldValue( base or obj, unicode(rule)[1:] )
 
         return ret_dict

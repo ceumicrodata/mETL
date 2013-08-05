@@ -62,6 +62,7 @@ class Source( metl.reader.Reader ):
         self.limit    = None
         self.offset   = 0
         self.kwargs   = kwargs
+        self.base     = None
         self.current  = 0
 
     # void
@@ -81,7 +82,7 @@ class Source( metl.reader.Reader ):
     def getFieldSetWithValue( self, value ):
 
         fs = self.getFieldSetPrototypeCopy()
-        fs.setValues( value )
+        fs.setValues( value, self.base )
         fs.transform()
 
         self.log( fs, value )

@@ -45,8 +45,8 @@ class XMLSource( metl.source.base.FileSource ):
     # list
     def getRecordsList( self ):
 
-        d = xml2dict.XML2Dict().parseFile( self.file_pointer )
-        return metl.fieldmap.FieldMap({ 'root': self.itemName }).getValues( d ).get('root')
+        self.base = xml2dict.XML2Dict().parseFile( self.file_pointer )
+        return metl.fieldmap.FieldMap({ 'root': self.itemName }).getValues( self.base ).get('root')
 
     # FieldSet
     def getTransformedRecord( self, record ):

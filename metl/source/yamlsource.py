@@ -41,8 +41,8 @@ class YamlSource( metl.source.base.FileSource ):
     # list
     def getRecordsList( self ):
 
-        d = yaml.load( self.file_pointer )
-        return metl.fieldmap.FieldMap({ 'root': self.rootIterator }).getValues( d ).get('root')
+        self.base = yaml.load( self.file_pointer )
+        return metl.fieldmap.FieldMap({ 'root': self.rootIterator }).getValues( self.base ).get('root')
 
     # FieldSet
     def getTransformedRecord( self, record ):

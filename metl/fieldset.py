@@ -64,9 +64,9 @@ class FieldSet( object ):
         self.fieldmap = fieldmap_obj
 
     # void
-    def setValues( self, values ):
+    def setValues( self, values, base = None ):
 
-        for field_name, value in self.getFieldMap().getValues( values ).items():
+        for field_name, value in self.getFieldMap().getValues( values, base ).items():
             try:
                 self.getField( field_name, skip_check_exists = True ).setValue( value )
             except:

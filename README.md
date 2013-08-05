@@ -21,6 +21,7 @@
 - .5: Added dinamicSheetField attribute to XLS target to group your data in different sheets.
 - .6: Added KeepByCondition filter.
 - .7: JSON, Yaml source rootIterator and XML source itemName attributes are working like fieldMaps.
+- .8: Absolute FieldMap (starts with `/` mark) usage for JSON, XML, YAML files.
 
 ### Version 0.1.5
 - .0: htaccess file opening support.
