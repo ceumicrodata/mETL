@@ -22,6 +22,7 @@
 - .6: Added KeepByCondition filter.
 - .7: JSON, Yaml source rootIterator and XML source itemName attributes are working like fieldMaps.
 - .8: Absolute FieldMap (starts with `/` mark) usage for JSON, XML, YAML files.
+- .9: Database source has a resource attribute to handle sql statements via file.
 
 ### Version 0.1.5
 - .0: htaccess file opening support.

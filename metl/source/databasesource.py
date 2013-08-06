@@ -19,11 +19,11 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, <see http://www.gnu.org/licenses/>.
 """
 
-import metl.source.base, sqlalchemy
+import metl.source.base, sqlalchemy, os
 
 class DatabaseSource( metl.source.base.Source ):
 
-    resource_init = ['url','schema','table','statement']
+    resource_init = ['url','schema','table','statement','resource']
 
    # void
     def __init__( self, fieldset, **kwargs ):
@@ -39,10 +39,16 @@ class DatabaseSource( metl.source.base.Source ):
         super( DatabaseSource, self ).__init__( fieldset, **kwargs )
 
     # void
-    def setResource( self, url, schema = None, table = None, statement = None ):
+    def setResource( self, url, resource = None, schema = None, table = None, statement = None ):
 
-        if statement is None and table is None:
-            raise AttributeError( 'Table or statement is required!' )
+        if resource is None and statement is None and table is None:
+            raise AttributeError( 'Resource, table or statement is required!' )
+
+        if resource is not None and statement is None and table is None:
+            fp, closable = metl.source.base.openResource( os.path.abspath( resource ), 'r' )
+            statement = fp.read()
+            if closable:
+                fp.close()
 
         self.url        = url
         self.table      = table
@@ -80,7 +86,7 @@ class DatabaseSource( metl.source.base.Source ):
     def execute( self ):
 
         if self.statement is not None:
-            return self.db_connection.execute( self.statement )
+            return self.db_connection.execute( sqlalchemy.text( self.statement ) )
 
         return self.db_table.select().execute()
 

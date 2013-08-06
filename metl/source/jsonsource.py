@@ -42,7 +42,7 @@ class JSONSource( metl.source.base.FileSource ):
     def getRecordsList( self ):
 
         self.base = demjson.decode( self.file_pointer.read() )
-        return metl.fieldmap.FieldMap({ 'root': self.rootIterator }).getValues( self.base ).get('root')
+        return metl.fieldmap.FieldMap({ 'root': self.rootIterator }).getValues( self.base ).get('root') or []
 
     # FieldSet
     def getTransformedRecord( self, record ):
