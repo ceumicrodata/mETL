@@ -19,11 +19,11 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, <see http://www.gnu.org/licenses/>.
 """
 
-import metl.source.base, sqlalchemy, os
+import metl.source.base, sqlalchemy, os, re
 
 class DatabaseSource( metl.source.base.Source ):
 
-    resource_init = ['url','schema','table','statement','resource']
+    resource_init = ['url','schema','table','statement','resource','params']
 
    # void
     def __init__( self, fieldset, **kwargs ):
@@ -39,7 +39,7 @@ class DatabaseSource( metl.source.base.Source ):
         super( DatabaseSource, self ).__init__( fieldset, **kwargs )
 
     # void
-    def setResource( self, url, resource = None, schema = None, table = None, statement = None ):
+    def setResource( self, url, resource = None, schema = None, table = None, statement = None, params = None ):
 
         if resource is None and statement is None and table is None:
             raise AttributeError( 'Resource, table or statement is required!' )
@@ -54,6 +54,9 @@ class DatabaseSource( metl.source.base.Source ):
         self.table      = table
         self.schema     = schema
         self.statement  = statement
+        if params is not None and type( params ) == dict:
+            for k,v in params.items():
+                self.statement = re.sub( ':' + k, str(v), self.statement )
 
         return self
 

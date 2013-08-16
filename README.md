@@ -23,6 +23,7 @@
 - .7: JSON, Yaml source rootIterator and XML source itemName attributes are working like fieldMaps.
 - .8: Absolute FieldMap (starts with `/` mark) usage for JSON, XML, YAML files.
 - .9: Database source has a resource attribute to handle sql statements via file.
+- .10: Database source has a params attribute to add parameters to statements.
 
 ### Version 0.1.5
 - .0: htaccess file opening support.
