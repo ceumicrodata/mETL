@@ -107,7 +107,7 @@ class FieldSet( object ):
     def getField( self, field_name, skip_check_exists = False ):
 
         if not skip_check_exists and not self.hasField( field_name ):
-            raise FieldNotExistsError( 'Field is not exists with name: %s' % ( field_name ) )
+            raise FieldNotExistsError( 'Field %s does not exist' % ( field_name ) )
 
         return self.fields[ field_name ]
 
@@ -142,7 +142,7 @@ class FieldSet( object ):
     def deleteField( self, field_name ):
         
         if not self.hasField( field_name ):
-            raise FieldNotExistsError( 'Field is not exists with name: %s' % ( field_name ) )
+            raise FieldNotExistsError( 'Field %s does not exist' % ( field_name ) )
 
         del self.fields[ field_name ]
         self.fieldlist.remove( field_name )
