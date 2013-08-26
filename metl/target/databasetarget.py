@@ -73,7 +73,7 @@ class DatabaseTarget( metl.target.base.Target ):
             now_created   = True
         
         if not self.isExistsTable() and self.db_table is None:
-            raise ResourceNotExistsError( 'Table %s is not exists!' % ( self.table ) )
+            raise ResourceNotExistsError( 'Table %s does not exist!' % ( self.table ) )
 
         if self.isExistsTable() and self.replaceTable and not now_created:
             self.db_table = self.getTable( autoload = False )

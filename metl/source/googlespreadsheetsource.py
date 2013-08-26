@@ -72,7 +72,7 @@ class GoogleSpreadsheetSource( metl.source.base.Source ):
             )
 
             if len( databases ) == 0:
-                raise ValueError( "Spreadsheet is not exists with key '%s' or name '%s'" % ( self.spreadsheetKey, self.spreadsheetKey ) )
+                raise ValueError( "Spreadsheet does not exist with key '%s' or name '%s'" % ( self.spreadsheetKey, self.spreadsheetKey ) )
 
             database = databases[0]
 
@@ -90,7 +90,7 @@ class GoogleSpreadsheetSource( metl.source.base.Source ):
             try:
                 feed = self.client.GetWorksheetsFeed( self.spreadsheetKey, visibility = 'public', projection = 'basic' )
             except:
-                raise ValueError( "Spreadsheet requires Authorization or is not exists with key '%s'!" % ( self.spreadsheetKey ) )
+                raise ValueError( "Spreadsheet requires Authorization or does not exist with key '%s'!" % ( self.spreadsheetKey ) )
 
             for sheet in feed.entry:
                 if self.worksheetName is None:
