@@ -30,7 +30,7 @@ class DatabaseTarget( metl.target.base.Target ):
     init = ['createTable','replaceTable','truncateTable','addIDKey','idKeyName','bufferSize']
     resource_init = ['url','schema','table']
 
-    def __init__( self, reader, createTable = False, replaceTable = False, truncateTable = False, addIDKey = True, idKeyName = 'id', *args, **kwargs ):
+    def __init__( self, reader, createTable = False, replaceTable = False, truncateTable = False, addIDKey = True, idKeyName = 'id', bufferSize = None, *args, **kwargs ):
         
         self.connection           = None
         self.url                  = None
@@ -41,7 +41,7 @@ class DatabaseTarget( metl.target.base.Target ):
         self.truncateTable        = truncateTable
         self.addIDKey             = addIDKey
         self.idKeyName            = idKeyName
-        self.bufferSize           = int( random.random()*10000+5000 )
+        self.bufferSize           = bufferSize or int( random.random()*10000+5000 )
         self.db_connection        = None
         self.db_closable          = None
         self.db_table             = None
