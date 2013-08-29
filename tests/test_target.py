@@ -143,5 +143,23 @@ class Test_Target( unittest.TestCase ):
 
         os.unlink( 'tests/target' )
 
+    def test_db_target_mysql_varchar( self ):
+
+        configparser = ConfigParser( Config( 'tests/config/test_db_target_mysql_varchar.yml' ) )
+        target = configparser.getTarget()
+        dburl = target.url
+        target.url = 'sqlite:///'
+        target.initialize()
+
+        self.assertTrue( target.db_table.c.name.type.length is None )
+        self.assertEquals( 130, target.db_table.c.name_limited.type.length )
+
+        target.url = dburl
+        target.getTable( False ).drop( target.db_connection )
+        table = target.getCreatedTable()
+
+        self.assertEquals( 255, target.db_table.c.name.type.length )
+        self.assertEquals( 130, target.db_table.c.name_limited.type.length )
+
 if __name__ == '__main__':
     unittest.main()

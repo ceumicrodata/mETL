@@ -126,7 +126,19 @@ class DatabaseTarget( metl.target.base.Target ):
         fs = self.getFieldSetPrototypeCopy()
         for field_name in fs.getFieldNames():
             field = fs.getField( field_name )
-            db_column = sqlalchemy.schema.Column( field_name, field.getType().getAlchemyType() )
+
+            sqlalchemy_type = field.getType().getAlchemyType()
+
+            # force limit on mysql varchar
+            limit = field.getLimit()
+            if self.url.startswith( 'mysql' ) and not limit and (sqlalchemy_type == sqlalchemy.types.Unicode):
+              limit = 255
+
+            # apply eventual limit to sqlalchemy_type
+            if limit:
+              sqlalchemy_type = sqlalchemy_type( limit )
+
+            db_column = sqlalchemy.schema.Column( field_name, sqlalchemy_type )
             db_table.append_column( db_column )
 
         db_table.create()
