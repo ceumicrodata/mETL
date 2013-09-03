@@ -24,4 +24,3 @@ import metl.fieldtype.base, sqlalchemy
 class BooleanFieldType( metl.fieldtype.base.FieldType ):
             
     field_types = [ bool ]
-    alchemy_map = sqlalchemy.types.Boolean

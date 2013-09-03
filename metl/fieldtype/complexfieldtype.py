@@ -24,7 +24,6 @@ import sqlalchemy, metl.fieldtype.base, demjson
 class ComplexFieldType( metl.fieldtype.base.FieldType ):
             
     field_types = [ dict, list ]
-    alchemy_map = metl.fieldtype.base.JSONType
 
     # int
     def getConvertedValue( self, value ):

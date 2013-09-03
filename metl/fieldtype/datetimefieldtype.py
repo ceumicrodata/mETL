@@ -26,7 +26,6 @@ from metl.exception import *
 class DateTimeFieldType( metl.fieldtype.base.FieldType ):
             
     field_classes = [ datetime.datetime ]
-    alchemy_map = sqlalchemy.types.DateTime
 
     # datetime.datetime
     def getConvertedValue( self, value ):

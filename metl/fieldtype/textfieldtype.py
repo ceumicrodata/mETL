@@ -24,4 +24,3 @@ import sqlalchemy, metl.fieldtype.base
 class TextFieldType( metl.fieldtype.base.FieldType ):
             
     field_types = [ unicode, str ]
-    alchemy_map = sqlalchemy.types.UnicodeText

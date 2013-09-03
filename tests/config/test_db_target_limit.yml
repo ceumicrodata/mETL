@@ -13,7 +13,7 @@ source:
 
 target:
   type: Database
-  url: mysql://user:pass@host:port/database
+  url: sqlite:///tests/target
   table: result
   addIDKey: false
   createTable: true

@@ -26,7 +26,6 @@ rec = re.compile( r',' )
 class IntegerFieldType( metl.fieldtype.base.FieldType ):
             
     field_types = [ int ]
-    alchemy_map = sqlalchemy.types.Integer
 
     # int
     def getConvertedValue( self, value ):

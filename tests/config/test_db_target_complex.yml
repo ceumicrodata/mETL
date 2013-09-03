@@ -1,0 +1,24 @@
+source:
+  source: Static
+  sourceRecords:
+    - [ 1, [1,2,3,4,5,[6,7]], ['1st','2nd','3rd'] ]
+    - [ 2, "{ first: 1, second: 2, third: [1,2,3] }", ['3rd','2nd','1st'] ]
+  fields:
+    - name: SERIAL_NUMBER
+      type: Integer
+      key: true
+      map: 0
+    - name: VALUE
+      type: Complex
+      map: 1
+    - name: LIST
+      type: List
+      map: 2
+
+target:
+  type: Database
+  url: sqlite:///tests/target
+  table: result
+  createTable: true
+  replaceTable: true
+  truncateTable: true

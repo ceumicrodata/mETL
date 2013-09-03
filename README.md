@@ -24,6 +24,7 @@
 - .8: Absolute FieldMap (starts with `/` mark) usage for JSON, XML, YAML files.
 - .9: Database source has a resource attribute to handle sql statements via file.
 - .10: Database source has a params attribute to add parameters to statements.
+- .11: Fields has a new limit attribute for database targets. Easy to add new database types if necessary.
 
 ### Version 0.1.5
 - .0: htaccess file opening support.

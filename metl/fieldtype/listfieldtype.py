@@ -24,7 +24,6 @@ import sqlalchemy, metl.fieldtype.base, demjson
 class ListFieldType( metl.fieldtype.base.FieldType ):
             
     field_types = [ list ]
-    alchemy_map = metl.fieldtype.base.JSONType
   
     def getPreConvertValue( self, value ):
 

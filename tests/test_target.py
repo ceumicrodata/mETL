@@ -143,23 +143,37 @@ class Test_Target( unittest.TestCase ):
 
         os.unlink( 'tests/target' )
 
-    def test_db_target_mysql_varchar( self ):
+    def test_db_target_complex( self ):
 
-        configparser = ConfigParser( Config( 'tests/config/test_db_target_mysql_varchar.yml' ) )
+        self.getHashForFile('tests/config/test_db_target_complex.yml', delete = False )
+        s = DatabaseSource( FieldSet([
+            Field( 'SERIAL_NUMBER', IntegerFieldType() ),
+            Field( 'VALUE', ComplexFieldType() ),
+            Field( 'LIST', ListFieldType() )
+        ]))
+        s.setResource( url = 'sqlite:///tests/target', table = 'result' )
+        s.initialize()
+        records = [ r.getValues() for r in s.getRecords() ]
+        s.finalize()
+
+        self.assertEqual(
+            [ r.getValues() for r in s.getRecords() ],
+            [
+                {'SERIAL_NUMBER': 1, 'LIST': [u'1st', u'2nd', u'3rd'], 'VALUE': [1, 2, 3, 4, 5, [6, 7]]}, 
+                {'SERIAL_NUMBER': 2, 'LIST': [u'3rd', u'2nd', u'1st'], 'VALUE': {u'second': 2, u'third': [1, 2, 3], u'first': 1}}
+            ]
+        )
+
+        os.unlink( 'tests/target' )
+
+    def test_db_target_limit( self ):
+
+        configparser = ConfigParser( Config( 'tests/config/test_db_target_limit.yml' ) )
         target = configparser.getTarget()
-        dburl = target.url
-        target.url = 'sqlite:///'
         target.initialize()
 
-        self.assertTrue( target.db_table.c.name.type.length is None )
-        self.assertEquals( 130, target.db_table.c.name_limited.type.length )
-
-        target.url = dburl
-        target.getTable( False ).drop( target.db_connection )
-        table = target.getCreatedTable()
-
-        self.assertEquals( 255, target.db_table.c.name.type.length )
-        self.assertEquals( 130, target.db_table.c.name_limited.type.length )
+        self.assertEquals( 255, target.database.table.c.name.type.length )
+        self.assertEquals( 130, target.database.table.c.name_limited.type.length )
 
 if __name__ == '__main__':
     unittest.main()

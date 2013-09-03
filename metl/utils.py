@@ -120,4 +120,6 @@ from metl.reader import *
 from metl.tarrdispatcher import *
 from metl.writer import *
 from metl.migration import *
+from metl.database.basedatabase import *
+from metl.database.alchemydatabase import *
 

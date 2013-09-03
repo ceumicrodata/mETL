@@ -20,24 +20,6 @@ along with this program. If not, <see http://www.gnu.org/licenses/>.
 """
 
 from metl.exception import *
-from sqlalchemy.types import TypeDecorator, VARCHAR
-
-class JSONType(TypeDecorator):
-
-    impl = VARCHAR
-
-    def process_bind_param(self, value, dialect):
-
-        if value is not None:
-            value = demjson.encode(value)
-
-        return value
-
-    def process_result_value(self, value, dialect):
-        if value is not None:
-            value = demjson.decode(value)
-
-        return value
 
 class FieldType( object ):
     
@@ -54,10 +36,10 @@ class FieldType( object ):
 
         self.width = width
 
-    # sqlalchemy
-    def getAlchemyType( self ):
+    # str
+    def getName( self ):
 
-        return self.alchemy_map
+        return self.__class__.__name__
 
     # list<type>
     def getFieldTypes( self ):
@@ -97,6 +79,7 @@ class FieldType( object ):
         except:
             return False
 
+    # type
     def getPreConvertValue( self, value ):
 
         return ( value is None or len( unicode( value ).strip() ) == 0 )
