@@ -1,0 +1,19 @@
+base: tests/config/test_basic_target.yml
+
+source:
+  fields:
+    - name: id
+      type: Integer
+      key: true
+    - name: name
+      type: String
+    - name: name_limited
+      type: String
+      limit: 130
+
+target:
+  type: Database
+  url: mysql://user:pass@host:port/database
+  table: result
+  addIDKey: false
+  createTable: true

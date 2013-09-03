@@ -25,12 +25,13 @@ from metl.exception import *
 class Field( object ):
 
     # void
-    def __init__( self, field_name, field_type, field_final_type = None, key = False, defaultValue = None, transforms = None ):
+    def __init__( self, field_name, field_type, field_final_type = None, key = False, defaultValue = None, transforms = None, limit = None ):
 
         self.field_name       = field_name
         self.orig_type        = field_type
         self.field_type       = field_type
         self.field_final_type = field_final_type or field_type
+        self.limit            = limit
         self.value            = None
         self.transforms       = transforms
         self.key              = key
@@ -47,7 +48,8 @@ class Field( object ):
             self.getFinalType().clone(),
             key = self.isKey(),
             defaultValue = self.getDefaultValue(),
-            transforms = self.getTransforms()
+            transforms = self.getTransforms(),
+            limit = self.limit
         )
 
     def getDefaultValue( self ):
@@ -76,6 +78,10 @@ class Field( object ):
     def getType( self ):
 
         return self.field_type
+
+    def getLimit( self ):
+
+        return self.limit
 
     # bool
     def isConvertable( self, field_type ):
@@ -132,6 +138,10 @@ class Field( object ):
         elif hard:
             self.field_type = field_type
             self.value      = None
+
+    def setLimit( self, limit ):
+
+      self.limit = limit
 
     # void
     def setName( self, field_name ):

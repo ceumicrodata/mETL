@@ -53,6 +53,10 @@ class Test_Field( unittest.TestCase ):
 
         self.assertTrue( self.field.isKey() )
 
+    def test_key( self ):
+
+        self.assertTrue( self.field.isKey() )
+
     def test_value( self ):
 
         self.assertEqual( self.field.getValue(), self.defaultValue )
@@ -72,6 +76,12 @@ class Test_Field( unittest.TestCase ):
         self.assertEqual( self.field.getType(), self.startType )
         self.field.run()
         self.assertEqual( self.field.getType(), self.endType )
+
+    def test_limit( self ):
+
+        self.assertEqual( self.field.getLimit(), None )
+        self.field.setLimit( 100 )
+        self.assertEqual( self.field.getLimit(), 100 )
 
     def test_fieldtype_value( self ):
 
