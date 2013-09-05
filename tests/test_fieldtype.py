@@ -38,6 +38,12 @@ class Test_FieldType( unittest.TestCase ):
 
         self.assertTrue( ft.getValue( 1 ) )
         self.assertFalse( ft.getValue( 0 ) )
+        self.assertTrue( ft.getValue( '1' ) )
+        self.assertFalse( ft.getValue( '0' ) )
+        self.assertTrue( ft.getValue( 'tRuE' ) )
+        self.assertFalse( ft.getValue( 'fAlSe' ) )
+        self.assertTrue( ft.getValue( 't' ) )
+        self.assertFalse( ft.getValue( 'F' ) )
         self.assertTrue( ft.getValue( True ) )
         self.assertFalse( ft.getValue( False ) )
 

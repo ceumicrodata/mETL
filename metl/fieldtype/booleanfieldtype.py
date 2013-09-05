@@ -24,3 +24,19 @@ import metl.fieldtype.base, sqlalchemy
 class BooleanFieldType( metl.fieldtype.base.FieldType ):
             
     field_types = [ bool ]
+
+    # type
+    def getConvertedValue( self, value ):
+
+        if type( value ) in ( str, unicode ):
+            if value.lower().strip() in ( 't', 'true' ):
+                return True
+            if value.lower().strip() in ( 'f,' 'false' ):
+                return False
+
+            try:
+                return self.getFieldTypes()[0]( int( value ) )
+            except:
+                pass
+
+        return self.getFieldTypes()[0]( value )
