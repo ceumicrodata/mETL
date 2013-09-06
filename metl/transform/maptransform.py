@@ -23,14 +23,15 @@ import metl.transform.base
 
 class MapTransform( metl.transform.base.Transform ):
 
-    init = ['values','ignorecase','elseValue']
+    init = ['values','ignorecase','elseValue','elseClear']
 
     # void
-    def __init__( self, values, elseValue = None, ignorecase = False, *args, **kwargs ):
+    def __init__( self, values, elseValue = None, elseClear = False, ignorecase = False, *args, **kwargs ):
 
         self.ignorecase = ignorecase
         self.values     = {}
         self.elseValue  = elseValue
+        self.elseClear  = elseClear
 
         for k,v in values.items():
             if self.ignorecase is True and type( k ) in ( str, unicode ):
@@ -57,5 +58,8 @@ class MapTransform( metl.transform.base.Transform ):
 
         elif self.elseValue is not None:
             field.setValue( self.elseValue )
+
+        elif self.elseClear:
+            field.setValue( None )
 
         return field

@@ -1005,6 +1005,7 @@ Kicserél mező értékeket, más értékre. Ezeket kulcs, érték párokban sz�
 - **values**: Kulcs-érték párok halmaza, amely az átalakítási értékeket tartalmazza.
 - **ignorecase**: Figyelmen kívül hagyja-e a kiértékeléskor a kis- és nagybetűk közti különbségeket.
 - **elseValue**: Nem közelező paraméter. Akkor adjuk meg, ha minden értéket valamire módosítanánk ha nem szerepel a megadott listában.
+- **elseClear**: Nem kötelező paraméter. Akkor adjuk meg, ha minden értéket ürítenénk, amennyiben nem szerepel a values listában.
 
 Példa lehet, a korábban már látott YAML konfiguráció:
 

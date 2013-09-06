@@ -140,6 +140,24 @@ class Test_Transform( unittest.TestCase ):
         self.field.setTransforms([ MapTransform({ 'monkey': 'animal' }, ignorecase = True ) ]).run()
         self.assertEqual( self.field.getValue(), 'animal' )
 
+    def test_map_transform_not_used_else_value( self ):
+
+        self.field.setValue(u'monkey')
+        self.field.setTransforms([ MapTransform({ 'monkey': 'animal' }, elseValue = 'other' ) ]).run()
+        self.assertEqual( self.field.getValue(), 'animal' )
+
+    def test_map_transform_used_else_value( self ):
+
+        self.field.setValue(u'Building')
+        self.field.setTransforms([ MapTransform({ 'monkey': 'animal' }, elseValue = 'other' ) ]).run()
+        self.assertEqual( self.field.getValue(), 'other' )
+
+    def test_map_transform_used_else_clear( self ):
+
+        self.field.setValue(u'Building')
+        self.field.setTransforms([ MapTransform({ 'monkey': 'animal' }, elseClear = True ) ]).run()
+        self.assertIsNone( self.field.getValue() )
+
     def test_replace_by_regexp( self ):
 
         self.field.setValue(u'2012-04-20')
