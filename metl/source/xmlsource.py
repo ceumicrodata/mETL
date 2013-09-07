@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, <see http://www.gnu.org/licenses/>.
 """
 
-import metl.source.base, codecs, re, xml2dict
+import metl.source.base, codecs, re, xmlsquash
 
 class XMLSource( metl.source.base.FileSource ):
 
@@ -45,7 +45,7 @@ class XMLSource( metl.source.base.FileSource ):
     # list
     def getRecordsList( self ):
 
-        self.base = xml2dict.XML2Dict().parseFile( self.file_pointer )
+        self.base = xmlsquash.XML2Dict().parseFile( self.file_pointer )
         return metl.fieldmap.FieldMap({ 'root': self.itemName }).getValues( self.base ).get('root') or []
 
     # FieldSet

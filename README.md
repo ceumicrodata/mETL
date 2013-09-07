@@ -135,7 +135,7 @@ Hagyományos Python csomagként a telepítést legegyszerűbben a következő pa
 Csomagot ezt követően az alábbi paranccsal tesztelhetjük:
 `python setup.py test`
 
-Következő függőségekkel rendelkezik: xlrd, gdata, demjson, pyyaml, sqlalchemy, xlwt, tarr, nltk, xlutils, xml2dict
+Következő függőségekkel rendelkezik: xlrd, gdata, demjson, pyyaml, sqlalchemy, xlwt, tarr, nltk, xlutils, xmlsquash
 
 ### Mac OSX
 Telepítés előtt a következő csomagok feltételére lesz szükség, mely a következő:

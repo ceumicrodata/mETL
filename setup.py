@@ -25,7 +25,7 @@ setup(
     license = 'GPL',
     dependency_links = [
         'https://github.com/ceumicrodata/tarr/archive/tarr-0.1.1.zip',
-        'https://github.com/bfaludi/XML2Dict/archive/master.zip#egg=xml2dict-0.1'
+        'https://github.com/bfaludi/xmlsquash/archive/master.zip#egg=xmlsquash-0.1.1'
     ],
     install_requires = [
         'python-dateutil',
@@ -38,7 +38,7 @@ setup(
         'nltk',
         'tarr',
         'xlutils',
-        'xml2dict'
+        'xmlsquash'
     ],
     test_suite = "tests"
 )
