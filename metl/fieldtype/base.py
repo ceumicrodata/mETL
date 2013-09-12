@@ -24,12 +24,16 @@ from metl.exception import *
 class FieldType( object ):
     
     field_types, field_classes = [], []
-    alchemy_map = None
     width = None
+    nullable = True
 
     def clone( self ):
 
         return self.__class__()
+
+    def setNullable( self, nullable = True ):
+
+        self.nullable = nullable
 
     # void
     def setWidth( self, width = None ):
@@ -55,6 +59,11 @@ class FieldType( object ):
     def getWidth( self ):
 
         return self.width
+
+    # bool
+    def isNullable( self ):
+
+        return self.nullable
 
     # bool
     def isCorrect( self, value ):
@@ -93,7 +102,7 @@ class FieldType( object ):
     def getValue( self, value ):
         
         if self.getPreConvertValue( value ):
-            return None
+            return None if self.isNullable() else u''
 
         if self.isCorrect( value ):
             return value

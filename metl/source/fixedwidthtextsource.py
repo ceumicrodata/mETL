@@ -31,6 +31,14 @@ class FixedWidthTextSource( metl.source.base.FileSource ):
         super( FixedWidthTextSource, self ).__init__( fieldset, **kwargs )
         self.setOffsetNumber( skipRows )
 
+    # FixedWidthTextSource
+    def clone( self ):
+
+        return self.__class__(
+            self.fieldset.clone(),
+            skipRows = self.offset,
+        )
+
     # list
     def getRecordsList( self ):
 

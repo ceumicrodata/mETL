@@ -40,6 +40,7 @@ class GoogleSpreadsheetSource( metl.source.base.Source ):
         self.client          = None
         self.worksheet       = None
         self.public_auth     = None
+        self.res_dict        = None
 
         super( GoogleSpreadsheetSource, self ).__init__( fieldset, **kwargs )
 
@@ -55,7 +56,31 @@ class GoogleSpreadsheetSource( metl.source.base.Source ):
         self.client          = None
         self.public_auth     = username is None or password is None
 
+        res_dict = {
+            'username': username,
+            'password': password,
+            'spreadsheetKey': spreadsheetKey,
+            'spreadsheetName': spreadsheetName,
+            'worksheetId': worksheetId,
+            'worksheetName': worksheetName
+        }
+
+        self.updateResourceDict( res_dict )
+
         return self
+
+    def updateResourceDict( self, res_dict ):
+
+        super( GoogleSpreadsheetSource, self ).updateResourceDict( res_dict )
+
+        self.spreadsheetKey  = self.res_dict['spreadsheetKey']
+        self.spreadsheetName = self.res_dict['spreadsheetName']
+        self.worksheetId     = self.res_dict['worksheetId']
+        self.worksheetName   = self.res_dict['worksheetName']
+        self.username        = self.res_dict['username']
+        self.password        = self.res_dict['password']
+        self.client          = None
+        self.public_auth     = self.res_dict['username'] is None or self.res_dict['password'] is None
 
     # void
     def initialize( self ):

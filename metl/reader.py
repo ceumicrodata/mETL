@@ -23,6 +23,11 @@ import metl.base, demjson
 
 class Reader( metl.base.Base ):
 
+    # void
+    def __init__( self, *args, **kwargs ):
+
+        pass
+
     # FieldSet
     def getFieldSetPrototypeCopy( self ):
 

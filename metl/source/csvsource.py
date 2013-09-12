@@ -60,6 +60,17 @@ class CSVSource( metl.source.base.FileSource ):
         super( CSVSource, self ).__init__( fieldset, **kwargs )
         self.setOffsetNumber( skipRows )
 
+    # CSVSource
+    def clone( self ):
+
+        return self.__class__(
+            self.fieldset.clone(),
+            delimiter = self.delimiter,
+            quote = self.quote,
+            skipRows = self.offset,
+            headerRow = self.headerRow
+        )
+
     # void
     def initialize( self ):
 

@@ -24,13 +24,18 @@ import codecs, os, demjson
 class Base( object ):
 
     logFile = None
+    appendLog = False
     log = None
 
     # void
     def base_initialize( self ):
 
-        if self.logFile is not None:
+        if self.logFile is not None and not self.appendLog:
             self.log_file_pointer = codecs.open( self.logFile, 'w', 'utf-8' )
+            self.log = self.logActive
+
+        elif self.logFile is not None and self.appendLog:
+            self.log_file_pointer = codecs.open( self.logFile, 'a', 'utf-8' )
             self.log = self.logActive
 
         else:
@@ -57,9 +62,10 @@ class Base( object ):
         return self.base_finalize()
 
     # void
-    def setLogFile( self, logFile = None ):
+    def setLogFile( self, logFile = None, appendLog = False ):
 
         self.logFile = os.path.abspath( logFile ) if logFile is not None else None 
+        self.appendLog = appendLog
 
     # void
     def logInactive( self, msg, *args, **kwargs ):

@@ -19,16 +19,17 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, <see http://www.gnu.org/licenses/>.
 """
 
-import metl.expand.base, metl.fieldmap
+import metl.expand.base, metl.fieldmap, demjson
 
 class AppendExpand( metl.expand.base.Expand ):
 
-    init = ['resource']
+    use_args = True
 
     # void
-    def __init__( self, reader, resource, *args, **kwargs ):
+    def __init__( self, reader, skipIfFails = False, *args, **kwargs ):
 
-        self.resource = resource
+        self.resource = kwargs
+        self.skipIfFails = skipIfFails
         super( AppendExpand, self ).__init__( reader, *args, **kwargs )
         self.source   = self.cloneFirstReader()
 
@@ -42,8 +43,11 @@ class AppendExpand( metl.expand.base.Expand ):
             else:
                 success = True
 
-        source = current_reader.__class__( current_reader.getFieldSetPrototypeCopy() )
-        source.setResource( self.resource )
+        source = current_reader.clone()
+        resource_filtered = current_reader.getResourceDict()
+        resource_filtered.update( self.resource )
+        source.updateResourceDict( resource_filtered )
+
         return source
 
     # Source
@@ -64,12 +68,32 @@ class AppendExpand( metl.expand.base.Expand ):
         return super( AppendExpand, self ).finalize()
 
     # list<FieldSet>
+    def getNewRecords( self ):
+
+        if self.skipIfFails:
+            try:
+                records = [ r for r in self.getSource().getRecords() ]
+                return records
+            except Exception, e:
+                rd = self.getSource().getResourceDict()
+                rd['error'] = e
+                self.log( rd )
+                return []
+
+        else:
+            return self.getSource().getRecords()
+
+    # list<FieldSet>
     def getRecords( self ):
 
         for record in self.getReader().getRecords():
             yield record
         
-        for record in self.getSource().getRecords():
+        for record in self.getNewRecords():
             yield record
 
-        
+    # void
+    def logActive( self, record ):
+
+        self.log_file_pointer.write( '%s\n' % ( demjson.encode( record ) ) )
+

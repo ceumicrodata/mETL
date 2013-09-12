@@ -36,16 +36,38 @@ class XLSSource( metl.source.base.FileSource ):
         self.sheet      = None
         self.rowCount   = None
         self.currentRow = None
+        self.res_dict   = None
 
         super( XLSSource, self ).__init__( fieldset, **kwargs )
         self.setOffsetNumber( skipRows )
 
+    # XLSSource
+    def clone( self ):
+
+        return self.__class__(
+            self.fieldset.clone(),
+            skipRows = self.offset
+        )
+
     # void
     def setResource( self, resource, sheetName = None, encoding = 'utf-8' ):
 
-        self.sheetName = sheetName or 0
+        res_dict = {
+            'resource': resource,
+            'sheetName': sheetName,
+            'encoding': encoding
+        }
+
+        self.updateResourceDict( res_dict )
 
         return super( XLSSource, self ).setResource( resource, encoding )
+
+    def updateResourceDict( self, res_dict ):
+
+        super( XLSSource, self ).updateResourceDict( res_dict )
+
+        self.resource = self.res_dict['resource']
+        self.sheetName = self.res_dict['sheetName'] or 0
 
     # void
     def initialize( self ):

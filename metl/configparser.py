@@ -204,7 +204,7 @@ class ConfigParser( object ):
             resource_params['resource'] = self.source_resource
 
         source.setResource( **resource_params )
-        source.setLogFile( **getMore( cfg, ['logFile'], only = True ) )
+        source.setLogFile( **getMore( cfg, ['logFile','appendLog'], only = True ) )
 
         return source
 
@@ -244,7 +244,11 @@ class ConfigParser( object ):
                 } ) )
 
         if transformType in ( 'Filter', 'Expand', 'Modifier', 'Aggregator' ):
-            params = getMore( transformConfig, obj.init, only = True )
+            if not obj.use_args:
+                params = getMore( transformConfig, obj.init, only = True )
+            else:
+                params = transformConfig
+                
             if 'condition' in transformConfig:
                 params['condition'] = self.getObject( 
                     'Condition', 
@@ -261,7 +265,7 @@ class ConfigParser( object ):
                     self.getLastReader(),
                     **params 
                 )
-                obj.setLogFile( **getMore( transformConfig, ['logFile'], only = True ) )
+                obj.setLogFile( **getMore( transformConfig, ['logFile','appendLog'], only = True ) )
             except Exception as inst:
                 if self.debug:
                     traceback.print_exc()

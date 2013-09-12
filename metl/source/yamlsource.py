@@ -31,6 +31,14 @@ class YamlSource( metl.source.base.FileSource ):
         self.rootIterator = self.setRootIterator( rootIterator )
         super( YamlSource, self ).__init__( fieldset, **kwargs )
 
+    # YamlSource
+    def clone( self ):
+
+        return self.__class__(
+            self.fieldset.clone(),
+            rootIterator = self.rootIterator
+        )
+        
     def setRootIterator( self, rootIterator ):
 
         if rootIterator is not None:

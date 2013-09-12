@@ -25,7 +25,7 @@ from metl.exception import *
 class Field( object ):
 
     # void
-    def __init__( self, field_name, field_type, field_final_type = None, key = False, defaultValue = None, transforms = None, limit = None ):
+    def __init__( self, field_name, field_type, field_final_type = None, key = False, defaultValue = None, transforms = None, limit = None, nullable = True ):
 
         self.field_name       = field_name
         self.orig_type        = field_type
@@ -37,7 +37,11 @@ class Field( object ):
         self.key              = key
         self.log              = False
         self.defaultValue     = defaultValue
+        self.nullable         = nullable
         
+        self.field_type.setNullable( self.nullable )
+        self.field_final_type.setNullable( self.nullable )
+
         self.setValue( defaultValue )
 
     def clone( self, final = False ):
@@ -49,7 +53,8 @@ class Field( object ):
             key = self.isKey(),
             defaultValue = self.getDefaultValue(),
             transforms = self.getTransforms(),
-            limit = self.limit
+            limit = self.limit,
+            nullable = self.nullable
         )
 
     def getDefaultValue( self ):

@@ -24,6 +24,7 @@ import metl.reader
 class Manipulation( metl.reader.Reader ):
 
     init = []
+    use_args = False
 
     # void
     def __init__( self, reader, *args, **kwargs ):

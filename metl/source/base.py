@@ -19,7 +19,19 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, <see http://www.gnu.org/licenses/>.
 """
 
-import metl.reader, os, copy, urlparse, codecs, urllib2, demjson
+import metl.reader, os, copy, urlparse, codecs, urllib2, demjson, httplib
+
+def patch_http_response_read( func ):
+    def inner( *args ):
+        try:
+            return func(*args)
+
+        except httplib.IncompleteRead, e:
+            return e.partial
+
+    return inner
+
+httplib.HTTPResponse.read = patch_http_response_read( httplib.HTTPResponse.read )
 
 def openResource( resource, mode, encoding = None, realm = None, host = None, username = None, password = None ):
 
@@ -64,6 +76,13 @@ class Source( metl.reader.Reader ):
         self.kwargs   = kwargs
         self.base     = None
         self.current  = 0
+        self.res_dict = None
+
+    def clone( self ):
+
+        return self.__class__(
+            self.fieldset.clone()
+        )
 
     # void
     def setLimitNumber( self, number ):
@@ -141,6 +160,21 @@ class Source( metl.reader.Reader ):
             demjson.encode( record.getValues( class_to_string = True ) ) ) 
         )
 
+    # dict
+    def getResourceDict( self ):
+
+        return self.res_dict
+
+    def updateResourceDict( self, res_dict ):
+
+        if self.res_dict is None:
+            self.res_dict = {}
+
+        for k,v in res_dict.items():
+            if k in self.resource_init:
+                self.res_dict[k] = v
+
+
 class FileSource( Source ):
 
     resource_init = ['resource','encoding','username','password','realm','host']
@@ -180,17 +214,32 @@ class FileSource( Source ):
     # void
     def setResource( self, resource, encoding = 'utf-8', username = None, password = None, realm = None, host = None ):
 
-        self.resource = os.path.abspath( resource ) \
-            if os.path.exists( os.path.abspath( resource ) ) \
-            else resource
+        res_dict = {
+            'resource': resource,
+            'encoding': encoding,
+            'username': username,
+            'password': password,
+            'realm': realm,
+            'host': host
+        }
 
-        self.encoding = encoding
-        self.htaccess_username = username
-        self.htaccess_password = password
-        self.htaccess_realm = realm
-        self.htaccess_host = host
+        self.updateResourceDict( res_dict )
 
         return self
+
+    def updateResourceDict( self, res_dict ):
+
+        super( FileSource, self ).updateResourceDict( res_dict )
+
+        self.resource = os.path.abspath( self.res_dict['resource'] ) \
+            if os.path.exists( os.path.abspath( self.res_dict['resource'] ) ) \
+            else self.res_dict['resource']
+
+        self.encoding = self.res_dict.get('encoding')
+        self.htaccess_username = self.res_dict.get('username')
+        self.htaccess_password = self.res_dict.get('password')
+        self.htaccess_realm = self.res_dict.get('realm')
+        self.htaccess_host = self.res_dict.get('host')
 
     # unicode
     def getResource( self ):

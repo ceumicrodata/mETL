@@ -31,6 +31,14 @@ class XMLSource( metl.source.base.FileSource ):
         self.itemName = self.setRootIterator( itemName )
         super( XMLSource, self ).__init__( fieldset, **kwargs )
 
+    # XMLSource
+    def clone( self ):
+
+        return self.__class__(
+            self.fieldset.clone(),
+            itemName = self.itemName
+        )
+
     def setRootIterator( self, rootIterator ):
 
         if rootIterator is not None:

@@ -21,6 +21,7 @@ along with this program. If not, <see http://www.gnu.org/licenses/>.
 
 import datetime, unittest, metl.field
 from metl.fieldtype.datetimefieldtype import DateTimeFieldType
+from metl.fieldtype.textfieldtype import TextFieldType
 from metl.fieldtype.datefieldtype import DateFieldType
 from metl.fieldtype.stringfieldtype import StringFieldType
 from metl.transform.settransform import SetTransform
@@ -42,6 +43,59 @@ class Test_Field( unittest.TestCase ):
             field_final_type = self.endType,
             defaultValue = self.defaultValue
         )
+
+    def test_nullable( self ):
+
+        f1 = metl.field.Field(
+            'test_name',
+            StringFieldType(),
+        )
+
+        f2 = metl.field.Field(
+            'test_name',
+            StringFieldType(),
+            nullable = False
+        )
+
+        f3 = metl.field.Field(
+            'test_name',
+            StringFieldType(),
+            field_final_type = TextFieldType(),
+        )
+
+        f4 = metl.field.Field(
+            'test_name',
+            StringFieldType(),
+            field_final_type = TextFieldType(),
+            nullable = False
+        )
+
+        f5 = metl.field.Field(
+            'test_name',
+            DateFieldType(),
+            field_final_type = DateTimeFieldType(),
+        )
+
+        f6 = metl.field.Field(
+            'test_name',
+            DateFieldType(),
+            field_final_type = DateTimeFieldType(),
+            nullable = False
+        )
+
+        f1.setValue(u' ')
+        f2.setValue(u' ')
+        f3.setValue(u' ')
+        f4.setValue(u' ')
+        f5.setValue(u' ')
+        f6.setValue(u' ')
+
+        self.assertIsNone( f1.getValue() )
+        self.assertIsNone( f3.getValue() )
+        self.assertIsNone( f5.getValue() )
+        self.assertEqual( f2.getValue(), u'' )
+        self.assertEqual( f4.getValue(), u'' )
+        self.assertEqual( f6.getValue(), u'' )
 
     def test_name( self ):
 

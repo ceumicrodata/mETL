@@ -41,24 +41,40 @@ class DatabaseSource( metl.source.base.Source ):
     # void
     def setResource( self, url, resource = None, schema = None, table = None, statement = None, params = None ):
 
-        if resource is None and statement is None and table is None:
+        res_dict = {
+            'url': url,
+            'resource': resource,
+            'schema': schema,
+            'table': table,
+            'statement': statement,
+            'params': params,
+        }
+
+        self.updateResourceDict( res_dict )
+
+        return self
+
+    def updateResourceDict( self, res_dict ):
+
+        super( DatabaseSource, self ).updateResourceDict( res_dict )
+
+        if self.res_dict['resource'] is None and self.res_dict['statement'] is None and self.res_dict['table'] is None:
             raise AttributeError( 'Resource, table or statement is required!' )
 
-        if resource is not None and statement is None and table is None:
-            fp, closable = metl.source.base.openResource( os.path.abspath( resource ), 'r' )
+        statement = None
+        if self.res_dict['resource'] is not None and self.res_dict['statement'] is None and self.res_dict['table'] is None:
+            fp, closable = metl.source.base.openResource( os.path.abspath( self.res_dict['resource'] ), 'r' )
             statement = fp.read()
             if closable:
                 fp.close()
 
-        self.url        = url
-        self.table      = table
-        self.schema     = schema
-        self.statement  = statement
-        if params is not None and type( params ) == dict:
-            for k,v in params.items():
+        self.url        = self.res_dict['url']
+        self.table      = self.res_dict['table']
+        self.schema     = self.res_dict['schema']
+        self.statement  = statement or self.res_dict['statement']
+        if self.res_dict['params'] is not None and type( self.res_dict['params'] ) == dict:
+            for k,v in self.res_dict['params'].items():
                 self.statement = re.sub( ':' + k, str(v), self.statement )
-
-        return self
 
     # void
     def initialize( self ):
