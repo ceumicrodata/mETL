@@ -555,6 +555,8 @@ Minden forrás állomány esetén kötelező megadni a forrásban szereplő mez�
 - **key**: Kulcs mező-e. Minden esetben állítsunk minden mező értéket igaz-ra, amely egyértelműen képes azonosítani egy sort, hogy használhassuk majd a migrációs tulajdonságokat.
 - **defaultValue**: Alapértelmezett kezdőérték. Csak akkor használható ha nincs a mezőhöz illesztés definiálva.
 - **transforms**: Transzformációs lépések.
+- **limit**: Adatbázisban használt mezőhossz.
+- **nullable**: Üresen hagyható-e az érték, ha nem abban esetben üres szövegként fogjuk eltárolni.
 
 Példa YAML konfigurációs szerepeltetésre:
 
@@ -1635,14 +1637,18 @@ Bővítésre használjuk, ha további értékeket szeretnénk a jelenlegi forrá
 ##### Append
 Az épp akutális forrással teljesen megyező formátumú állomány beolvasására és az akutális folyamatba történő behelyezésére ad lehetőséget. Paraméterei:
 
- - **resource**: Új állomány helye. Csak olyan források esetén használható amik resource-al működnek (Database esetén nem működőképes)
+ - **skipIfFails**: Ha hibás a forrás állomány, akkor kihagyjuk, nem állítjuk le a folyamatot. `logFile` és `appendLog`-al lehet menteni a hibás források listáját.
 
-Fontos, hogy **új mezőkkel nem bővíti a korábbi forrást**, minden ugyanúgy folytatódik, mint ha egy másik `resource`-t kapott volna az aktuális állomány, `modifier`-ek és `target` nélkül.
+Fontos, hogy **új mezőkkel nem bővíti a korábbi forrást**, minden ugyanúgy folytatódik, mint ha egy másik `resource`-t kapott volna az aktuális állomány, `modifier`-ek és `target` nélkül. Természetesen bármilyen **resouce** attribútomot felül lehet írni, akár htaccess-hez kapcsolódó `username`, `password`, vagy `encoding` adatokat is!
 
 Példa YAML konfigurációra:
 	
 	- expand: Append
 	  resource: target/otherfile.json
+	  encoding: iso-8859-2
+	  skipIfFails: true
+	  logFile: log/otherfile.txt
+      appendLog: true
     
 ##### AppendBySource
 Másik forrás állomány tartalma szúrható az eredeti forrás után. Inicializáláshoz összesen egy `source`-t vár minden szükséges paraméterével együtt. 
