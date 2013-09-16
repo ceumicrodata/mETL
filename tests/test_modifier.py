@@ -28,6 +28,7 @@ from metl.fieldtype.stringfieldtype import StringFieldType
 from metl.fieldtype.integerfieldtype import IntegerFieldType
 from metl.condition.ismatchbyregexpcondition import IsMatchByRegexpCondition
 from metl.modifier.setmodifier import SetModifier
+from metl.modifier.joinbykeymodifier import JoinByKeyModifier
 from metl.modifier.transformfieldmodifier import TransformFieldModifier
 from metl.transform.replacebyregexptransform import ReplaceByRegexpTransform
 from metl.modifier.ordermodifier import OrderModifier
@@ -42,7 +43,8 @@ class Test_Modifier( unittest.TestCase ):
                 Field( 'name', StringFieldType() ),
                 Field( 'email', StringFieldType() ),
                 Field( 'year', IntegerFieldType() ),
-                Field( 'after_year', IntegerFieldType() )
+                Field( 'after_year', IntegerFieldType() ),
+                Field( 'age', IntegerFieldType() )
             ],
             FieldMap({
                 'name': 0,
@@ -138,6 +140,59 @@ class Test_Modifier( unittest.TestCase ):
             [ 'Western Ogre', 'Western Ogre@metl-test-data.com', 1998, 2004 ],
             [ 'Sergeant Strawberry', 'Sergeant Strawberry@metl-test-data.com', 2006, 2008 ]
         ])
+
+    def test_joinbykey_modifier( self ):
+
+        source = StaticSource(
+            FieldSet([
+                Field( 'email', StringFieldType(), key = True ),
+                Field( 'age', IntegerFieldType() )
+            ],
+            FieldMap({
+                'email': 0,
+                'age': 1
+            }))
+        )
+        source.setResource([
+            [ 'El Agent@metl-test-data.com', 12 ],
+            [ 'Ochala Wild@metl-test-data.com', 14 ],
+            [ 'Sina Venomous@metl-test-data.com', 17 ],
+            [ 'Akassa Savage Phalloz@metl-test-data.com', 16 ],
+            [ 'Sermak Bad@metl-test-data.com', 22 ],
+            [ 'Olivia Deadly Dawod@metl-test-data.com', 32 ],
+            [ 'PendusInhuman@metl-test-data.com', 42 ],
+            [ 'Naria Cold-blodded Greste@metl-test-data.com', 22 ],
+            [ 'ShardBrutal@metl-test-data.com', 54 ],
+            [ 'Sina Cruel@metl-test-data.com', 56 ],
+            [ 'Deadly Ohmar@metl-test-data.com', 43 ],
+            [ 'Mylenedriz Cold-blodded@metl-test-data.com', 23 ],
+            [ 'Calden rigid@metl-test-data.com', 35 ],
+            [ 'AcidReaper@metl-test-data.com', 56 ],
+            [ 'Raven Seth@metl-test-data.com', 23 ],
+            [ 'RandomLeader@metl-test-data.com', 45 ],
+            [ 'Pluto Brigadier@metl-test-data.com', 64 ],
+            [ 'Southern Kangaroo@metl-test-data.com', 53 ],
+            [ 'Serious Flea@metl-test-data.com', 62 ],
+            [ 'NocturnalRaven@metl-test-data.com', 63 ],
+            [ 'Risky Flea@metl-test-data.com', 21 ],
+            [ 'Rivatha Todal@metl-test-data.com', 56 ],
+            [ 'Panic Oliviaezit@metl-test-data.com', 25 ],
+            [ 'Tomara Wild@metl-test-data.com', 46 ],
+            [ 'Venessa Metalhead@metl-test-data.com', 53 ],
+            [ 'Western Ogre@metl-test-data.com', 71 ],
+            [ 'SergeantStrawberry@metl-test-data.com', 76 ]
+        ])        
+
+        records = [ r for r in JoinByKeyModifier( 
+            self.reader,
+            fieldNames = [ 'age' ],
+            source = source
+        ).initialize().getRecords() ]
+
+        self.assertEqual( len( records ), 85 )
+        self.assertIsNone( records[-1].getField('age').getValue() )
+        self.assertEqual( records[-2].getField('age').getValue(), 71 )
+        self.assertEqual( records[0].getField('age').getValue(), 12 )
 
     def test_order_modifier( self ):
 

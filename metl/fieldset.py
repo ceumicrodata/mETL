@@ -159,6 +159,10 @@ class FieldSet( object ):
         if len( keys ) == 0:
             return None
 
+        return self.getKeyForFields( keys )
+
+    # unicode
+    def getKeyForFields( self, keys ):
+
         values = self.getValues( to_string = True )
         return u'-'.join([ values[field_name] for field_name in keys ])
-        

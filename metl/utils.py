@@ -89,6 +89,7 @@ from metl.modifier.setmodifier import *
 from metl.modifier.setwithmapmodifier import *
 from metl.modifier.transformfieldmodifier import *
 from metl.modifier.ordermodifier import *
+from metl.modifier.joinbykeymodifier import *
 from metl.aggregator.base import *
 from metl.aggregator.countaggregator import *
 from metl.aggregator.avgaggregator import *

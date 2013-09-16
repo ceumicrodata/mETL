@@ -26,6 +26,7 @@
 - .10: Database source has a params attribute to add parameters to statements.
 - .11: Fields has a new limit attribute for database targets. Easy to add new database types if necessary.
 - .12: Boolean conversion is working for String correctly.
+- .13: Added JoinByKey modifier to easily join two sources and fill out some fields.
 
 ### Version 0.1.5
 - .0: htaccess file opening support.
