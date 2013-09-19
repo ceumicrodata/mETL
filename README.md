@@ -48,160 +48,142 @@
 - .11: Added ListExpander to expand list information into single fields.
 - .12: XML source open via http and https protocols.
 
-# Documentation
+# First steps
 
-## Alapok
-Az mETL egy olyan **ETL eszköz**, amely kifejezetten a CEU számára szükséges választási adatok adatok betöltésére jött létre. Természetesen a program ennél sokkal általánosabb körű, gyakorlatilag bármilyen adat betöltésre alkalmazható. A program fejlesztése **Python**-ban történt, az optimális memóriahasználat maximális figyelembevételével a **Brewery** eszköz képességeinek felmérést követően.
+## The basics
+mETL is an ETL device which has been especially designed to load elective data necessary for CEu. Obviously, the programme can be used in a more general way, it can be used to load practically any kind of data. The programme was designed with Python, taking into maximum consideration the optimal memory usage after having assessed the Brewery device’s capabilities. 
 
-## Képességek
-Leggyakoribb fájlformátumokra biztosít a program aktuális verziója támogatást **migrációk és migrációs csomagok** kezelésével. Ezek a következőek típusonként.
+## Capabilities
+The actual version supports the most widespread file formats with data migration and data migration packages. These include:
 
-**Forrás típusok**:
+**Source- types**:
 
-- CSV, TSV, XLS, Google SpreadSheet, Fix szélességű fájl
+- CSV, TSV, XLS, Google SpreadSheet, Fixed width file
 - PostgreSQL, MySQL, Oracle, SQLite, Microsoft SQL Server
 - JSON, XML, YAML
 
-**Cél típusok:**
+**Target- types:**
 
-- CSV, TSV, XLS - fájl folytatással is
-- Fix szélességű fájl
-- PostgreSQL, MySQL, Oracle, SQLite, Microsoft SQL Server - módosítás céllal is
+- CSV, TSV, XLS - with file continuation as well
+- Fixed width file
+- •	PostgreSQL, MySQL, Oracle, SQLite, Microsoft SQL Server - with the purpose of modification as well
 - JSON, XML, YAML
 
-Fejlesztés folyamán igyekeztünk a leggyakoribb transzformációs lépésekkel, programszerkezetekkel, és manipulációs lépésekkel is ellátni a teljes feldolgozási folyamatot. Ennek fényében a program a következő transzformációkkal rendelkezik alapértelmezetten:
+During the develpoment of the programme we tried to provide the whole course of processing with the most widespread transformation steps, programme structures and mutation steps. In light of this, the programme by default possesses the following transformations: 
 
-- **Add**: Hozzáad egy tetszőleges számot egy értékhez.
-- **Clean**: Eltávolítja a különféle írásjeleket. (pont, vessző, stb.)
-- **ConvertType**: Módosítja a mező típusát egy másik típusra.
-- **Homogenize**: Az ékezetes karaktereket ékezet nélküliekre alakítja. (NFKD formátum)
-- **LowerCase**: Kisbetűssé alakítás.
-- **Map**: Kicserél mező értékeket, más értékre.
-- **RemoveWordsBySource**: Egy másik forrás állományt felhasználva eltávolít szavakat.
-- **ReplaceByRegexp**: Reguláris kifejezés alapján cserét hajt végre.
-- **ReplaceWordsBySource**: Egy másik forrás állományt felhasználva lecserél szavakat.
-- **Set**: Érték beállítást végez.
-- **Split**: Szóközök mentén elválasztja a szavakat és a megadott intervallumot hagyja meg.
-- **Stem**: Szótőre hozás.
-- **Strip**: Eltávolítja az érték elején és végén levő felesleges szóközöket vagy egyéb karaktereket.
-- **Sub**: Kivon egy számot egy értékből.
-- **Title**: Minden szót nagy kezdőbetűssé alakít.
-- **UpperCase**: Nagybetűssé alakítás.
+- **Add**: Adds an arbitrary number to a value.- **Clean**: Removes the different types of punctuation marks. (dots, commas, etc.)- **ConvertType**: Modifies the type of the field to another type.
+- **Homogenize**: Converts the accentuated letters to unaccentuated ones. (NFKD format)- **LowerCase**: Converts to lower case.- **Map**: Changes the value of a field to anothe value.- **RemoveWordsBySource**: Using another source, it removes certain words.- **ReplaceByRegexp**: Makes a change (replaces) by a regular expression.- **ReplaceWordsBySource**: Replaces words using another source.- **Set**: Sets a certain value.- **Split**: Separates words by spaces and leaves a given interval.- **Stem**: Brings words to a stem. (root)- **Strip**: Removes the unnecessary spaces and/or other characters from the beginning and ending of the value.- **Sub**: Subtracts a given number from a given value.- **Title**: Capitalizes the first letter of every word.- **UpperCase**: Converts to upper case.
 
-Manupulációk esetében négy csoportot különböztetünk meg:
+Four groups are differentiated in case of manipulations:
 
 1. **Modifier**
 
-   Módosítók azok az objektumok, amelyek egy teljes sort (rekordot) kapnak, és mindig egy teljes sorral térnek vissza. Azonban a folyamataik során érték módosításokat végeznek a különböző mezők összefüggő értékeinek felhasználásával.
+   Modifiers are those objects that are given a whole line (record) and revert with a whole line. However, during their processes they make changes to values with the usage of the related values of different fields. 
    
-   - **Order**: Sorrendbe rendezi a sorokat a megadott feltételeknek megfelelően.
-   - **Set**: Érték beállítást végez fix érték séma, függvény, vagy másik forrás felhasználásával.
-   - **SetWithMap**: Érték beállítást végez összetett típus esetén megadott map segítéségével.
-   - **TransformField**: Hagyományos mező szintű transzformáció hívható általa a manipulációs lépés során. 
+   - **JoinByKey**: Merge and join two different record.
+   - **Order**: Orders lines according to the given conditions.
+   - **Set**: Sets a value with the use of fix value scheme, function or another source.
+   - **SetWithMap**: Sets a value in case of a complicated type with a given map.
+   - **TransformField**: During manipulation, regular field transformation can be achieved with this command .
    
 2. **Filter**
 
-   Szűrést végeznek elsősorban. Olyankor használatosak, amikor a korábbi lépésekben transzformációk segítségével megtisztított értékeket szeretnénk kiértékelni és eldobni, ha a rekordot hiányosnak, vagy nem megfelelőnek ítéljük meg.
+   Their function is primarily filtering. It is used when we would like to evaluate or get rid of incomlete or faulty records as a result of an earlier tranformation.
 
-   - **DropByCondition**: Feltétel alapján dönthető el a rekord sorsa.
-   - **DropBySource**: Másik forrás állományban történő szereplés dönt a rekord sorsáról.
-   - **DropField**: Rekord számot ugyan nem csökkent, de mezők törölhetőek a segítségével.
+   - **DropByCondition**: The fate of the record depends on a condition.
+   - **DropBySource**: The fate is decided by whether or not the record is in another file.
+   - **DropField**: Does not decrease the number of records but field can be deleted with it.
+   - **KeepByCondition**: The fate of the record depends on a condition.
 
 3. **Expand**
 
-   Bővítésre használjuk, ha további értékeket szeretnénk a jelenlegi forrás után helyezni.
+   It is used for enlargement if we would like to add more values to the present given source.
 
-   - **Append**: Mostanival teljesen megegyező forrásállomány beszúrása a folyamatba az aktuális után.
-   - **AppendBySource**: Másik forrás állomány tartalma szúrható az eredeti forrás után.
-   - **Field**: Paraméterül megadott oszlopokat egy másik oszlopba gyűjt össze az oszlop értékeivel.
-   - **BaseExpander**: Kiterjesztésre használható osztály, elsődleges feladata olyan esetben van, ahol egy rekordot többszöröznénk meg.
-   - **ListExpander**: Lista típusú elemet bont értékei alapján külön sorokba.
-   - **Melt**: Megadott oszlopokat rögzíti és a többi oszlopot kulcs-érték párok alapján jeleníti meg. 
+   - **Append**: Pasting a new source file identical to the used one after the actual one being used.
+   - **AppendBySource**: A new file source may be pasted after the original one.
+   - **Field**: Collects coloumns as parameters and puts them into another coloumn with the coloumns’ values.
+   - **BaseExpander**: Class used for enlargement, primarily used when we would like to multiply a record.
+   - **ListExpander**: Splits list-type elements and puts them into separate lines.
+   - **Melt**: Fixes given coloumns and shows the rest of the coloumns as key-value pairs.
 
 4. **Aggregator**
 
-   Adatok összekapcsolására és csoportokba rendezésére használjuk.
+   Aggregators are used to connect and arrange data.
    
-   - **Avg**: Átlag érték meghatározásához használható.
-   - **Count**: Számosságok kalkulációjához használjuk.
-   - **Sum**: Összérték meghatározásához használható.
+   - **Avg**: Used to determine the mean average.
+   - **Count**: Used to calculate figures.
+   - **Sum**: Used to determine sums.
 
-### Komponens ábra
+### Komponent figure
 <img src="docs/components.png" alt="Folyamat" style="width: 100%;"/>
 
-## Telepítés
-Hagyományos Python csomagként a telepítést legegyszerűbben a következő parancs kiadásával tehetjük meg a mETL könyvtárában állva:
+## Installation
+As a traditional Python package, installation can the most easily be carried out with the help of the following command int he mELT directory:  
 `python setup.py install`
-
-Csomagot ezt követően az alábbi paranccsal tesztelhetjük:
+Then the package can be tested with the following command:  
 `python setup.py test`
-
-Következő függőségekkel rendelkezik: xlrd, gdata, demjson, pyyaml, sqlalchemy, xlwt, tarr, nltk, xlutils, xmlsquash
+The package has the following dependancies: python-dateutil, xlrd, gdata, demjson, pyyaml, sqlalchemy, xlwt, tarr, nltk, xlutils, xmlsquash
 
 ### Mac OSX
-Telepítés előtt a következő csomagok feltételére lesz szükség, mely a következő:
+Before installation, one needs to have the following packages installed:
+- XCode
+- Code ’Command Line Tools’
+- [Macports](https://distfiles.macports.org/MacPorts/MacPorts-2.1.3-10.8-MountainLion.pkg)
 
-- XCode telepítése
-- XCode "Command Line Tools" telepítése
-- [Macports telepítése](https://distfiles.macports.org/MacPorts/MacPorts-2.1.3-10.8-MountainLion.pkg)
-
-Ezt követően minden csomag megfelelően feltelepítésre kerül.
+Afterwards all packages are installed properly.
 
 ### Linux
-Telepítés előtt a `python-setuptools` meglétét ellenőrizni kell, illetve hiányzása esetén `apt-get install`-al telepíteni.
+Before installation, one needs to check that they have `python-setuptools` and in case of its absence it need to be insalled with the help of `apt-get install`.
 
-### Windows
-Minden csomag könnyedén feltelepíthető!
+## Running of the programme
+The programme is a collection of console scripts which can be built into all systems and can even be timed with the help of cron scripts.
 
-## Futtatás
-Konzol scriptek gyűjteménye a program, amely emiatt bármilyen rendszerbe könnyen beépíthető, és akár cron script-ek segítségével időzíthető is. 
-
-**Következő script-ekből áll a program:**
+**The programme is made up of the following scipts:**
 
 1. `metl [options] CONFIG.YML`
 
-   Egy teljes folyamat indítható el a segítségével a paraméterül kapott YAML fájl alapján. A konfigurációban megadott folyamatokat a konfigurációs állománynak teljesen le kell írnia, input és output fájlok pontos útvonalával együtt.
+   A complete process can be started with the help of it ont he basis of the YAML file as a parameter. The processes in the configuration should all be described by the configuraion file including the exact route of input and outout files.
    
-   - `-t`: Futtatás során migrációs állomány készítése az aktuális adatok állapotából.
-   - `-m`: Korábbi migrációs állomány átadása, amely az előző futtatott verzióé volt.
-   - `-p`: Mappa átadása, amit hozzá adunk a PATH változóhoz, hogy a YAML konfigurációban történő hivatkozás megvalósulhasson külső python állományra.
-   - `-d`: Debug mód, mindent kiír a stdout-ra.
-   - `-l`: Hány elemen történjen a feldolgozás. Nagyszerű lehetőség nagy fájlok tesztelésére kis rekordokon, amíg minden nem úgy működik, ahogy szeretnénk.
-   - `-o`: Hányadik elemtől kezdje a feldolgozást.
-   - `-s`: Ha a konfigurációs állomány nem tartalmazza a resource útvonalát, itt is megadható.
+   - `-t`: During running, it prepares a migration file from the state of the present data.
+   - `-m`: Conveyance of previous migration file that was part of the previously run version.
+   - `-p`: Conveyance of a folder, which is added to the PATH variable in order that the link in the YAML configuration could be run on an outside python file.
+   - `-d`: ’debug’ mode, writes everything out as stdout.
+   - `-l`: Determines the number of elements for processing. An excellent option to test large files within small records until everything works as we would like to.
+   - `-o`: Determines from which element should the processing start.
+   - `-s`: If the configuration does not contain the route of the resource, it could be given here as well.
 
-   Migrációról és a `-p` kapcsolóról később lesz szó részletesebben.
+   Migarion and `–p` will be dealt with more in depth later.
 
 2. `metl-walk [options] BASECONFIG.YML FOLDER`
    
    Feladata a paraméterül kapott YAML fájl alkalmazása, minden paraméterül kapott mappában szereplő állományra nézve. A konfigurációnak ebben az esetben nem kell az input fájlok elérhetőségét tartalmazni, a script automatikusan elvégzi ezek behelyettesítését.
    
-   - `-m`: Multiprocessing bekapcsolása több CPU-val rendelkező gépeken. A feldolgozandó állományok külön thread-ekbe kerülnek. Használata **csak és kizárólag** `Database` cél esetén szabad, mindenhol máshol problémákat okoz!
-   - `-p`: Mappa átadása, amit hozzá adunk a PATH változóhoz, hogy a YAML konfigurációban történő hivatkozás megvalósulhasson külső python állományra.
-   - `-d`: Debug mód, mindent kiír a stdout-ra.
-   - `-l`: Hány elemen történjen a feldolgozás. Nagyszerű lehetőség nagy fájlok tesztelésére kis rekordokon, amíg minden nem úgy működik, ahogy szeretnénk.
-   - `-o`: Hányadik elemtől kezdje a feldolgozást.
+   - `-m`: Walk the files with multiple process. (use only for database target)
+   - `-p`: Conveyance of a folder, which is added to the PATH variable in order that the link in the YAML configuration could be run on an outside python file.
+   - `-d`: ’debug’ mode, writes everything out as stdout.
+   - `-l`: Determines the number of elements for processing. An excellent option to test large files within small records until everything works as we would like to.
+   - `-o`: Determines from which element should the processing start.
    
-   A `-p` kapcsolóról később lesz szó részletesebben.
+   Migarion and `–p` will be dealt with more in depth later.
    
 3. `metl-transform [options] CONFIG.YML FIELD VALUE`
    
    Feladata a YAML fájlban szereplő egyik mező transzformációs lépéseinek tesztelése. Paraméterül várja a mező megnevezését, és azt az értéket, amelyen a tesztelést végeznénk. A script ki fogja írni lépésről-lépésre a mező értékének alakulását.
 
-   - `-p`: Mappa átadása, amit hozzá adunk a PATH változóhoz, hogy a YAML konfigurációban történő hivatkozás megvalósulhasson külső python állományra.
-   - `-d`: Debug mód, mindent kiír a stdout-ra.
+   - `-p`: Conveyance of a folder, which is added to the PATH variable in order that the link in the YAML configuration could be run on an outside python file.
+   - `-d`: ’debug’ mode, writes everything out as stdout.
    
-   A `-p` kapcsolóról később lesz szó részletesebben.
+   Migarion and `–p` will be dealt with more in depth later.
    
 4. `metl-aggregate [options] CONFIG.YML FIELD`
 
    Feladata kigyűjteni a paraméterül átadott mező összes lehetséges értékét. Ezen értékek alapján utána már könnyen készíthető Map a rekordokhoz.
 
-   - `-p`: Mappa átadása, amit hozzá adunk a PATH változóhoz, hogy a YAML konfigurációban történő hivatkozás megvalósulhasson külső python állományra.
-   - `-d`: Debug mód, mindent kiír a stdout-ra.
-   - `-l`: Hány elemen történjen a feldolgozás. Nagyszerű lehetőség nagy fájlok tesztelésére kis rekordokon, amíg minden nem úgy működik, ahogy szeretnénk.
-   - `-o`: Hányadik elemtől kezdje a feldolgozást.
-   - `-s`: Ha a konfigurációs állomány nem tartalmazza a resource útvonalát, itt is megadható.
+   - `-p`: Conveyance of a folder, which is added to the PATH variable in order that the link in the YAML configuration could be run on an outside python file.
+   - `-d`: ’debug’ mode, writes everything out as stdout.
+   - `-l`: Determines the number of elements for processing. An excellent option to test large files within small records until everything works as we would like to.
+   - `-o`: Determines from which element should the processing start.
+   - `-s`: If the configuration does not contain the route of the resource, it could be given here as well.
    
    A `-p` kapcsolóról később lesz szó részletesebben.
    

@@ -1,7 +1,7 @@
 # mETL dokumentáció
 
-## Alapok
-Az mETL egy olyan **ETL eszköz**, amely kifejezetten a CEU számára szükséges választási adatok adatok betöltésére jött létre. Természetesen a program ennél sokkal általánosabb körű, gyakorlatilag bármilyen adat betöltésre alkalmazható. A program fejlesztése **Python**-ban történt, az optimális memóriahasználat maximális figyelembevételével a **Brewery** eszköz képességeinek felmérést követően.
+## The basics
+mETL is an ETL device which has been especially designed to load elective data necessary for CEu. Obviously, the programme can be used in a more general way, it can be used to load practically any kind of data. The programme was designed with Python, taking into maximum consideration the optimal memory usage after having assessed the Brewery device’s capabilities. 
 
 ## Képességek
 Leggyakoribb fájlformátumokra biztosít a program aktuális verziója támogatást **migrációk és migrációs csomagok** kezelésével. Ezek a következőek típusonként.

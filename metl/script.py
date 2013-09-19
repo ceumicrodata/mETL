@@ -35,7 +35,7 @@ def main( argv = sys.argv ):
         "--targetMigration", 
         dest = "target_migration_file", 
         default = None,
-        help = "target migration filepath"
+        help = "During running, it prepares a migration file from the state of the present data."
     )
 
     parser.add_option(
@@ -43,7 +43,7 @@ def main( argv = sys.argv ):
         "--migration",
         dest = "migration_file",
         default = None,
-        help = 'last migration filepath'
+        help = 'Conveyance of previous migration file that was part of the previously run version.'
     )
 
     parser.add_option(
@@ -51,7 +51,7 @@ def main( argv = sys.argv ):
         "--path",
         dest = "path",
         default = None,
-        help = "add route into sys path"
+        help = "Conveyance of a folder, which is added to the PATH variable in order that the link in the YAML configuration could be run on an outside python file."
     )
 
     parser.add_option(
@@ -59,26 +59,26 @@ def main( argv = sys.argv ):
         "--debug",
         action = 'store_true',
         default = False,
-        help = "print debug messages"
+        help = "Debug mode, writes everything out as stdout."
     )
 
     parser.add_option(
         "-l",
         "--limit",
-        help = "limit after LIMIT line"
+        help = "Determines the number of elements for processing."
     )
 
     parser.add_option(
         "-o",
         "--offset",
         default = 0,
-        help = 'start after OFFSET line'
+        help = 'Determines from which element should the processing start.'
     )
 
     parser.add_option(
         "-s",
         "--source",
-        help = "define source resource"
+        help = "If the configuration does not contain the route of the resource, it could be given here as well."
     )
 
     (options, args) = parser.parse_args( argv[1:] )
@@ -136,7 +136,7 @@ def metl_walk( argv = sys.argv ):
         "--path",
         dest = "path",
         default = None,
-        help = "add route into sys path"
+        help = "Conveyance of a folder, which is added to the PATH variable in order that the link in the YAML configuration could be run on an outside python file."
     )
 
     parser.add_option(
@@ -144,20 +144,20 @@ def metl_walk( argv = sys.argv ):
         "--debug",
         action = 'store_true',
         default = False,
-        help = "print debug messages"
+        help = "Debug mode, writes everything out as stdout."
     )
 
     parser.add_option(
         "-l",
         "--limit",
-        help = "limit after LIMIT line"
+        help = "Determines the number of elements for processing."
     )
 
     parser.add_option(
         "-o",
         "--offset",
         default = 0,
-        help = 'start after OFFSET line'
+        help = 'Determines from which element should the processing start.'
     )
 
     parser.add_option(
@@ -218,7 +218,7 @@ def metl_transform( argv = sys.argv ):
         "--path",
         dest = "path",
         default = None,
-        help = "add route into sys path"
+        help = "Conveyance of a folder, which is added to the PATH variable in order that the link in the YAML configuration could be run on an outside python file."
     )
 
     parser.add_option(
@@ -226,7 +226,7 @@ def metl_transform( argv = sys.argv ):
         "--debug",
         action = 'store_true',
         default = False,
-        help = "print debug messages"
+        help = "Debug mode, writes everything out as stdout"
     )
 
     (options, args) = parser.parse_args( argv[1:] )
@@ -280,28 +280,28 @@ def metl_differences( argv = sys.argv ):
         '--deleted',
         dest = 'deleted',
         default = None,
-        help = 'save the deleted key list to here'
+        help = 'Save the deleted key list by this YAML configuration.'
     )
     parser.add_option(
         '-n',
         '--news',
         dest = 'news',
         default = None,
-        help = 'save the new key list to here'
+        help = 'Save the new key list by this YAML configuration.'
     )
     parser.add_option(
         '-m',
         '--modified',
         dest = 'modified',
         default = None,
-        help = 'save the modified key list to here'
+        help = 'Save the modified key list by this YAML configuration.'
     )
     parser.add_option(
         '-u',
         '--unchanged',
         dest = 'unchanged',
         default = None,
-        help = 'save the unchanged key list to here'
+        help = 'Save the unchanged key list by this YAML configuration.'
     )
 
     (options, args) = parser.parse_args( argv[1:] )
@@ -349,7 +349,7 @@ def metl_aggregate( argv = sys.argv ):
         "--path",
         dest = "path",
         default = None,
-        help = "add route into sys path"
+        help = "Conveyance of a folder, which is added to the PATH variable in order that the link in the YAML configuration could be run on an outside python file."
     )
 
     parser.add_option(
@@ -357,26 +357,26 @@ def metl_aggregate( argv = sys.argv ):
         "--debug",
         action = 'store_true',
         default = False,
-        help = "print debug messages"
+        help = "Debug mode, writes everything out as stdout."
     )
 
     parser.add_option(
         "-l",
         "--limit",
-        help = "limit after LIMIT line"
+        help = "Determines the number of elements for processing. An excellent option to test large files within small records until everything works as we would like to."
     )
 
     parser.add_option(
         "-o",
         "--offset",
         default = 0,
-        help = 'start after OFFSET line'
+        help = 'Determines from which element should the processing start.'
     )
 
     parser.add_option(
         "-s",
         "--source",
-        help = "define source resource"
+        help = "If the configuration does not contain the route of the resource, it could be given here as well."
     )
 
     (options, args) = parser.parse_args( argv[1:] )
