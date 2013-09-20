@@ -167,6 +167,17 @@ Konzol scriptek gyűjteménye a program, amely emiatt bármilyen rendszerbe kön
    - `-u`: Konfigurációs állomány a módosulatlan elemek kulcsainak kiírására.
    - `-d`: Konfigurációs állomány a törölt elemek kulcsainak kiírására.
  
+ 
+6. `metl-generate [options] SOURCE_TYPE CONFIG_FILE`
+
+   Egy választott forrás állományból készít Yaml kongirációs állományt. Ahhoz hogy a konfiguráció elkészülhessen meg kell adni a forrás alapvető inicializálási és forrás paramétereit.
+
+   Szükséges paraméterek listáját a következőképpen le lehet kérni: `metl-generate SOURCE_TYPE CONFIG_FILE`
+
+   Támogatott forrás típusok listája: CSV, Database, Google Spreadsheet (jelszóval védett), JSON, TSV, XLS, XML, Yaml
+   
+   - `-l`: Meghatározza, hány elem átviszgálásával készítse el konfigurációs állományt. Minél több rekord kerül átnézésre, annál pontosabb eredményt tud adni a megfelelő típus használatát illetően, de a konfiguráció készítésének ideje drasztikusan nőhet ennek hatására.
+   
 ## Működés
 
 Az eszköz egy **YAML fájlt használ konfigurációnak**, ami leírja a teljes végrehajtás útját, és az összes elvégzendő transzformációs lépést.

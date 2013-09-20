@@ -27,6 +27,7 @@
 - .11: Fields has a new limit attribute for database targets. Easy to add new database types if necessary.
 - .12: Boolean conversion is working for String correctly.
 - .13: Added JoinByKey modifier to easily join two sources and fill out some fields.
+- .14: Added `metl-generate` command to generate automaticaly Yaml configuration files.
 
 ### Version 0.1.5
 - .0: htaccess file opening support.
@@ -71,8 +72,22 @@ The actual version supports the most widespread file formats with data migration
 
 During the develpoment of the programme we tried to provide the whole course of processing with the most widespread transformation steps, programme structures and mutation steps. In light of this, the programme by default possesses the following transformations: 
 
-- **Add**: Adds an arbitrary number to a value.- **Clean**: Removes the different types of punctuation marks. (dots, commas, etc.)- **ConvertType**: Modifies the type of the field to another type.
-- **Homogenize**: Converts the accentuated letters to unaccentuated ones. (NFKD format)- **LowerCase**: Converts to lower case.- **Map**: Changes the value of a field to anothe value.- **RemoveWordsBySource**: Using another source, it removes certain words.- **ReplaceByRegexp**: Makes a change (replaces) by a regular expression.- **ReplaceWordsBySource**: Replaces words using another source.- **Set**: Sets a certain value.- **Split**: Separates words by spaces and leaves a given interval.- **Stem**: Brings words to a stem. (root)- **Strip**: Removes the unnecessary spaces and/or other characters from the beginning and ending of the value.- **Sub**: Subtracts a given number from a given value.- **Title**: Capitalizes the first letter of every word.- **UpperCase**: Converts to upper case.
+- **Add**: Adds an arbitrary number to a value.
+- **Clean**: Removes the different types of punctuation marks. (dots, commas, etc.)
+- **ConvertType**: Modifies the type of the field to another type.
+- **Homogenize**: Converts the accentuated letters to unaccentuated ones. (NFKD format)
+- **LowerCase**: Converts to lower case.
+- **Map**: Changes the value of a field to anothe value.
+- **RemoveWordsBySource**: Using another source, it removes certain words.
+- **ReplaceByRegexp**: Makes a change (replaces) by a regular expression.
+- **ReplaceWordsBySource**: Replaces words using another source.
+- **Set**: Sets a certain value.
+- **Split**: Separates words by spaces and leaves a given interval.
+- **Stem**: Brings words to a stem. (root)
+- **Strip**: Removes the unnecessary spaces and/or other characters from the beginning and ending of the value.
+- **Sub**: Subtracts a given number from a given value.
+- **Title**: Capitalizes the first letter of every word.
+- **UpperCase**: Converts to upper case.
 
 Four groups are differentiated in case of manipulations:
 
@@ -120,12 +135,13 @@ Four groups are differentiated in case of manipulations:
 ## Installation
 As a traditional Python package, installation can the most easily be carried out with the help of the following command int he mELT directory:  
 `python setup.py install`
-Then the package can be tested with the following command:  
+Then the package can be tested with the following command:  
 `python setup.py test`
-The package has the following dependancies: python-dateutil, xlrd, gdata, demjson, pyyaml, sqlalchemy, xlwt, tarr, nltk, xlutils, xmlsquash
+The package has the following dependancies: python-dateutil, xlrd, gdata, demjson, pyyaml, sqlalchemy, xlwt, tarr, nltk, xlutils, xmlsquash
 
 ### Mac OSX
-Before installation, one needs to have the following packages installed:
+Before installation, one needs to have the following packages installed:
+
 - XCode
 - Code ’Command Line Tools’
 - [Macports](https://distfiles.macports.org/MacPorts/MacPorts-2.1.3-10.8-MountainLion.pkg)
@@ -195,6 +211,16 @@ The programme is a collection of console scripts which can be built into all sys
    - `-m`: Konfigurációs állomány a módosult elemek kulcsainak kiírására.
    - `-u`: Konfigurációs állomány a módosulatlan elemek kulcsainak kiírására.
    - `-d`: Konfigurációs állomány a törölt elemek kulcsainak kiírására.
+
+6. `metl-generate [options] SOURCE_TYPE CONFIG_FILE`
+
+   Egy választott forrás állományból készít Yaml kongirációs állományt. Ahhoz hogy a konfiguráció elkészülhessen meg kell adni a forrás alapvető inicializálási és forrás paramétereit.
+
+   Szükséges paraméterek listáját a következőképpen le lehet kérni: `metl-generate SOURCE_TYPE CONFIG_FILE`
+
+   Támogatott forrás típusok listája: CSV, Database, Google Spreadsheet (jelszóval védett), JSON, TSV, XLS, XML, Yaml
+   
+   - `-l`: Meghatározza, hány elem átviszgálásával készítse el konfigurációs állományt. Minél több rekord kerül átnézésre, annál pontosabb eredményt tud adni a megfelelő típus használatát illetően, de a konfiguráció készítésének ideje drasztikusan nőhet ennek hatására.
  
 ## Működés
 

@@ -123,4 +123,6 @@ from metl.writer import *
 from metl.migration import *
 from metl.database.basedatabase import *
 from metl.database.alchemydatabase import *
-
+from metl.guessfieldset import *
+from metl.guessmanager import *
+from metl.guess import *

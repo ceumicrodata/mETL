@@ -2,7 +2,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '0.1.6.13'
+version = '0.1.6.14'
 
 setup(
     name = 'mETL',
@@ -17,7 +17,8 @@ setup(
             'metl-transform = metl.script:metl_transform',
             'metl-walk = metl.script:metl_walk',
             'metl-aggregate = metl.script:metl_aggregate',
-            'metl-differences = metl.script:metl_differences'
+            'metl-differences = metl.script:metl_differences',
+            'metl-generate = metl.script:metl_generate'
         ],
     },
     author = 'Bence Faludi',

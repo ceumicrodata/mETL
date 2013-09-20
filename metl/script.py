@@ -21,7 +21,7 @@ along with this program. If not, <see http://www.gnu.org/licenses/>.
 
 import optparse, metl.configparser, metl.manager, metl.config, sys, os, time, \
     metl.target.statictarget, metl.migration, metl.source.staticsource, \
-    metl.fieldmap, metl.fieldset, metl.fieldtype.stringfieldtype
+    metl.fieldmap, metl.fieldset, metl.fieldtype.stringfieldtype, metl.guessmanager
 from multiprocessing import Process
 
 def main( argv = sys.argv ):
@@ -337,6 +337,26 @@ def metl_differences( argv = sys.argv ):
     print 'Updated:\t%d' % ( len( updated ) )
     print 'Unchanged:\t%d' % ( len( unchanged ) )
     print 'Deleted:\t%d' % ( len( deleted ) )
+
+def metl_generate( argv = sys.argv ):
+
+    try:
+        mgr = metl.guessmanager.GuessManager( argv[-2].upper() )
+    except:
+        print 'Usage: metl-generate [options] SOURCE_TYPE CONFIG_FILE'
+        print 'Supported SOURCE_TYPEs:'
+        print '\n'.join(( ' - %s' % ( t.title() ) for t in metl.guessmanager.GuessManager.types.keys() ))
+        sys.exit()
+
+    parser = mgr.getParser()
+    (options, args) = parser.parse_args( argv[1:] )
+
+    if len([ v for v in vars( options ).values() if v is not None ]) == 1:
+        parser.print_help()
+        sys.exit()
+
+    mgr.startGuess( vars( options ) )
+    mgr.saveConfig( sys.argv[-1] )
 
 def metl_aggregate( argv = sys.argv ):
     
