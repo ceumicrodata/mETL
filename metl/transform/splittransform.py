@@ -48,7 +48,9 @@ class SplitTransform( metl.transform.base.Transform ):
 
         elif self.idx.count(u':') == 1:
             pts = self.idx.split(u':')
-            field.setValue( u' '.join( field.getValue().split( self.chars )[ int( pts[0] ) : int( pts[1] ) ] ) )
+            pts0 = None if len( pts[0] ) == 0 else int( pts[0] )
+            pts1 = None if len( pts[1] ) == 0 else int( pts[1] )
+            field.setValue( u' '.join( field.getValue().split( self.chars )[ pts0 : pts1 ] ) )
 
         else:
             field.setValue( field.getValue().split( self.chars )[ int( self.idx ) ] )

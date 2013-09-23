@@ -82,7 +82,9 @@ class FieldMap( object ):
                     elif rule_part.count(':') == 1:
                         pts = rule_part.split(':')
                         new_object = []
-                        for item in current_object[ int( pts[0] ) : int( pts[1] ) ]:
+                        pts0 = None if len( pts[0] ) == 0 else int( pts[0] )
+                        pts1 = None if len( pts[1] ) == 0 else int( pts[1] )
+                        for item in current_object[ pts0 : pts1 ]:
                             new_object.append( self.getFieldValue( 
                                 item, 
                                 rule[ rule.index( rule_part ) + len( rule_part ) + 1: ] 
@@ -98,7 +100,9 @@ class FieldMap( object ):
                 elif type( current_object ) in ( str, unicode ):
                     pts = rule_part.split(':')
                     if len( pts ) == 2:
-                        current_object = current_object[ int( pts[0] ) : int( pts[1] ) ].strip()
+                        pts0 = None if len( pts[0] ) == 0 else int( pts[0] )
+                        pts1 = None if len( pts[1] ) == 0 else int( pts[1] )
+                        current_object = current_object[ pts0 : pts1 ].strip()
 
                     else:
                         current_object = current_object[ int( rule_part ) ].strip()
