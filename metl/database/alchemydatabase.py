@@ -109,6 +109,7 @@ class AlchemyDatabase( metl.database.basedatabase.BaseDatabase ):
         return sqlalchemy.schema.Column( 
             field.getName(), 
             self.getColumnType( field.getType().getName(), field.getLimit() ) 
+            primary_key = (field.getName() == self.target.getIDKeyName())
         )
 
     # sqlalchemy.types
