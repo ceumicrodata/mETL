@@ -122,13 +122,18 @@ class AlchemyDatabase( metl.database.basedatabase.BaseDatabase ):
             primary_key = True
         )
 
+    # bool
+    def isPrimaryKey( self, field ):
+
+        return self.target.getIDKeyName() is not None and not self.target.getAddIDKey() and field.getName() == self.target.getIDKeyName()
+
     # sqlalchemy.types.Column
     def getColumnForField( self, field ):
 
         return sqlalchemy.schema.Column( 
             field.getName(), 
             self.getColumnType( field.getType().getName(), field.getLimit() ),
-            primary_key = ( self.target.getIDKeyName() is not None and not self.target.getAddIDKey() and field.getName() == self.target.getIDKeyName() )
+            primary_key = self.isPrimaryKey( field )
         )
 
     # sqlalchemy.types

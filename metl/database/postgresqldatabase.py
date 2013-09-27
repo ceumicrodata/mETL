@@ -37,7 +37,8 @@ class PostgresqlDatabase( metl.database.alchemydatabase.AlchemyDatabase ):
 
         return sqlalchemy.schema.Column( 
             field.getName().lower(), 
-            self.getColumnType( field.getType().getName(), field.getLimit() ) 
+            self.getColumnType( field.getType().getName(), field.getLimit() ),
+            primary_key = self.isPrimaryKey( field )
         )
 
     # unicode
