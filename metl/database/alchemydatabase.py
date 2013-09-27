@@ -20,8 +20,8 @@ along with this program. If not, <see http://www.gnu.org/licenses/>.
 """
 
 import sqlalchemy, sqlalchemy.sql.expression, sqlalchemy.types, random, \
-    metl.database.basedatabase, demjson
-from sqlalchemy.types import TypeDecorator, VARCHAR
+    metl.database.basedatabase, json, demjson, pickle
+from sqlalchemy.types import TypeDecorator, VARCHAR, LargeBinary
 from metl.exception import *
 
 class JSONType( TypeDecorator ):
@@ -37,7 +37,24 @@ class JSONType( TypeDecorator ):
 
     def process_result_value( self, value, dialect ):
         if value is not None:
-            value = demjson.decode(value)
+            value = json.loads(value)
+
+        return value
+
+class PickleType( TypeDecorator ):
+
+    impl = LargeBinary
+
+    def process_bind_param( self, value, dialect ):
+
+        if value is not None:
+            value = pickle.dumps(value)
+
+        return value
+
+    def process_result_value( self, value, dialect ):
+        if value is not None:
+            value = pickle.loads(value)
 
         return value
 
@@ -50,9 +67,11 @@ class AlchemyDatabase( metl.database.basedatabase.BaseDatabase ):
         'DateTimeFieldType': sqlalchemy.types.DateTime,
         'FloatFieldType': sqlalchemy.types.Numeric,
         'IntegerFieldType': sqlalchemy.types.Integer,
+        'BigIntegerFieldType': sqlalchemy.types.BigInteger,
         'ListFieldType': JSONType,
         'StringFieldType': sqlalchemy.types.Unicode,
-        'TextFieldType': sqlalchemy.types.UnicodeText
+        'TextFieldType': sqlalchemy.types.UnicodeText,
+        'PickleFieldType': PickleType # sqlalchemy.types.PickleType works only with ORM :(
     }
 
     DEFAULT_LIMIT = {
@@ -174,6 +193,7 @@ class AlchemyDatabase( metl.database.basedatabase.BaseDatabase ):
         self.metadata = sqlalchemy.MetaData()
         self.metadata.bind = self.connection.engine
         self.table = None
+        self.cursor = self.connection.connection.cursor()
 
         if not self.isExistsTable() and self.target.isCreateTable():
             self.table = self.getCreatedTable()
@@ -197,6 +217,18 @@ class AlchemyDatabase( metl.database.basedatabase.BaseDatabase ):
 
         self.db_insert_command = self.getInsertCommand()
         self.db_update_command = self.getUpdateCommand()
+        self.columns = self.target.getFieldSetPrototypeCopy().getFieldNames()
+        self.afterOpen()
+
+    # void
+    def afterOpen( self ):
+
+        pass
+
+    # list<unicode>
+    def getColumnNames( self ):
+
+        return self.columns
 
     # void
     def close( self ):

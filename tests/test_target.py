@@ -67,7 +67,7 @@ class Test_Target( unittest.TestCase ):
 
     def test_json_target( self ):
 
-        self.assertEqual( self.getHashForFile('tests/config/test_json_target.yml'), 'fd5ae206495b4e9dc624e0999eaf5082' )
+        self.assertEqual( self.getHashForFile('tests/config/test_json_target.yml', delete = False), 'fd5ae206495b4e9dc624e0999eaf5082' )
 
     def test_yaml_target( self ):
 

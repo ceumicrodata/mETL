@@ -1,8 +1,19 @@
 
 # Change Log
 
+### Version 0.1.7
+- .0: Major changes and running time reduction.
+
+	* Changed PostgreSQL target to load data more efficient (12x speed boost) by creating a workaround for psycopg2 and SQLAlchemy's slow behaviour. 
+	* JSON file loading now replaced to standard json package (from demjson) because faster with big (>100MB) files.
+	* BigInteger type is added to handle 8bit length numbers.
+   * Pickle type is added to handle serialized BLOB objects.
+
+	<br>
+	**IMPORTANT**: The alternate PostgreSQL target will work with only basic field types and lower case column names.
+   
 ### Version 0.1.6
-- .0: Changed XML converter to <a href="https://github.com/bfaludi/XML2Dict">xml2dict</a> package. 
+- .0: Changed XML converter to <a href="https://github.com/bfaludi/xmlsquash">xmlsquash</a> package. 
 
    **IMPORTANT**: It has a new XML mapping technique, all XML source map must be updated!
    

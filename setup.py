@@ -2,7 +2,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '0.1.6.14'
+version = '0.1.7.0'
 
 setup(
     name = 'mETL',

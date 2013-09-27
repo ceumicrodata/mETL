@@ -114,7 +114,7 @@ class Guess( object ):
                 if acceptable_types is None:
                     acceptable_types = types
                 else:
-                    acceptable_types.intersection( types )
+                    acceptable_types = acceptable_types.intersection( types )
 
             self.fields[ field_name ]['type'] = metl.fieldtype.unknownfieldtype.UnknownFieldType.offerType( acceptable_types )().getName()[:-9]
 

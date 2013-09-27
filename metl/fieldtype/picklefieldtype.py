@@ -19,31 +19,13 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, <see http://www.gnu.org/licenses/>.
 """
 
-import sqlalchemy, metl.fieldtype.base, json
+import metl.fieldtype.base
 
-class ListFieldType( metl.fieldtype.base.FieldType ):
+class PickleFieldType( metl.fieldtype.base.FieldType ):
             
-    field_types = [ list ]
-  
-    def getPreConvertValue( self, value ):
+    field_types = [ dict, list ]
 
-        return value is None
-
-    # int
     def getConvertedValue( self, value ):
 
-        if type( value ) in ( str, unicode ):
-            try:
-                converted = json.loads( value )
-                if type( converted ) == list:
-                    return converted
-                else:
-                    return [ converted ]
-            except:
-                return [ value ]
+        return value
 
-        try:
-            return list( value )
-
-        except:
-            return [ value ]

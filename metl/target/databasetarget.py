@@ -24,6 +24,7 @@ https://pypi.python.org/pypi/brewery/0.8.0
 
 import metl.target.base, sqlalchemy, sqlalchemy.sql.expression, random
 from metl.database.alchemydatabase import AlchemyDatabase
+from metl.database.postgresqldatabase import PostgresqlDatabase
 from metl.exception import *
 
 class DatabaseTarget( metl.target.base.Target ):
@@ -32,7 +33,8 @@ class DatabaseTarget( metl.target.base.Target ):
     resource_init = ['url','schema','table']
 
     DISPATCH = {
-        'default': AlchemyDatabase
+        'default': AlchemyDatabase,
+        'postgresql': PostgresqlDatabase
     }
 
     def __init__( self, reader, createTable = False, replaceTable = False, truncateTable = False, addIDKey = True, idKeyName = 'id', bufferSize = None, *args, **kwargs ):
@@ -59,7 +61,7 @@ class DatabaseTarget( metl.target.base.Target ):
         self.table      = table
         self.schema     = schema
 
-        self.database = self.DISPATCH.get( url[url.find(':')+1:], self.DISPATCH['default'] )( self )
+        self.database = self.DISPATCH.get( url[:url.find(':')].lower(), self.DISPATCH['default'] )( self )
 
         return self
 

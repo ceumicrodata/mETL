@@ -19,31 +19,8 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, <see http://www.gnu.org/licenses/>.
 """
 
-import sqlalchemy, metl.fieldtype.base, json
+import re, sqlalchemy, metl.fieldtype.integerfieldtype
 
-class ListFieldType( metl.fieldtype.base.FieldType ):
+class BigIntegerFieldType( metl.fieldtype.integerfieldtype.IntegerFieldType ):
             
-    field_types = [ list ]
-  
-    def getPreConvertValue( self, value ):
-
-        return value is None
-
-    # int
-    def getConvertedValue( self, value ):
-
-        if type( value ) in ( str, unicode ):
-            try:
-                converted = json.loads( value )
-                if type( converted ) == list:
-                    return converted
-                else:
-                    return [ converted ]
-            except:
-                return [ value ]
-
-        try:
-            return list( value )
-
-        except:
-            return [ value ]
+    field_types = [ int ]

@@ -50,6 +50,8 @@ from metl.fieldtype.stringfieldtype import *
 from metl.fieldtype.textfieldtype import *
 from metl.fieldtype.listfieldtype import *
 from metl.fieldtype.complexfieldtype import *
+from metl.fieldtype.bigintegerfieldtype import *
+from metl.fieldtype.picklefieldtype import *
 from metl.filter.base import *
 from metl.filter.dropbyconditionfilter import *
 from metl.filter.dropbysourcefilter import *

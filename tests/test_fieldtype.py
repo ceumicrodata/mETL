@@ -28,6 +28,8 @@ from metl.fieldtype.integerfieldtype import IntegerFieldType
 from metl.fieldtype.stringfieldtype import StringFieldType
 from metl.fieldtype.textfieldtype import TextFieldType
 from metl.fieldtype.listfieldtype import ListFieldType
+from metl.fieldtype.complexfieldtype import ComplexFieldType
+from metl.fieldtype.picklefieldtype import PickleFieldType
 from metl.exception import *
 
 class Test_FieldType( unittest.TestCase ):
@@ -46,6 +48,29 @@ class Test_FieldType( unittest.TestCase ):
         self.assertFalse( ft.getValue( 'F' ) )
         self.assertTrue( ft.getValue( True ) )
         self.assertFalse( ft.getValue( False ) )
+
+    def test_pickle_field_type( self ):
+
+        ft = PickleFieldType()
+
+        self.assertEqual( ft.getValue('monkey'), 'monkey' )
+        self.assertEqual( ft.getValue('[{"animal":"monkey","country":"hungary"}]'),'[{"animal":"monkey","country":"hungary"}]')
+        self.assertEqual( ft.getValue('{"animal":"monkey","country":"hungary"}'),'{"animal":"monkey","country":"hungary"}')
+        self.assertEqual( ft.getValue([1,2,3]), [1,2,3] )
+        self.assertEqual( ft.getValue(set([1,2,3,3,3,3])), set([1,2,3]) )
+        self.assertEqual( ft.getValue(5), 5 )
+        self.assertEqual( ft.getValue({'a':1,'b':2}), {'a':1,'b':2} )
+
+    def test_complex_field_type( self ):
+
+        ft = ComplexFieldType()
+
+        self.assertEqual( ft.getValue('monkey'), 'monkey' )
+        self.assertEqual( ft.getValue('[{"animal":"monkey","country":"hungary"}]'),[{'animal':'monkey','country':'hungary'}])
+        self.assertEqual( ft.getValue('{"animal":"monkey","country":"hungary"}'),{'animal':'monkey','country':'hungary'})
+        self.assertEqual( ft.getValue([1,2,3]), [1,2,3] )
+        self.assertEqual( ft.getValue(set([1,2,3,3,3,3])), set([1,2,3]) )
+        self.assertEqual( ft.getValue(5), 5 )
 
     def test_list_field_type( self ):
 

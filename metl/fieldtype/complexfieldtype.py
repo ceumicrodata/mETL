@@ -19,22 +19,17 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, <see http://www.gnu.org/licenses/>.
 """
 
-import sqlalchemy, metl.fieldtype.base, demjson
+import sqlalchemy, metl.fieldtype.base, json
 
 class ComplexFieldType( metl.fieldtype.base.FieldType ):
             
     field_types = [ dict, list ]
 
-    # int
-    def getConvertedValue( self, value ):
-
-        return value
-
     def getConvertedValue( self, value ):
 
         if type( value ) in ( str, unicode ):
             try:
-                return demjson.decode( value )
+                return json.loads( value )
 
             except:
                 return value

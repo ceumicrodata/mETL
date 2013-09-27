@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, <see http://www.gnu.org/licenses/>.
 """
 
-import metl.manipulation, demjson
+import metl.manipulation
 
 class Filter( metl.manipulation.Manipulation ):
 

@@ -30,6 +30,7 @@ from metl.fieldtype.stringfieldtype import *
 from metl.fieldtype.textfieldtype import *
 from metl.fieldtype.listfieldtype import *
 from metl.fieldtype.complexfieldtype import *
+from metl.fieldtype.bigintegerfieldtype import *
 
 class UnknownFieldType( metl.fieldtype.base.FieldType ):
               
@@ -74,6 +75,14 @@ class UnknownFieldType( metl.fieldtype.base.FieldType ):
     def isAcceptableIntegerType( self, value ):
 
         iv = IntegerFieldType().getValue( value )
+        fv = FloatFieldType().getValue( value )
+
+        return ( ( fv is None ) or ( fv is not None and FloatFieldType().getValue( iv ) == fv ) ) and len(str(iv)) <= 9
+
+    # bool
+    def isAcceptableBigIntegerType( self, value ):
+
+        iv = BigIntegerFieldType().getValue( value )
         fv = FloatFieldType().getValue( value )
         
         return ( fv is None ) or ( fv is not None and FloatFieldType().getValue( iv ) == fv )
@@ -126,6 +135,9 @@ class UnknownFieldType( metl.fieldtype.base.FieldType ):
         if self.isAcceptableType( 'Date', value ):
             acceptable_types.append( 'Date' )
 
+        if self.isAcceptableType( 'BigInteger', value ):
+            acceptable_types.append( 'BigInteger' )
+
         if self.isAcceptableType( 'Integer', value ):
             acceptable_types.append( 'Integer' )
 
@@ -153,11 +165,14 @@ class UnknownFieldType( metl.fieldtype.base.FieldType ):
         if 'Complex' in accepted_types:
             return ComplexFieldType
 
-        if 'Float' in accepted_types and 'Integer' not in accepted_types:
+        if 'Float' in accepted_types and 'Integer' not in accepted_types and 'BigInteger' not in accepted_types:
             return FloatFieldType
 
         if 'Integer' in accepted_types:
             return IntegerFieldType
+
+        if 'BigInteger' in accepted_types and 'Integer' not in accepted_types:
+            return BigIntegerFieldType
 
         if 'DateTime' in accepted_types:
             return DateTimeFieldType

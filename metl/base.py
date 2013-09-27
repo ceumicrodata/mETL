@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, <see http://www.gnu.org/licenses/>.
 """
 
-import codecs, os, demjson
+import codecs, os
 
 class Base( object ):
 
