@@ -116,7 +116,7 @@ class AlchemyDatabase( metl.database.basedatabase.BaseDatabase ):
     def getPrimaryKeyColumn( self, sequence = None ):
 
         return sqlalchemy.schema.Column( 
-            self.target.getIDKeyName(), 
+            self.target.getIDKeyName() or 'id', 
             sqlalchemy.types.Integer, 
             sequence,
             primary_key = True
@@ -128,7 +128,7 @@ class AlchemyDatabase( metl.database.basedatabase.BaseDatabase ):
         return sqlalchemy.schema.Column( 
             field.getName(), 
             self.getColumnType( field.getType().getName(), field.getLimit() ),
-            primary_key = (field.getName() == self.target.getIDKeyName())
+            primary_key = ( self.target.getIDKeyName() is not None and not self.target.getAddIDKey() and field.getName() == self.target.getIDKeyName() )
         )
 
     # sqlalchemy.types

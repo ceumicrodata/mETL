@@ -37,7 +37,7 @@ class DatabaseTarget( metl.target.base.Target ):
         'postgresql': PostgresqlDatabase
     }
 
-    def __init__( self, reader, createTable = False, replaceTable = False, truncateTable = False, addIDKey = True, idKeyName = 'id', bufferSize = None, *args, **kwargs ):
+    def __init__( self, reader, createTable = False, replaceTable = False, truncateTable = False, addIDKey = True, idKeyName = None, bufferSize = None, *args, **kwargs ):
         
         self.url                  = None
         self.table                = None
