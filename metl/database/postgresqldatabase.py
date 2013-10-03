@@ -20,6 +20,7 @@ along with this program. If not, <see http://www.gnu.org/licenses/>.
 """
 
 import metl.database.alchemydatabase, sqlalchemy.schema
+from metl.target.csvtarget import *
 from StringIO import StringIO
 
 class PostgresqlDatabase( metl.database.alchemydatabase.AlchemyDatabase ):
@@ -41,27 +42,37 @@ class PostgresqlDatabase( metl.database.alchemydatabase.AlchemyDatabase ):
             primary_key = self.isPrimaryKey( field )
         )
 
-    # unicode
-    def getTabSeparatedRecord( self, buffer_item ):
+    # list
+    def getListRecord( self, buffer_item ):
 
-        v = []
-        for column_name in self.getColumnNames():
-            v.append( unicode( buffer_item.get( column_name ) or '\N' ) )
-
-        return u'\t'.join(v)
+        return ( unicode( buffer_item.get( column_name ) ) for column_name in self.getColumnNames() )
 
     # StringIO
     def getBufferContent( self, buffer ):
 
-        return StringIO( u'\n'.join( self.getTabSeparatedRecord( b ) for b in buffer ) + u'\n' )
+        pointer = StringIO()
+        writer = UnicodeWriter( 
+            pointer, 
+            delimiter = ',', 
+            quotechar = '`',
+            encoding = 'utf-8'
+        )
+
+        for b in buffer:
+            writer.writerow( self.getListRecord( b ) )
+
+        pointer.seek(0)
+        return pointer
 
     # void
     def alternateInsert( self, buffer ):
 
-        self.cursor.copy_from( 
-            self.getBufferContent( buffer ), 
-            self.target.getTableName(), 
-            columns = map( str.lower, self.getColumnNames() )
+        self.cursor.copy_expert(
+            "COPY %(table)s (%(columns)s) FROM STDIN WITH CSV NULL 'None' QUOTE '`' ESCAPE '`' DELIMITER ','" % {
+                'table': self.target.getTableName(),
+                'columns': u', '.join( map( str.lower, self.getColumnNames() ) )
+            },
+            self.getBufferContent( buffer )
         )
 
         self.connection.connection.commit()
