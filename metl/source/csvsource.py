@@ -96,7 +96,7 @@ class CSVSource( metl.source.base.FileSource ):
         if self.headerRow is None:
             return
 
-        if self.current == self.headerRow:
+        if self.current == int( self.headerRow ):
             self.headers = record
 
     # list
