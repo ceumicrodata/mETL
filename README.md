@@ -145,7 +145,7 @@ Four groups are differentiated in case of manipulations:
 
 ## Installation
 As a traditional Python package, installation can the most easily be carried out with the help of the following command int he mELT directory:  
-`python setup.py install`
+`python setup.py install` or `easy_install mETL`
 Then the package can be tested with the following command:  
 `python setup.py test`
 The package has the following dependancies: python-dateutil, xlrd, gdata, demjson, pyyaml, sqlalchemy, xlwt, tarr, nltk, xlutils, xmlsquash

@@ -25,8 +25,7 @@ setup(
     author_email = 'b.faludi@mito.hu',
     license = 'GPL',
     dependency_links = [
-        'https://github.com/ceumicrodata/tarr/archive/tarr-0.1.1.zip',
-        'https://github.com/bfaludi/xmlsquash/archive/master.zip#egg=xmlsquash-0.1.1'
+        'https://github.com/ceumicrodata/tarr/archive/tarr-0.1.1.zip'
     ],
     install_requires = [
         'python-dateutil',
