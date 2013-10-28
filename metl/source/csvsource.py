@@ -82,11 +82,18 @@ class CSVSource( metl.source.base.FileSource ):
             realm = self.htaccess_realm,
             host = self.htaccess_host
         )
+        csv_params = {
+            'delimiter': self.delimiter,
+            'encoding': self.getEncoding()
+        }
+        if len(self.quote):
+            csv_params['quotechar'] = self.quote
+        else:
+            csv_params['quoting'] = csv.QUOTE_NONE
+
         self.file_reader  = UnicodeReader( 
             self.file_pointer, 
-            delimiter = self.delimiter, 
-            quotechar = self.quote,
-            encoding = self.getEncoding()
+            ** csv_params
         )
         return self.base_initialize()
 
