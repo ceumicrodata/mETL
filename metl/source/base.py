@@ -95,7 +95,7 @@ class Source( metl.reader.Reader ):
         if init:
             self.offset += int( number )
         else:
-            self.offset = int( number ) or 0
+            self.offset = int( number or 0 )
 
     # FieldSet
     def getFieldSetWithValue( self, value ):
