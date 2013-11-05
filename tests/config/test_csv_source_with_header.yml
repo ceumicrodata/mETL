@@ -5,6 +5,7 @@ source:
   delimiter: "|"
   headerRow: 0
   skipRows: 1
+  quote: ""
   map:
     id: varosresz_id
     name: nev

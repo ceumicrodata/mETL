@@ -86,7 +86,7 @@ class CSVSource( metl.source.base.FileSource ):
             'delimiter': self.delimiter,
             'encoding': self.getEncoding()
         }
-        if len(self.quote):
+        if self.quote is not None and len( self.quote ):
             csv_params['quotechar'] = self.quote
         else:
             csv_params['quoting'] = csv.QUOTE_NONE
