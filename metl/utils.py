@@ -117,6 +117,7 @@ from metl.target.tsvtarget import *
 from metl.target.xlstarget import *
 from metl.target.xmltarget import *
 from metl.target.yamltarget import *
+from metl.target.googlespreadsheettarget import *
 from metl.base import *
 from metl.manipulation import *
 from metl.reader import *

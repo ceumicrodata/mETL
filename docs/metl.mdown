@@ -1940,6 +1940,30 @@ YAML konfigurációra példa:
 	  type: FixedWidthText
 	  resurce: utvonal/output.txt
 	  
+#### GoogleSpreadsheet
+Spreadsheet állományok esetén használatos cél típus. Inicializálásának paraméterei:
+
+- **addHeader**: A mezők elnevezéseit tegyük-e fel az első sorba, mint header. Alapértelmezetten teszünk.
+
+Cél helyszínének megadásához szükséges további paraméterek:
+
+- **username**: Felhasználó neve.
+- **password**: Jelszava.
+- **spreadsheetKey**: Írni szándékozott spreadsheet azonosítója.
+- **spreadsheetName**: Írni szándékozott spreadsheet neve. spreadsheetKey vagy spreadsheetName egyikének a megadása kötelező!
+- **worksheetName**: Munkalap neve. Amennyiben nem létezik, automatikusan létrehozzuk.
+- **truncateSheet**: Ürítse-e a munkalap tartalmát. Alapéretelmezetten nem teszi.
+
+YAML konfigurációra példa:
+
+	target:
+	  type: GoogleSpreadsheet
+	  username: ***
+	  password: ***
+	  spreadsheetKey: 0ApA_54tZDwKTdDlibXppSkd1MExxb3Y5WmJrZjFxR1E
+	  worksheetName: Sheet1
+
+	   
 #### JSON
 JSON állományok esetén használatos cél típus. Inicializálásának paraméterei:
 

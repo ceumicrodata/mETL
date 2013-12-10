@@ -12,6 +12,8 @@
 	<br>
 	**IMPORTANT**: The alternate PostgreSQL target will work with only basic field types and lower case column names.
    
+- .1: Added GoogleSpreadsheetTarget to write and update Spreadsheet files.
+
 ### Version 0.1.6
 - .0: Changed XML converter to <a href="https://github.com/bfaludi/xmlsquash">xmlsquash</a> package. 
 

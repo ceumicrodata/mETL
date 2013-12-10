@@ -2,7 +2,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '0.1.7.0'
+version = '0.1.7.1'
 
 setup(
     name = 'mETL',
@@ -38,7 +38,8 @@ setup(
         'nltk',
         'tarr',
         'xlutils',
-        'xmlsquash'
+        'xmlsquash',
+        'gspread'
     ],
     test_suite = "tests"
 )
