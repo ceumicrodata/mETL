@@ -14,7 +14,7 @@ Leggyakoribb fájlformátumokra biztosít a program aktuális verziója támogat
 
 **Cél típusok:**
 
-- CSV, TSV, XLS - fájl folytatással is
+- CSV, TSV, XLS, Google SpreadSheet - fájl folytatással is
 - Fix szélességű fájl
 - PostgreSQL, MySQL, Oracle, SQLite, Microsoft SQL Server - módosítás céllal is
 - JSON, XML, YAML
@@ -64,6 +64,7 @@ Manupulációk esetében négy csoportot különböztetünk meg:
    Bővítésre használjuk, ha további értékeket szeretnénk a jelenlegi forrás után helyezni.
 
    - **Append**: Mostanival teljesen megegyező forrásállomány beszúrása a folyamatba az aktuális után.
+   - **AppendAll**: Mappán szalad végig és a teljesen megegyező forrásállományokat beszűrja a folyamatba.
    - **AppendBySource**: Másik forrás állomány tartalma szúrható az eredeti forrás után.
    - **Field**: Paraméterül megadott oszlopokat egy másik oszlopba gyűjt össze az oszlop értékeivel.
    - **BaseExpander**: Kiterjesztésre használható osztály, elsődleges feladata olyan esetben van, ahol egy rekordot többszöröznénk meg.
@@ -1712,7 +1713,22 @@ Példa YAML konfigurációra:
 	  skipIfFails: true
 	  logFile: log/otherfile.txt
       appendLog: true
-    
+
+##### AppendAll
+Az épp akutális forrással teljesen megyező formátumú állományok beolvasására és az akutális folyamatba történő behelyezésére ad lehetőséget. Paraméterei:
+
+ - **folder**: Mappa amelyben levő fájlokat hozzá kell szúrnia a végére. Amennyiben tartalmazza a kiinduló állományt, őt figyelmen kívül hagyja.
+ - **extension**: Kiterjesztésű fájlokon jár csak végig.
+
+Fontos, hogy **új mezőkkel nem bővíti a korábbi forrást**, minden ugyanúgy folytatódik, mint ha egy másik `resource`-t kapott volna az aktuális állomány, `modifier`-ek és `target` nélkül. `Append`-et hoz létre minden fájlra, és úgy történik a folyamat végrehajtása.
+
+Példa YAML konfigurációra:
+		
+	- expand: AppendAll
+	  folder: source/oc
+	  extension: xml
+	    
+      
 ##### AppendBySource
 Másik forrás állomány tartalma szúrható az eredeti forrás után. Inicializáláshoz összesen egy `source`-t vár minden szükséges paraméterével együtt. 
 

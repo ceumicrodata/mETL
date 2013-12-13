@@ -38,6 +38,7 @@ from metl.expand.appendexpand import *
 from metl.expand.listexpanderexpand import *
 from metl.expand.fieldexpand import *
 from metl.expand.meltexpand import *
+from metl.expand.appendallexpand import *
 from metl.field import Field
 from metl.fieldmap import *
 from metl.fieldset import *
