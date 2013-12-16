@@ -40,6 +40,11 @@ class BaseDatabase( object ):
         raise RuntimeError('BaseDatabaseHandler.close() function is not implemented!')
 
     # void
+    def iterateInsert( self, buffer ):
+
+         raise RuntimeError('BaseDatabaseHandler.iterateInsert() function is not implemented!')
+
+    # void
     def insert( self, buffer ):
 
         raise RuntimeError('BaseDatabaseHandler.insert() function is not implemented!')
@@ -53,7 +58,14 @@ class BaseDatabase( object ):
     def execute( self, insert_buffer, update_buffer ):
 
         if len( insert_buffer ) != 0:
-            self.insert( insert_buffer )
+            if self.target.isContinueOnError():
+                try:
+                    self.insert( insert_buffer )
+                except:
+                    self.iterateInsert( insert_buffer )
+            
+            else:
+                self.insert( insert_buffer )
 
         if len( update_buffer ) != 0:
             self.update( update_buffer )

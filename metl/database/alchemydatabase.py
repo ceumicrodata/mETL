@@ -237,6 +237,16 @@ class AlchemyDatabase( metl.database.basedatabase.BaseDatabase ):
         return self.columns
 
     # void
+    def iterateInsert( self, buffer ):
+
+        for b in buffer:
+            try:
+                self.connection.execute( self.db_insert_command, [b] )
+            except:
+                print 'Error in buffer element', b
+                pass
+
+    # void
     def close( self ):
 
         self.connection.close()

@@ -29,7 +29,7 @@ from metl.exception import *
 
 class DatabaseTarget( metl.target.base.Target ):
 
-    init = ['createTable','replaceTable','truncateTable','addIDKey','idKeyName','bufferSize']
+    init = ['createTable','replaceTable','truncateTable','addIDKey','idKeyName','bufferSize','continueOnError']
     resource_init = ['url','schema','table']
 
     DISPATCH = {
@@ -37,7 +37,7 @@ class DatabaseTarget( metl.target.base.Target ):
         'postgresql': PostgresqlDatabase
     }
 
-    def __init__( self, reader, createTable = False, replaceTable = False, truncateTable = False, addIDKey = True, idKeyName = None, bufferSize = None, *args, **kwargs ):
+    def __init__( self, reader, createTable = False, replaceTable = False, truncateTable = False, addIDKey = True, idKeyName = None, bufferSize = None, continueOnError = False, *args, **kwargs ):
         
         self.url                  = None
         self.table                = None
@@ -48,6 +48,7 @@ class DatabaseTarget( metl.target.base.Target ):
         self.truncateTable        = truncateTable
         self.addIDKey             = addIDKey
         self.idKeyName            = idKeyName
+        self.continueOnError      = continueOnError
         self.bufferSize           = bufferSize or int( random.random()*10000+5000 )
         self.db_insert_buffer     = []
         self.db_update_buffer     = []
@@ -96,6 +97,10 @@ class DatabaseTarget( metl.target.base.Target ):
     def isTruncateTable( self ):
 
         return self.truncateTable
+
+    def isContinueOnError( self ):
+
+        return self.continueOnError
 
     # void
     def initialize( self ):
