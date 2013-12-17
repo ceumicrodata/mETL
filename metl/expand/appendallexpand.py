@@ -86,11 +86,8 @@ class AppendAllExpand( metl.expand.base.Expand ):
             yield record
 
         for resource in self.getResources():
-            print
-            print resource
             e = self.getAppendExpander( resource )
             e.initialize()
             for record in e.getNewRecords():
-                print '.',
                 yield record
 
