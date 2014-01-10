@@ -139,7 +139,11 @@ class AlchemyDatabase( metl.database.basedatabase.BaseDatabase ):
     # sqlalchemy.types
     def getColumnType( self, field_type, field_limit ):
 
-        return self.TYPES[ field_type ]( field_limit or self.DEFAULT_LIMIT.get( field_type ) )
+        limit = field_limit or self.DEFAULT_LIMIT.get( field_type )
+        if limit is None:
+            return self.TYPES[ field_type ]()
+
+        return self.TYPES[ field_type ]( limit )
 
     # void
     def addColumn( self, table, column ):
