@@ -27,6 +27,7 @@ class BaseDatabase( object ):
     def __init__( self, target ):
 
         self.target        = target
+        self.session       = None
         self.connection    = None
 
     # void
@@ -54,18 +55,27 @@ class BaseDatabase( object ):
 
         raise RuntimeError('BaseDatabaseHandler.update() function is not implemented!')
 
+    # type
+    def run( self, insert_buffer, update_buffer ):
+
+        return self.target.getFunction()( self.connection, insert_buffer, update_buffer )
+
     # void
     def execute( self, insert_buffer, update_buffer ):
 
-        if len( insert_buffer ) != 0:
-            if self.target.isContinueOnError():
-                try:
+        if self.target.isTable():
+            if len( insert_buffer ) != 0:
+                if self.target.isContinueOnError():
+                    try:
+                        self.insert( insert_buffer )
+                    except:
+                        self.iterateInsert( insert_buffer )
+                
+                else:
                     self.insert( insert_buffer )
-                except:
-                    self.iterateInsert( insert_buffer )
-            
-            else:
-                self.insert( insert_buffer )
 
-        if len( update_buffer ) != 0:
-            self.update( update_buffer )
+            if len( update_buffer ) != 0:
+                self.update( update_buffer )
+
+        if self.target.isFunction():
+            self.run( insert_buffer, update_buffer )

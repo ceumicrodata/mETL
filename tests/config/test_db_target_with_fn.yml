@@ -1,0 +1,6 @@
+base: tests/config/test_basic_target.yml
+
+target:
+  type: Database
+  url: sqlite:///tests/target
+  fn: tests.test_target.RunFunctionQuery

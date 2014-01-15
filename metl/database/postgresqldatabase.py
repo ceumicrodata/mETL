@@ -28,6 +28,9 @@ class PostgresqlDatabase( metl.database.alchemydatabase.AlchemyDatabase ):
     # void
     def afterOpen( self ):
 
+        if not self.target.isTable():
+            return
+
         naming_cond = [ col.name for col in self.table.c if col.name in map( str.lower, self.getColumnNames() ) ]
         type_cond   = [ name for name, field in self.target.getFieldSetPrototypeCopy().getFields().items() if field.getType().getName() in [ 'ListFieldType', 'ComplexFieldType', 'PickleFieldType' ] ]
         if len( naming_cond ) == len( self.getColumnNames() ) and len( type_cond ) == 0:

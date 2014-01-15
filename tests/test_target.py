@@ -103,6 +103,29 @@ class Test_Target( unittest.TestCase ):
         with self.assertRaises( ResourceNotExistsError ):
             self.getHashForFile('tests/config/test_db_target_not_exist_table.yml')
 
+    def test_db_target_without_table_and_fn( self ):
+
+        with self.assertRaises( ParameterError ):
+            self.getHashForFile('tests/config/test_db_target_without_table_and_fn.yml')
+
+    def test_db_target_with_fn( self ):
+
+        self.getHashForFile('tests/config/test_db_target_with_fn.yml', delete = False )
+
+        s = DatabaseSource( FieldSet([ 
+            Field( 'lat', FloatFieldType() )
+        ]))
+        s.setResource( url = 'sqlite:///tests/target', table = 'result' )
+        s.initialize()
+        records = [ r.getField('lat').getValue() for r in s.getRecords() ]
+        s.finalize()
+
+        self.assertEqual( len(records), 187 )
+        self.assertEqual( records[:5], [ 47.5487066254, 47.5268950165, 47.5997870304, 47.5906976355, 47.5713306295 ] )
+        self.assertEqual( records[-5:], [ 47.4839168553, 47.4743399473, 47.4634649166, 47.4703229377, 47.47670395 ] )
+
+        os.unlink( 'tests/target' )
+
     def test_db_target_table( self ):
 
         self.getHashForFile('tests/config/test_db_target_table.yml', delete = False )
@@ -174,6 +197,25 @@ class Test_Target( unittest.TestCase ):
 
         self.assertEquals( 255, target.database.table.c.name.type.length )
         self.assertEquals( 130, target.database.table.c.name_limited.type.length )
+
+def RunFunctionQuery( connection, insert_buffer, update_buffer ):
+
+    connection.execute(
+        """
+        CREATE TABLE result (
+            lat numeric,
+            lng numeric
+        );
+        """
+    )
+
+    for item in insert_buffer:
+        connection.execute(
+            """
+            INSERT INTO result ( lat, lng ) VALUES ( :lat, :lng );
+            """,
+            item
+        )
 
 if __name__ == '__main__':
     unittest.main()

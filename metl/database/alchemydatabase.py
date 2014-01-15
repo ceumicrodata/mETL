@@ -202,32 +202,36 @@ class AlchemyDatabase( metl.database.basedatabase.BaseDatabase ):
         self.connection = engine.connect()
         self.metadata = sqlalchemy.MetaData()
         self.metadata.bind = self.connection.engine
+
         self.table = None
         self.cursor = self.connection.connection.cursor()
 
-        if not self.isExistsTable() and self.target.isCreateTable():
-            self.table = self.getCreatedTable()
-            now_created   = True
+        if self.target.isTable():
+            if not self.isExistsTable() and self.target.isCreateTable():
+                self.table = self.getCreatedTable()
+                now_created   = True
+            
+            if not self.isExistsTable() and self.table is None:
+                raise ResourceNotExistsError( 'Table %s does not exist!' % ( self.table ) )
+
+            if self.isExistsTable() and self.target.isReplaceTable() and not now_created:
+                self.table = self.getTable( autoload = False )
+                self.table.drop( checkfirst = False )
+                self.table = self.getCreatedTable()
+
+            if self.isExistsTable() and not self.target.isReplaceTable() and self.target.isTruncateTable() and not now_created:
+                self.table = self.getTable( autoload = False )
+                self.table.delete().execute()
+                self.table = self.getTable( autoload = True, extend_existing = True )
+
+            if self.table is None:
+                self.table = self.getTable( autoload = True, extend_existing = True )
+
+            self.db_insert_command = self.getInsertCommand()
+            self.db_update_command = self.getUpdateCommand()
+
+            self.columns = self.target.getFieldSetPrototypeCopy().getFieldNames()
         
-        if not self.isExistsTable() and self.table is None:
-            raise ResourceNotExistsError( 'Table %s does not exist!' % ( self.table ) )
-
-        if self.isExistsTable() and self.target.isReplaceTable() and not now_created:
-            self.table = self.getTable( autoload = False )
-            self.table.drop( checkfirst = False )
-            self.table = self.getCreatedTable()
-
-        if self.isExistsTable() and not self.target.isReplaceTable() and self.target.isTruncateTable() and not now_created:
-            self.table = self.getTable( autoload = False )
-            self.table.delete().execute()
-            self.table = self.getTable( autoload = True, extend_existing = True )
-
-        if self.table is None:
-            self.table = self.getTable( autoload = True, extend_existing = True )
-
-        self.db_insert_command = self.getInsertCommand()
-        self.db_update_command = self.getUpdateCommand()
-        self.columns = self.target.getFieldSetPrototypeCopy().getFieldNames()
         self.afterOpen()
 
     # void

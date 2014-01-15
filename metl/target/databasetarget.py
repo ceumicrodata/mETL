@@ -22,7 +22,7 @@ THIS FILE IS BASED ON BREWERY PYTHON DS CLASS!
 https://pypi.python.org/pypi/brewery/0.8.0
 """
 
-import metl.target.base, sqlalchemy, sqlalchemy.sql.expression, random
+import metl.target.base, sqlalchemy, sqlalchemy.sql.expression, random, inspect, metl.configparser
 from metl.database.alchemydatabase import AlchemyDatabase
 from metl.database.postgresqldatabase import PostgresqlDatabase
 from metl.exception import *
@@ -30,7 +30,7 @@ from metl.exception import *
 class DatabaseTarget( metl.target.base.Target ):
 
     init = ['createTable','replaceTable','truncateTable','addIDKey','idKeyName','bufferSize','continueOnError']
-    resource_init = ['url','schema','table']
+    resource_init = ['url','schema','table', 'fn']
 
     DISPATCH = {
         'default': AlchemyDatabase,
@@ -42,6 +42,7 @@ class DatabaseTarget( metl.target.base.Target ):
         self.url                  = None
         self.table                = None
         self.schema               = None
+        self.func                 = None
         self.database             = None
         self.createTable          = createTable
         self.replaceTable         = replaceTable
@@ -56,15 +57,33 @@ class DatabaseTarget( metl.target.base.Target ):
         super( DatabaseTarget, self ).__init__( reader, *args, **kwargs )
 
     # void
-    def setResource( self, url, table, schema = None ):
+    def setResource( self, url, table = None, schema = None, fn = None ):
+
+        if table is None and fn is None:
+            raise ParameterError('DatabaseTarget table or fn attribute is required!')
 
         self.url        = url
         self.table      = table
         self.schema     = schema
 
+        if fn is not None:
+            if inspect.ismethod( fn ) or inspect.isfunction( fn ):
+                self.func = fn
+
+            else:
+                self.func = metl.configparser.lookupClass( fn )
+
         self.database = self.DISPATCH.get( url[:url.find(':')].lower(), self.DISPATCH['default'] )( self )
 
         return self
+
+    def isFunction( self ):
+
+        return self.func is not None
+
+    def isTable( self ):
+
+        return self.table is not None
 
     def getConnectionURL( self ):
 
@@ -85,6 +104,10 @@ class DatabaseTarget( metl.target.base.Target ):
     def getAddIDKey( self ):
 
         return self.addIDKey
+
+    def getFunction( self ):
+
+        return self.func
 
     def isCreateTable( self ):
 

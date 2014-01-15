@@ -1922,11 +1922,13 @@ Ha adatbázisba szeretnénk írni a rekordjainkat, akkor használjuk ezt a célt
 - **truncateTable**: Ürítse-e a már létező táblát, hogy üres állapotba történjen a rekordok írása. Alapértelmezetten nem teszi. Fontos megjegyezni, ha a `replaceTable` értéke igazra van állítva, akkor mindenképpen üres állapotba kerül a tábla, így ennek megadása nem szükséges.
 - **addIDKey**: Adjon-e egyértelmű kulcsot autoincrement szekvenciával a táblához a létrehozás pillanatában. Alapértelmezetten megteszi.
 - **idKeyName**: Ha az `addIDKey` értéke igaz, mi legyen annak az oszlopnak a neve. Nem lehet ilyen nevű oszlop a kiírandó értékek között.
+- **continueOnError**: Írás/módosítás esetén ha hiba történik (pl.: Foreign Key nem szerepel) kihagyható a sor. Alapértelmezetten ki van kapcsolva.
 
 Cél helyszínének megadásához szükséges további paraméterek:
 
 - **url**: Adatbázis kapcsolódás linkje.
-- **table**: Tábla neve, amibe írni szeretnénk.
+- **table**: Tábla neve, amibe írni szeretnénk. Ha megadjuk az írás/módosítást automatikusan elvégzi a rendszer.
+- **fn**: Függvény neve, amivel írni/módosítani fogunk. Megadása akkor kötelező, ha táblát nem adunk. Érdemes használni, ha nem feltétlenül egy táblába, hanem komoly Foreign Key-es környezetbe kell több táblába írni. Ha van megadva `table` és `fn` is, akkor az automatikus írás is és a függvény hívás is megtörténik!
 - **schema**: Schema megnevezése, amiben a tábla található. Megadása nem kötelező.
 
 YAML konfigurációra példa:
@@ -1939,6 +1941,29 @@ YAML konfigurációra példa:
 	  createTable: true
 	  replaceTable: true
 	  truncateTable: true
+	  
+vagy
+
+	target:
+	  type: Database
+	  url: sqlite:///tests/target
+	  fn: mgmt.RunFunctionQuery
+	  
+a következő Python állománnyal:
+
+	def RunFunctionQuery( connection, insert_buffer, update_buffer ):
+	
+	    for item in insert_buffer:
+	        connection.execute(
+	            """
+	            INSERT INTO result ( lat, lng ) VALUES ( :lat, :lng );
+	            """,
+	            item
+	        )
+	        
+	        ...
+	        
+`fn` megadásának fő haszna azonban migrációk készítésekor van. Példa később.
 
 #### FixedWidthText
 Fix szélességű állományok esetén használatos cél típus. Inicializálásának paraméterei:
@@ -2150,6 +2175,32 @@ Jól látszik, hogy csak és kizárólag target-et kell megadni, hisz a többir�
 
 Természetesen az eredeti konfigurációs állományban egyetlen `id` mező tartalmazta a `key` beállítást.
 **A fenti script csak azonos típusú migrációk között használható!!!**
+
+Azonban legtöbbször a módosítást, vagy a törölt rekordok listájára teljesen más miatt van szükség. Gyakoribb, hogy egy teljes migráció új rekordjait egy adatbázisba írjuk, a törölt rekordokat azonban inaktiválnánk. Erre használatos a `DatabaseTarget` `fn` attribútuma.
+
+`metl-differences -d delete.yml migration/current.pickle migration/prev.pickle`
+
+esetén a delete.yml tartalma:
+
+	target:
+	  type: Database
+	  url: sqlite:///database.db
+	  fn: mgmt.inactivateRecords
+
+míg, az mgmt.py állomány tartalma pedig:
+
+	def inactivateRecords( connection, delete_buffer, other_buffer ):
+	    
+	    connection.execute( 
+	    	"""
+	        UPDATE
+	            t_result
+	        SET
+	            active = FALSE
+	        WHERE
+	            id = ANY( VALUES %s )
+	        """ % ( ', '.join( [ "('%(key)s')" % b for b in delete_buffer ] ) ) 
+	    )
 
 ## Példa
 Most hogy túljutottunk az eszköz által nyújtott rövid lehetőségeken, nézzünk meg pár dolog, hogy mire is lehet használni.

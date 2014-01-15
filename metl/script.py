@@ -274,6 +274,14 @@ def metl_differences( argv = sys.argv ):
     parser = optparse.OptionParser(
         usage = 'Usage: %prog [options] CURRENT_MIGRATION LAST_MIGRATION'
     )
+
+    parser.add_option(
+        "-p",
+        "--path",
+        dest = "path",
+        default = None,
+        help = "Conveyance of a folder, which is added to the PATH variable in order that the link in the YAML configuration could be run on an outside python file."
+    )
     
     parser.add_option(
         '-d',
@@ -309,6 +317,10 @@ def metl_differences( argv = sys.argv ):
     if len( args ) != 2:
         parser.print_help()
         sys.exit()
+
+    if options.path is not None:
+        absdirectory = os.path.abspath( options.path )
+        sys.path.append( absdirectory )
 
     new_migration = metl.migration.Migration( args[0] )
     new_migration.initialize()
