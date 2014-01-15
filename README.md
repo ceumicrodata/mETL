@@ -6,12 +6,12 @@
 
    * DatabaseTarget has a new attribute which is allowing to continue the write/update process when error happens.
    
-         target:
-            type: Database
-            url: sqlite:///database.db
-            table: t_table
-            createTable: true
-            continueOnError: true
+            target:
+               type: Database
+               url: sqlite:///database.db
+               table: t_table
+               createTable: true
+               continueOnError: true
    
    * Execute function on DatabaseTarget. 
    
@@ -19,29 +19,29 @@
      
       In 0.1.7 inactivate deleted records was sluggish, currently it's quite easy.
       
-         metl-differences -d delete.yml migration/current.pickle migration/prev.pickle
+            metl-differences -d delete.yml migration/current.pickle migration/prev.pickle
 
       where delete.yml is the following:
 
-         target:
-            type: Database
-            url: sqlite:///database.db
-            fn: mgmt.inactivateRecords
+            target:
+               type: Database
+               url: sqlite:///database.db
+               fn: mgmt.inactivateRecords
 
       mgmt.py is contains:
 
-         def inactivateRecords( connection, delete_buffer, other_buffer ):
-                
-            connection.execute( 
-               """
-               UPDATE
-                   t_table
-               SET
-                   active = FALSE
-               WHERE
-                   id IN ( %s )
-               """ % ( ', '.join( [ b['key'] for b in delete_buffer ] ) ) 
-            )
+            def inactivateRecords( connection, delete_buffer, other_buffer ):
+                   
+               connection.execute( 
+                  """
+                  UPDATE
+                      t_table
+                  SET
+                      active = FALSE
+                  WHERE
+                      id IN ( %s )
+                  """ % ( ', '.join( [ b['key'] for b in delete_buffer ] ) ) 
+               )
 
 
 ### Version 0.1.7
