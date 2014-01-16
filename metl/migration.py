@@ -78,12 +78,12 @@ class Migration( object ):
 
         else: 
             record_key = record.getKey()
-            if record_key in self.getMigrationData().keys():
+            try:
                 if self.getMigrationData()[ record_key ] != record.getHash():
                     return { 'exists': True, 'modified': True }
                 else:
                     return { 'exists': True, 'modified': False }
-            else:
+            except:
                 return { 'exists': False }
 
     # type

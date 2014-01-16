@@ -13,6 +13,7 @@
                createTable: true
                continueOnError: true
    
+   * Migration on big dataset running time optimization.
    * Execute function on DatabaseTarget. 
    
       You could use to load data into special or multiple table in one time or trigger changes (deleted, changed, ...) on records based on migration differences.
