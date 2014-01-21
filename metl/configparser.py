@@ -204,7 +204,7 @@ class ConfigParser( object ):
             resource_params['resource'] = self.source_resource
 
         source.setResource( **resource_params )
-        source.setLogFile( **getMore( cfg, ['logFile','appendLog'], only = True ) )
+        source.setLogFile( **getMore( cfg, ['logFile','appendLog','logger'], only = True ) )
 
         return source
 
@@ -265,7 +265,7 @@ class ConfigParser( object ):
                     self.getLastReader(),
                     **params 
                 )
-                obj.setLogFile( **getMore( transformConfig, ['logFile','appendLog'], only = True ) )
+                obj.setLogFile( **getMore( transformConfig, ['logFile','appendLog','logger'], only = True ) )
             except Exception as inst:
                 if self.debug:
                     traceback.print_exc()
@@ -337,5 +337,5 @@ class ConfigParser( object ):
             **getMore( target_config, target_cls.init, only = True ) 
         )
         self.target.setResource( **getMore( target_config, target_cls.resource_init, only = True ) )
-        self.target.setLogFile( **getMore( target_config, ['logFile'], only = True ) )
+        self.target.setLogFile( **getMore( target_config, ['logFile','logger'], only = True ) )
 

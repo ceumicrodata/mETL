@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, <see http://www.gnu.org/licenses/>.
 """
 
-import unittest
+import unittest, os, hashlib
 from metl.config import Config
 from metl.field import Field
 from metl.fieldset import FieldSet
@@ -178,6 +178,45 @@ class Test_Filter( unittest.TestCase ):
             [ 'Sergeant Strawberry', 'Sergeant Strawberry@metl-test-data.com' ]
         ])
 
+    def test_logger_filter_default( self ):
+
+        filtr = DropByConditionFilter( 
+            self.reader,
+            condition = IsEqualCondition( 2008 ),
+            fieldNames = 'year'
+        )
+        filtr.setLogFile( 
+            logFile = 'tests/logger', 
+            appendLog = False, 
+            logger = None 
+        )
+        filtr.initialize()
+        records = [ r for r in filtr.getRecords() ]
+        filtr.finalize()
+
+        hashcode = hashlib.md5( open( 'tests/logger', 'rb' ).read() ).hexdigest()
+        os.unlink( 'tests/logger' )
+        self.assertEqual( hashcode, '95eff99740e2d8d2b50808357e006293' )
+
+    def test_logger_filter_fn( self ):
+
+        filtr = DropByConditionFilter( 
+            self.reader,
+            condition = IsEqualCondition( 2008 ),
+            fieldNames = 'year'
+        )
+        filtr.setLogFile( 
+            logFile = 'tests/logger', 
+            appendLog = False, 
+            logger = 'tests.test_filter.notDroppedLogger' 
+        )
+        filtr.initialize()
+        records = [ r for r in filtr.getRecords() ]
+        filtr.finalize()
+
+        hashcode = hashlib.md5( open( 'tests/logger', 'rb' ).read() ).hexdigest()
+        os.unlink( 'tests/logger' )
+        self.assertEqual( hashcode, '3c30fe720f1b410fce6cf17651978b13' )
 
     def test_drop_by_condition_filter( self ):
 
@@ -273,6 +312,13 @@ class Test_Filter( unittest.TestCase ):
 
         self.assertEqual( len( records ), 2 )
         self.assertEqual( records[-1].getField('name').getValue(), 'Nocturnal Raven' )
+
+def notDroppedLogger( self, record, is_filtered ):
+
+    if is_filtered:
+        return
+
+    self.getLogFilePointer().write( unicode( record.getValues() ) )
 
 if __name__ == '__main__':
     unittest.main()

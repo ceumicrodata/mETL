@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, <see http://www.gnu.org/licenses/>.
 """
 
-import metl.manipulation
+import metl.manipulation, demjson
 
 class Filter( metl.manipulation.Manipulation ):
 
@@ -32,8 +32,16 @@ class Filter( metl.manipulation.Manipulation ):
     def getRecords( self ):
 
         for record in self.getReader().getRecords():
-            if not self.isFiltered( record ):
+            filtered = self.isFiltered( record )
+            if not filtered:
                 yield record
+            
+            self.log( self, record, filtered )
 
-            else:
-                self.log( record )
+    # void
+    def logActive( self, ftr, record, is_filtered ):
+
+        if not is_filtered:
+            return
+
+        self.log_file_pointer.write( '%s: %s\n' % ( record.getID(), demjson.encode( record.getValues( class_to_string = True ) ) ) )

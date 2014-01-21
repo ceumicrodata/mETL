@@ -44,6 +44,7 @@
                   """ % ( ', '.join( [ b['key'] for b in delete_buffer ] ) ) 
                )
 
+- .1: Added logger attribute to Source/Manipulation/Target elements to define specific logger method.
 
 ### Version 0.1.7
 - .0: Major changes and running time reduction.

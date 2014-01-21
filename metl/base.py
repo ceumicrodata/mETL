@@ -19,24 +19,30 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, <see http://www.gnu.org/licenses/>.
 """
 
-import codecs, os
+import codecs, os, metl.configparser
 
 class Base( object ):
 
     logFile = None
     appendLog = False
     log = None
+    logger = None
+
+    # StreamIO
+    def getLogFilePointer( self ):
+
+        return self.log_file_pointer
 
     # void
     def base_initialize( self ):
 
         if self.logFile is not None and not self.appendLog:
             self.log_file_pointer = codecs.open( self.logFile, 'w', 'utf-8' )
-            self.log = self.logActive
+            self.log = self.logger or self.logActive
 
         elif self.logFile is not None and self.appendLog:
             self.log_file_pointer = codecs.open( self.logFile, 'a', 'utf-8' )
-            self.log = self.logActive
+            self.log = self.logger or self.logActive
 
         else:
             self.log = self.logInactive
@@ -62,10 +68,13 @@ class Base( object ):
         return self.base_finalize()
 
     # void
-    def setLogFile( self, logFile = None, appendLog = False ):
+    def setLogFile( self, logFile = None, appendLog = False, logger = None ):
 
         self.logFile = os.path.abspath( logFile ) if logFile is not None else None 
         self.appendLog = appendLog
+        self.logger = metl.configparser.lookupClass( logger ) \
+            if logger is not None \
+            else None
 
     # void
     def logInactive( self, msg, *args, **kwargs ):
