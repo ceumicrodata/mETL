@@ -1719,6 +1719,7 @@ Az épp akutális forrással teljesen megyező formátumú állományok beolvas�
 
  - **folder**: Mappa amelyben levő fájlokat hozzá kell szúrnia a végére. Amennyiben tartalmazza a kiinduló állományt, őt figyelmen kívül hagyja.
  - **extension**: Kiterjesztésű fájlokon jár csak végig.
+ - **skipIfFails**: Ha hibás a forrás állomány, akkor kihagyjuk, nem állítjuk le a folyamatot. `logFile` és `appendLog`-al lehet menteni a hibás források listáját.
 
 Fontos, hogy **új mezőkkel nem bővíti a korábbi forrást**, minden ugyanúgy folytatódik, mint ha egy másik `resource`-t kapott volna az aktuális állomány, `modifier`-ek és `target` nélkül. `Append`-et hoz létre minden fájlra, és úgy történik a folyamat végrehajtása.
 

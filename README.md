@@ -45,6 +45,7 @@
                )
 
 - .1: Added logger attribute to Source/Manipulation/Target elements to define specific logger method.
+- .2: AppendAllExpand get skipIfFails attribute
 
 ### Version 0.1.7
 - .0: Major changes and running time reduction.

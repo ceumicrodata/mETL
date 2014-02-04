@@ -23,12 +23,13 @@ import metl.expand.base, metl.expand.appendexpand, os
 
 class AppendAllExpand( metl.expand.base.Expand ):
 
-    init = ['folder', 'extension' ]
+    init = ['folder', 'extension', 'skipIfFails']
 
     # void
-    def __init__( self, reader, folder, extension = None, *args, **kwargs ):
+    def __init__( self, reader, folder, extension = None, skipIfFails = False, *args, **kwargs ):
 
         self.folder = folder
+        self.skipIfFails = skipIfFails
         self.extension = extension.lower() \
             if extension is not None \
             else None
@@ -76,7 +77,8 @@ class AppendAllExpand( metl.expand.base.Expand ):
 
         return metl.expand.appendexpand.AppendExpand(
             reader = self.reader,
-            resource = resource
+            resource = resource,
+            skipIfFails = self.skipIfFails
         )
 
     # list<FieldSet>
