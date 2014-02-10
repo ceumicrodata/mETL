@@ -56,10 +56,11 @@ class Transfer( object ):
         self.missing_source_tables = set( self.tables_before ) - set( self.source_tables )
         self.missing_target_tables = set( self.tables_after ) - set( self.target_tables )
         self.common_tables  = set( self.tables_before ) - self.missing_source_tables - self.getSourceTableBySet( self.missing_target_tables )
+        self.common_target_tables = self.getTargetTableBySet( self.common_tables )
 
-        self.common_sorted_tables = [ table.name \
+        self.common_sorted_tables = [ self.getSourceTableName( table.name ) \
             for table in self.target_meta.sorted_tables \
-            if table.name.lower() in ( t.lower() for t in self.common_tables ) ]
+            if table.name in self.common_target_tables ]
 
         self.target_database = DatabaseTarget.DISPATCH.get( target_uri[:target_uri.find(':')].lower(), DatabaseTarget.DISPATCH['default'] )( self )
         self.counter = 1
@@ -74,6 +75,26 @@ class Transfer( object ):
                 rdict.add( before )
 
         return rdict
+
+    # set
+    def getTargetTableBySet( self, tables ):
+
+        rdict = set( self.tables_before ) & set( self.tables_after ) & tables
+        
+        for before, after in self.tables_rename:
+            if before in tables:
+                rdict.add( after )
+
+        return rdict
+
+    # unicode
+    def getSourceTableName( self, table_name ):
+
+        for before, after in self.tables_rename:
+            if after == table_name:
+                return before
+
+        return table_name
 
     # unicode
     def getTargetTableName( self, table_name ):
@@ -242,7 +263,7 @@ class Transfer( object ):
                 print '  Table (%s) ...' % ( source_table_name ),
 
             else:
-                print '  Table (%s->%s) ...' % ( source_table_name, target_table_name )
+                print '  Table (%s->%s) ...' % ( source_table_name, target_table_name ),
             
             try:
                 self.table_name = target_table_name

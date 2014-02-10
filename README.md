@@ -48,6 +48,7 @@
 - .2: AppendAllExpand get skipIfFails attribute
 - .3: Neo4j Target added
 - .4: mETL-transfer command added to migrate and copy whole databases
+- .5: Minor fix on mETL transfer
 
 ### Version 0.1.7
 - .0: Major changes and running time reduction.
