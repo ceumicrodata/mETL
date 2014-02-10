@@ -21,7 +21,9 @@ along with this program. If not, <see http://www.gnu.org/licenses/>.
 
 import optparse, metl.configparser, metl.manager, metl.config, sys, os, time, \
     metl.target.statictarget, metl.migration, metl.source.staticsource, \
-    metl.fieldmap, metl.fieldset, metl.fieldtype.stringfieldtype, metl.guessmanager
+    metl.fieldmap, metl.fieldset, metl.fieldtype.stringfieldtype, metl.guessmanager, \
+    metl.transfer
+
 from multiprocessing import Process
 
 def main( argv = sys.argv ):
@@ -369,6 +371,33 @@ def metl_generate( argv = sys.argv ):
 
     mgr.startGuess( vars( options ) )
     mgr.saveConfig( sys.argv[-1] )
+
+def metl_transfer( argv = sys.argv ):
+    
+    parser = optparse.OptionParser(
+        usage = 'Usage: %prog [options] CONFIG.YML'
+    )
+
+    (options, args) = parser.parse_args( argv[1:] )
+
+    if len( args ) != 1:
+        parser.print_help()
+        sys.exit()
+
+    config = metl.config.Config( args[0] )
+
+    tf = metl.transfer.Transfer(
+        source_uri = config['sourceURI'],
+        target_uri = config['targetURI'],
+        tables = config.get( 'tables' ),
+        run_before = config.get( 'runBefore' ),
+        run_after = config.get( 'runAfter' ),
+        truncate = config.get( 'truncate' )
+    )
+    tf.initialize()
+    tf.migrate()
+    tf.sequences()
+    tf.finalize()
 
 def metl_aggregate( argv = sys.argv ):
     

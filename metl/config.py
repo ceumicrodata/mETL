@@ -60,23 +60,42 @@ class Config( object ):
             else:
                 base[ k ] = cfg[ k ]
 
+    # int
     def __len__( self ):
+        
         return len( self.dict )
 
+    # type
     def __getitem__( self, key ):
+
         return self.dict[ key ]
 
+    # void
     def __setitem__( self, key, value ):
+
         self.dict[key] = value
 
+    # void
     def __delitem__( self, key ):
+
         del self.dict[key]
 
+    # iter
     def __iter__( self ):
+
         return self.dict.__iter__()
 
+    # iter
     def iterkeys( self ):
+
         return self.dict.__iter__()
 
+    # type
     def get( self, key, default_value = None ):
+
         return self.dict.get( key, default_value )
+
+    # dict
+    def getDict( self ):
+
+        return self.dict

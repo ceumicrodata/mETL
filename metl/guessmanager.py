@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, <see http://www.gnu.org/licenses/>.
 """
 
-import codecs, optparse, yaml, metl.guess
+import codecs, optparse, yaml, metl.guess, metl.config
 import metl.source.csvsource
 import metl.source.databasesource 
 import metl.source.googlespreadsheetsource 
@@ -52,7 +52,23 @@ class GuessManager( object ):
 
     def getGuess( self, options ):
 
-        init, resource_init = {}, {}
+        init, resource_init, base = {}, {}, {}
+        if options.get('base') is not None:
+            cfg = metl.config.Config( options.get('base') )
+            for v in self.getSourceClass().init:
+                if cfg.get('source',{}).get( v ) is not None:
+                    init[ v ] = cfg.get('source',{}).get( v )
+            for v in self.getSourceClass().resource_init:
+                if cfg.get('source',{}).get( v ) is not None:
+                    resource_init[ v ] = cfg.get('source',{}).get( v )
+
+            base = {
+                'source': cfg.get('source',{}),
+                'target': cfg.get('target',{}),
+                'manipulations': cfg.get('manipulations',{}),
+                'base': options.get('base')
+            } 
+
         for v in self.getSourceClass().init:
             if options.get( v ) is not None:
                 init[ v ] = options.get( v ) 
@@ -64,7 +80,8 @@ class GuessManager( object ):
             self.source_class,
             init,
             resource_init,
-            int(options.get('limit',1000))
+            int(options.get('limit',1000)),
+            base
         )
 
     def startGuess( self, option ):
@@ -90,6 +107,14 @@ class GuessManager( object ):
 
         parser = optparse.OptionParser(
             usage = 'Usage: %prog [options] CONFIG_FILE SOURCE_TYPE'
+        )
+
+        parser.add_option(
+            '-b',
+            '--base',
+            dest = "base",
+            default = None,
+            help = 'Base configuration file'
         )
 
         parser.add_option(

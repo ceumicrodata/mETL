@@ -235,6 +235,20 @@ class AlchemyDatabase( metl.database.basedatabase.BaseDatabase ):
         self.afterOpen()
 
     # void
+    def load( self, connection, metadata, table ):
+
+        self.connection = connection
+        self.metadata = metadata
+        self.table = table
+        self.cursor = self.connection.connection.cursor()
+        self.columns = [ str( column.name ) for column in table.columns ]
+
+        self.db_insert_command = self.getInsertCommand()
+        self.db_update_command = None
+
+        self.afterOpen()
+
+    # void
     def afterOpen( self ):
 
         pass
@@ -259,13 +273,24 @@ class AlchemyDatabase( metl.database.basedatabase.BaseDatabase ):
 
         self.connection.close()
 
+
     # void
-    def insert( self, buffer ):
+    def _insert( self, buffer ):
 
         self.connection.execute( self.db_insert_command, buffer )
 
     # void
-    def update( self, buffer ):
+    def insert( self, buffer ):
+
+        self._insert( buffer )
+
+    # void
+    def _update( self, buffer ):
 
         self.connection.execute( self.db_update_command, buffer )
+
+    # void
+    def update( self, buffer ):
+
+        self._update( buffer )
 

@@ -18,6 +18,7 @@ Leggyakoribb fájlformátumokra biztosít a program aktuális verziója támogat
 - Fix szélességű fájl
 - PostgreSQL, MySQL, Oracle, SQLite, Microsoft SQL Server - módosítás céllal is
 - JSON, XML, YAML
+- Neo4j
 
 Fejlesztés folyamán igyekeztünk a leggyakoribb transzformációs lépésekkel, programszerkezetekkel, és manipulációs lépésekkel is ellátni a teljes feldolgozási folyamatot. Ennek fényében a program a következő transzformációkkal rendelkezik alapértelmezetten:
 
@@ -178,6 +179,10 @@ Konzol scriptek gyűjteménye a program, amely emiatt bármilyen rendszerbe kön
    Támogatott forrás típusok listája: CSV, Database, Google Spreadsheet (jelszóval védett), JSON, TSV, XLS, XML, Yaml
    
    - `-l`: Meghatározza, hány elem átviszgálásával készítse el konfigurációs állományt. Minél több rekord kerül átnézésre, annál pontosabb eredményt tud adni a megfelelő típus használatát illetően, de a konfiguráció készítésének ideje drasztikusan nőhet ennek hatására.
+   
+7. `metl-tranfer [options] CONFIG_FILE`
+
+   Egy adatbázist átmásol egy másik adatbázisba, függetlenül az adatbázis típusától.
    
 ## Működés
 
@@ -2033,6 +2038,79 @@ YAML konfigurációra példa:
 	  resurce: utvonal/output.json
 	  rootIterator: items
 	  
+#### Neo4j
+Gráf adatbázisba történő írás esetén használatos cél típus. Inicializálásának paraméterei:
+
+- **bufferSize**: Mennyi rekordot írjunk kötegelve egy időben.
+
+Cél helyszínének megadásához szükséges további paraméterek:
+
+- **url**: Neo4j adatbázis címe
+- **resourceType**: Milyen típusú adatot szeretnénk beírni. Felveheti a `Node` és `Relation` értékeket.
+- **label**: Cimke amivel szeretnénk ellátni a betöltendő adatot. Megadása mindig kötelező, még ha a Neo4j számára nem is szükséges.
+- **truncateLabel**: Törölje-e a betöltés kezdetén a már létező, megegyező label-el rendelkező rekordokat. Alapértelmezetten nem teszi.
+
+Amennyiben `Relation` resourceType-ot választunk, úgy a következő paraméterek kötelezőek továbbá:
+
+- **fieldNameLeft**: Betöltendő adatok közül, milyen mezőben szerepel a reláció bal oldalát leíró azonosító.
+- **fieldNameRight**: Betöltendő adatok közül, milyen mezőben szerepel a reláció jobb oldalát leíró azonosító. 
+- **keyNameLeft**: Reláció bal oldalán levő objektum melyik mezője tartalmazz a kulcsot.
+- **keyNameRight**: Reláció jobb oldalán levő objektum melyik mezője tartalmazz a kulcsot.
+- **labelLeft**: Bal oldali elem milyen címkével rendelkezik. Nem kötelező.
+- **labelRight**: Jobb oldali elem milyen címkével rendelkezik. Nem kötelező.
+
+A **key**-nek jelölt mezőkre, automatikusan index-et helyez a rendszer.
+
+YAML konfigurációra példa `Node` esetén:
+
+	source:
+	  source: TSV
+	  resource: Artist.txt
+	  quote: ""
+	  skipRows: 1
+	  fields:
+	    - name: uid
+	      map: 0
+	      key: true
+	    - name: name
+	      map: 1
+	    - name: nationality
+	      map: 2
+      
+	target:
+	  type: Neo4j
+	  url: http://localhost:7474
+	  label: Artist
+	  truncateLabel: true
+	  resourceType: Node
+
+illetve `Relation` esetén:
+
+	source:
+	  source: TSV
+	  resource: AlbumArtist.txt
+	  quote: ""
+	  skipRows: 1
+	  fields:
+	    - name: album_uid
+	      map: 0
+	    - name: artist_uid
+	      map: 1
+	
+	target:
+	  type: Neo4j
+	  url: http://localhost:7474
+	  label: Contains
+	  truncateLabel: true
+	  resourceType: Relation
+	  fieldNameLeft: album_uid
+	  fieldNameRight: artist_uid
+	  keyNameLeft: uid
+	  keyNameRight: uid
+	  labelLeft: Album
+	  labelRight: Artist
+
+	  
 #### Static
 Tesztelés céllal létrehozott típus, amely `stdout`-ra dolgozik TSV formátummal. Inicializálásának paraméterei:
 
@@ -2584,3 +2662,59 @@ Ezt pedig a következő konfigurációval akarjuk megvalósítani:
 	  truncateTable: true
 	
 Itt kiolvassuk az előbb betöltött `geometry` mező értékét egy listába, majd a `ListExpander` segítségével definiáljuk, hogy a `geometry` mezőt bejárva, a `latitude` és `longitude` mezőbe mit is írjunk pontosan. Ezzel a megvalósítással létrehoztunk egy táblát és hozzá egy kapcsolótáblát.
+
+### Adatbázis áttöltés
+
+Van egy MySQL és egy PostgreSQL adatbázisunk, és szeretnénk váltani a kettő között. Adatokat lehát áttölteni egyszerűen egy parancshívásra. 
+
+`metl-transfer config.yml `
+
+Config állomány pedig a következő:
+
+	sourceURI: mysql+mysqlconnector://xyz:xyz@localhost/database
+	targetURI: postgresql://xyz:xyz@localhost:5432/database
+	
+	tables:
+	  - [ 'Message', 'message' ]
+	  - [ 'SourceMessage', 'sourcemessage' ]
+	  - related_content
+	  - poi
+	  - shorturl
+	  - ident_data
+	  - user
+	  - estate_agency
+	  - time_series
+	  - auth_item
+	  - property_migration
+	  - property_group
+	  - cemp_id_daily
+	  - cluster
+	  - auth_assignment
+	  - property
+	  - lead
+	  - pic
+	  - lead_comment
+	  - similarity
+	  - property_cluster
+	
+	truncate:
+	  - auth_item
+	  - estate_agency
+	
+	runAfter: |
+	  UPDATE
+	      property
+	  SET
+	      status = status + 1,
+	      condition = condition + 1,
+	      estatetype = estatetype + 1,
+	      heating = heating + 1,
+	      conveniences = conveniences + 1,
+	      parking = parking + 1,
+	      view = view + 1,
+	      material = material + 1;
+	
+`sourceURI` tartalmazz a kiinduló adatbázis címét, `targetURI` a céladatbázis címét. `tables` felsorolása nem kötelező, amennyiben nem soroljuk fel úgy a forrás adatbázis összes tábláját átmásoljuk a cél adatbázisba. truncate opcióval lehet kérni, hogy valamelyik táblákat a cél adatbázison ürítse ki a betöltés előtt, illetve a `runAfter` és `runBefore`-ral lehet SQL parancsokat futtatni.
+
+**Fontos**, hogy a **tábláknak létezniük kell** a cél adatbázisban, a transfer nem hozza őket létre.
+

@@ -46,6 +46,8 @@
 
 - .1: Added logger attribute to Source/Manipulation/Target elements to define specific logger method.
 - .2: AppendAllExpand get skipIfFails attribute
+- .3: Neo4j Target added
+- .4: mETL-transfer command added to migrate and copy whole databases
 
 ### Version 0.1.7
 - .0: Major changes and running time reduction.

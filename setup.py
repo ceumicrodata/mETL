@@ -2,7 +2,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '0.1.8.1'
+version = '0.1.8.4'
 
 setup(
     name = 'mETL',
@@ -18,7 +18,8 @@ setup(
             'metl-walk = metl.script:metl_walk',
             'metl-aggregate = metl.script:metl_aggregate',
             'metl-differences = metl.script:metl_differences',
-            'metl-generate = metl.script:metl_generate'
+            'metl-generate = metl.script:metl_generate',
+            'metl-transfer = metl.script:metl_transfer'
         ],
     },
     author = 'Bence Faludi',
@@ -39,7 +40,8 @@ setup(
         'tarr',
         'xlutils',
         'xmlsquash',
-        'gspread'
+        'gspread',
+        'py2neo'
     ],
     test_suite = "tests"
 )

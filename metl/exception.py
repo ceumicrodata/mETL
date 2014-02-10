@@ -58,4 +58,8 @@ class MigrationNotCompatibleError( Exception ):
 class ResourceNotExistsError( Exception ):
 
     pass
+
+class TableNotExistsError( Exception ):
+
+    pass
     

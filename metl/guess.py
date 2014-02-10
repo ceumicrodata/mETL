@@ -25,12 +25,13 @@ class Guess( object ):
 
     source = None
 
-    def __init__( self, source_cls, init, resource_init, limit ):
+    def __init__( self, source_cls, init, resource_init, limit, base = None ):
 
         self.source_cls    = source_cls
         self.init          = init
         self.resource_init = resource_init
         self.limit         = limit
+        self.base          = base
 
         self.fieldmap = None
         self.fields   = None
@@ -135,10 +136,23 @@ class Guess( object ):
         source.update( self.init )
         source.update( self.resource_init )
 
-        return {
+        for k, v in self.base.get('source',{}).items():
+            if k in source.keys() and source[k] == v:
+                del source[k]
+
+        d_ret = {
             'source': source,
             'target': {
                 'type': 'Static',
                 'silence': False
             }
         }
+
+        if 'base' in self.base:
+            d_ret['base'] = self.base['base']
+
+        if 'target' in self.base and len( self.base['target'].keys() ):
+            del d_ret['target']
+
+        return d_ret
+

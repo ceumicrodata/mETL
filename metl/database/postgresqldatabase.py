@@ -20,6 +20,7 @@ along with this program. If not, <see http://www.gnu.org/licenses/>.
 """
 
 import metl.database.alchemydatabase, sqlalchemy.schema
+from sqlalchemy.types import *
 from metl.target.csvtarget import *
 from StringIO import StringIO
 
@@ -32,9 +33,21 @@ class PostgresqlDatabase( metl.database.alchemydatabase.AlchemyDatabase ):
             return
 
         naming_cond = [ col.name for col in self.table.c if col.name in map( str.lower, self.getColumnNames() ) ]
-        type_cond   = [ name for name, field in self.target.getFieldSetPrototypeCopy().getFields().items() if field.getType().getName() in [ 'ListFieldType', 'ComplexFieldType', 'PickleFieldType' ] ]
+
+        if hasattr( self.target, 'getFieldSetPrototypeCopy' ):
+            type_cond = [ name \
+                for name, field in self.target.getFieldSetPrototypeCopy().getFields().items() \
+                if field.getType().getName() in [ 'ListFieldType', 'ComplexFieldType', 'PickleFieldType' ] ]
+
+        else:
+            type_cond = type_cond = [ column.name \
+                for column in self.table.columns \
+                if isinstance( column.type, LargeBinary ) ]
+
         if len( naming_cond ) == len( self.getColumnNames() ) and len( type_cond ) == 0:
             self.insert = self.alternateInsert
+        else:
+            self.insert = self._insert
 
     # sqlalchemy.types.Column
     def getColumnForField( self, field ):
@@ -71,9 +84,9 @@ class PostgresqlDatabase( metl.database.alchemydatabase.AlchemyDatabase ):
     def alternateInsert( self, buffer ):
 
         self.cursor.copy_expert(
-            "COPY %(table)s (%(columns)s) FROM STDIN WITH CSV NULL 'None' QUOTE '`' ESCAPE '`' DELIMITER ','" % {
+            "COPY \"%(table)s\" (%(columns)s) FROM STDIN WITH CSV NULL 'None' QUOTE '`' ESCAPE '`' DELIMITER ','" % {
                 'table': self.target.getTableName(),
-                'columns': u', '.join( map( str.lower, self.getColumnNames() ) )
+                'columns': u', '.join([ '"%s"' % ( c ) for c in self.getColumnNames() ])
             },
             self.getBufferContent( buffer )
         )
