@@ -34,13 +34,13 @@ class Transfer( object ):
 
         self.run_before = run_before
         self.run_after = run_after
+        self.source_uri = source_uri
+        self.target_uri = target_uri
 
-        self.source, self.source_engine = self.connect( source_uri )
-        self.source_meta = MetaData( bind = self.source_engine )
-        self.source_meta.reflect( self.source_engine )
+        self.reConnectToSource()
         self.source_tables = self.getTableList( self.source_meta )
 
-        self.target, self.target_engine = self.connect( target_uri )
+        self.target, self.target_engine = self.connect( self.target_uri )
         self.target_meta = MetaData( bind = self.target_engine )
         self.target_meta.reflect( self.target_engine )
         self.target_tables = self.getTableList( self.target_meta )
@@ -64,6 +64,13 @@ class Transfer( object ):
 
         self.target_database = DatabaseTarget.DISPATCH.get( target_uri[:target_uri.find(':')].lower(), DatabaseTarget.DISPATCH['default'] )( self )
         self.counter = 1
+
+    # void
+    def reConnectToSource( self ):
+
+        self.source, self.source_engine = self.connect( self.source_uri )
+        self.source_meta = MetaData( bind = self.source_engine )
+        self.source_meta.reflect( self.source_engine )
 
     # set
     def getSourceTableBySet( self, tables ):
@@ -272,6 +279,8 @@ class Transfer( object ):
 
             except Exception, e:
                 print 'FAIL', e
+
+            self.reConnectToSource()
 
         print '  Done'
         self.counter += 1
