@@ -23,13 +23,14 @@ import metl.expand.base, metl.expand.appendexpand, os
 
 class AppendAllExpand( metl.expand.base.Expand ):
 
-    init = ['folder', 'extension', 'skipIfFails']
+    init = ['folder', 'extension', 'skipIfFails', 'skipSubfolders']
 
     # void
-    def __init__( self, reader, folder, extension = None, skipIfFails = False, *args, **kwargs ):
+    def __init__( self, reader, folder, extension = None, skipIfFails = False, skipSubfolders = False, *args, **kwargs ):
 
         self.folder = folder
         self.skipIfFails = skipIfFails
+        self.skipSubfolders = skipSubfolders
         self.extension = extension.lower() \
             if extension is not None \
             else None
@@ -55,12 +56,16 @@ class AppendAllExpand( metl.expand.base.Expand ):
         if not os.path.exists( self.folder ):
             raise AttributeError('Not existins directory')
 
+        bfolder = os.path.abspath( self.folder )
         self.files = []
         for directory, dirnames, filenames in os.walk( self.folder ):
             for filename in filenames:
                 if self.extension is None or ( self.extension is not None and filename.lower().endswith( self.extension ) ):
                     full_path = os.path.abspath( os.path.join( directory, filename ) )
                     if full_path == self.getFirstResource():
+                        continue
+
+                    if self.skipSubfolders and bfolder != os.path.abspath( directory ):
                         continue
 
                     self.files.append( full_path )

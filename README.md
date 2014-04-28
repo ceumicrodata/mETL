@@ -50,6 +50,7 @@
 - .4: mETL-transfer command added to migrate and copy whole databases
 - .5: Minor fix on mETL transfer
 - .6: Fixed a bug in mETL-transfer when using on big datasets sometimes lost source connection.
+- .7: AppendAllExpand has a new ability to do not walk the whole directory.
 
 ### Version 0.1.7
 - .0: Major changes and running time reduction.
