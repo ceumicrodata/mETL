@@ -67,20 +67,20 @@ def main( argv = sys.argv ):
     parser.add_option(
         "-l",
         "--limit",
-        help = "Determines the number of elements for processing."
+        help = "One can decide the number of elements to be processed. It is an excellent opportunity to test huge files with a small number of records until everything works the way they should."
     )
 
     parser.add_option(
         "-o",
         "--offset",
         default = 0,
-        help = 'Determines from which element should the processing start.'
+        help = 'Starting element of processing.'
     )
 
     parser.add_option(
         "-s",
         "--source",
-        help = "If the configuration does not contain the route of the resource, it could be given here as well."
+        help = "If the configuration does not contain the path of the resource, it could be given here as well."
     )
 
     (options, args) = parser.parse_args( argv[1:] )
@@ -152,14 +152,14 @@ def metl_walk( argv = sys.argv ):
     parser.add_option(
         "-l",
         "--limit",
-        help = "Determines the number of elements for processing."
+        help = "One can decide the number of elements to be processed. It is an excellent opportunity to test huge files with a small number of records until everything works the way they should."
     )
 
     parser.add_option(
         "-o",
         "--offset",
         default = 0,
-        help = 'Determines from which element should the processing start.'
+        help = "Starting element of processing."
     )
 
     parser.add_option(
@@ -167,7 +167,7 @@ def metl_walk( argv = sys.argv ):
         "--multiprocessing",
         action = 'store_true',
         default = False,
-        help = 'Walk the files with multiple process (use only for database target)'
+        help = "Turning on multiprocessing on computers with more than one CPU. The files to be processed are to be put to different threads. It is to be used exclusively for Database purposes as otherwise it causes problems!"
     )
 
     (options, args) = parser.parse_args( argv[1:] )
@@ -290,28 +290,28 @@ def metl_differences( argv = sys.argv ):
         '--deleted',
         dest = 'deleted',
         default = None,
-        help = 'Save the deleted key list by this YAML configuration.'
+        help = 'Configuration file for receiving keys of the deleted elements.'
     )
     parser.add_option(
         '-n',
         '--news',
         dest = 'news',
         default = None,
-        help = 'Save the new key list by this YAML configuration.'
+        help = 'Configuration file for receiving keys of the new elements.'
     )
     parser.add_option(
         '-m',
         '--modified',
         dest = 'modified',
         default = None,
-        help = 'Save the modified key list by this YAML configuration.'
+        help = 'Configuration file for receiving keys of the modified elements'
     )
     parser.add_option(
         '-u',
         '--unchanged',
         dest = 'unchanged',
         default = None,
-        help = 'Save the unchanged key list by this YAML configuration.'
+        help = 'Configuration file for receiving keys of the unmodified elements.'
     )
 
     (options, args) = parser.parse_args( argv[1:] )
@@ -424,20 +424,20 @@ def metl_aggregate( argv = sys.argv ):
     parser.add_option(
         "-l",
         "--limit",
-        help = "Determines the number of elements for processing. An excellent option to test large files within small records until everything works as we would like to."
+        help = "One can decide the number of elements to be processed. It is an excellent opportunity to test huge files with a small number of records until everything works the way they should."
     )
 
     parser.add_option(
         "-o",
         "--offset",
         default = 0,
-        help = 'Determines from which element should the processing start.'
+        help = 'Starting element of processing.'
     )
 
     parser.add_option(
         "-s",
         "--source",
-        help = "If the configuration does not contain the route of the resource, it could be given here as well."
+        help = "If the configuration file does not contain the resource path, it can be given here as well."
     )
 
     (options, args) = parser.parse_args( argv[1:] )
