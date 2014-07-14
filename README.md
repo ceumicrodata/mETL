@@ -7,7 +7,7 @@
 
 ### Version 1.0
 
-- .0: First stable release with full documentation.
+- .0: First stable release with full documentation and running time reduction on OrderModifier.
 
 ### Version 0.1.8
 - .0: Minor, but usefull changes

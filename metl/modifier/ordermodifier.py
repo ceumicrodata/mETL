@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, <see http://www.gnu.org/licenses/>.
 """
 
-import metl.modifier.base, tarr.compiler, tarr.data
+import metl.modifier.base, tarr.compiler, tarr.data, operator
 
 class OrderModifier( metl.modifier.base.Modifier ):
 
@@ -32,6 +32,7 @@ class OrderModifier( metl.modifier.base.Modifier ):
         self.fieldNamesAndOrder.reverse()
         super( OrderModifier, self ).__init__( reader, *args, **kwargs )
 
+    # dict
     def merge( self, record ):
 
         data = record.getValues()
@@ -45,12 +46,11 @@ class OrderModifier( metl.modifier.base.Modifier ):
         records = [ self.merge( record ) for record in self.getReader().getRecords() ]
 
         for prefItem in self.fieldNamesAndOrder:
-            fieldName, order = prefItem.keys()[0], prefItem.values()[0].upper()
+            fieldName, order = prefItem.popitem()
+            
+            records.sort(
+                key = operator.itemgetter( fieldName ), 
+                reverse = order.upper() != 'ASC'
+            )
 
-            if order == 'ASC':
-                records.sort( lambda x,y: cmp( x[ fieldName ], y[ fieldName ] ) )
-            else:
-                records.sort( lambda x,y: cmp( y[ fieldName ], x[ fieldName ] ) )
-
-        for record in records:
-            yield record['__record__']
+        return ( record['__record__'] for record in records )
