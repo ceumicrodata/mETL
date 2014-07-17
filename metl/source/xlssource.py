@@ -27,7 +27,7 @@ import metl.source.base, codecs, xlrd, datetime
 class XLSSource( metl.source.base.FileSource ):
 
     init = ['skipRows']
-    resource_init = ['resource','sheetName','encoding','username','password','realm','host']
+    resource_init = ['resource','sheetName','mergeSheets','encoding','username','password','realm','host']
 
     # void
     def __init__( self, fieldset, skipRows = 0, **kwargs ):
@@ -50,12 +50,13 @@ class XLSSource( metl.source.base.FileSource ):
         )
 
     # void
-    def setResource( self, resource, sheetName = None, encoding = 'utf-8' ):
+    def setResource( self, resource, sheetName = None, mergeSheets = False, encoding = 'utf-8' ):
 
         res_dict = {
             'resource': resource,
             'sheetName': sheetName,
-            'encoding': encoding
+            'encoding': encoding,
+            'mergeSheets': mergeSheets
         }
 
         self.updateResourceDict( res_dict )
@@ -68,6 +69,7 @@ class XLSSource( metl.source.base.FileSource ):
 
         self.resource = self.res_dict['resource']
         self.sheetName = self.res_dict['sheetName'] or 0
+        self.mergeSheets = self.res_dict['mergeSheets']
 
     # void
     def initialize( self ):
@@ -79,11 +81,16 @@ class XLSSource( metl.source.base.FileSource ):
             encoding_override = self.getEncoding()
         )
 
-        self.sheet = self.workbook.sheet_by_index( self.sheetName ) \
-            if type( self.sheetName ) == int \
-            else self.workbook.sheet_by_name( self.sheetName )
+        if self.mergeSheets:
+            self.sheets = [ self.workbook.sheet_by_name( sheetName ) \
+                for sheetName in self.workbook.sheet_names() ]
 
-        self.rowCount = self.sheet.nrows
+        else:
+            self.sheets = [ self.workbook.sheet_by_index( self.sheetName ) \
+                if type( self.sheetName ) == int \
+                else self.workbook.sheet_by_name( self.sheetName ) ]
+
+        self.rowCounts = [ sheet.nrows for sheet in self.sheets ]
 
         return self.base_initialize()
 
@@ -100,6 +107,26 @@ class XLSSource( metl.source.base.FileSource ):
     def getTransformedRecord( self, record ):
 
         return [ self.convertCellValue( cell ) for cell in self.sheet.row( self.current ) ]
+
+    # list<FieldSet>
+    def getRecords( self ):
+
+        for idx in xrange( len( self.sheets ) ):
+
+            self.rowCount = self.rowCounts[ idx ]
+            self.sheet = self.sheets[ idx ]
+            self.current = 0
+
+            for record in self.getRecordsList():
+                if self.current >= int( self.offset ):
+                    yield self.getFieldSetWithValue( self.getTransformedRecord( record ) )
+
+                else:
+                    self.invalidOffsetRecord( record )
+
+                self.current += 1
+                if self.limit is not None and self.current >= int( self.limit ) + int( self.offset ):
+                    raise StopIteration()
 
     # type
     def convertCellValue( self, cell ):

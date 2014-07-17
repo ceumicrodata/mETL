@@ -8,6 +8,7 @@
 ### Version 1.0
 
 - .0: First stable release with full documentation and running time reduction on OrderModifier.
+- .0.1: Merge Excel sheets ability added
 
 ### Version 0.1.8
 - .0: Minor, but usefull changes
@@ -763,6 +764,7 @@ Further parameters for source data:
 - **resource**: Path of the XLS file, which can even be a URL.
 - **encoding**: Coding of the XLS file. By default we expect `UTF-8`. 
 - **sheetName**: Name or number of the sheet of the XLS file.
+- **mergeSheets**: Merge all sheets. Define the sheetName not necessary if the value is 'true'. By default not merging will happen.
 
 Example of an XLS configuration:
 

@@ -50,6 +50,10 @@ class Test_Source( unittest.TestCase ):
 
         self.cfg_file = 'tests/config/test_xls_source_xls.yml'
 
+    def test_xls_source_xls_multiple_sheets( self ):
+
+        self.cfg_file = 'tests/config/test_xls_source_xls_multiple_sheets.yml'
+
     def test_xls_source_xlsx( self ):
 
         self.cfg_file = 'tests/config/test_xls_source_xlsx.yml'
