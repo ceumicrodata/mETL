@@ -144,7 +144,7 @@ mETL is an ETL tool which has been especially designed to load elective data nec
 
 ### Tutorials
 
-1. [Novice level exercises](https://github.com/bfaludi/mETL-tutorials/graphs/traffic)
+1. [Novice level exercises](https://github.com/bfaludi/mETL-tutorials)
 
 
 # Thirty-seconds tutorial
