@@ -141,6 +141,12 @@ mETL is an ETL tool which has been especially designed to load elective data nec
 
 	A practical rimer on how to make your life easier on ETL processes - even without writing loader code.
 
+
+### Tutorials
+
+1. [Novice level exercises](https://github.com/bfaludi/mETL-tutorials/graphs/traffic)
+
+
 # Thirty-seconds tutorial
 
 First of all let's see the most common problem. Want to load data into database from a text or binary file. Our example file is called <span>authors.csv</span> and file's structure is the following:
