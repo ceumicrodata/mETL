@@ -1,8 +1,126 @@
-
 <center>
-<img src="docs/logo.png" width="200">
+<table>
+	<tr>
+		<td style="border: none;"><img src="docs/logo.png" width="200"></td>
+		<td style="border: none;">
+			<ul>
+				<li><a href="#overview">Overview</a></li>
+				<li><a href="#thirtysecondstutorial">Thirty Seconds Tutorial</a></li>
+				<li><a href="#changelog">Changelog</a></li>
+				<li><a href="#documentation">Documentation</a></li>
+			</ul>
+		</td>
+	</tr>
+</table>
 </center>
 
+<a id="overview"></a>
+# Overview
+
+mETL is an ETL tool which has been especially designed to load elective data necessary for CEU. Obviously, the program can be used in a more general way, it can be used to load practically any kind of data. The program was written in Python, taking into maximum consideration the optimal memory usage after having assessed the Brewery tool’s capabilities. 
+
+### Presentations
+
+1. [Extract, Transform, Load in Python](https://speakerdeck.com/bfaludi/extract-transform-load-in-python) - Bence Faludi (@bfaludi), Budapest.py Meetup
+
+	Our solutions to create a new Python ETL tool from scratch.
+
+2. [mETL - just another ETL tool?](https://speakerdeck.com/bpdatabase/metl-just-another-etl-tool-molnar-daniel-mito) - Dániel Molnár (@soobrosa), Budapest Database Meetup
+
+	A practical rimer on how to make your life easier on ETL processes - even without writing loader code.
+
+
+### Tutorials
+
+1. [Novice level exercises](https://github.com/bfaludi/mETL-tutorials)
+
+<a id="thirtysecondstutorial"></a>
+# Thirty-seconds tutorial
+
+First of all let's see the most common problem. Want to load data into database from a text or binary file. Our example file is called <span>authors.csv</span> and file's structure is the following:
+
+	Author,Email,Birth,Phone
+	Duane Boyer,duaneboyer@yahoo.com,1918-05-01,+3670636943
+	Jonah Bazile,jonahbazile@live.com,1971-10-05,+3670464615
+	William Teeple,williamteeple@gmail.com,1995-07-26,+3670785797
+	Junior Thach,juniorthach@msn.com,1941-08-10,+3630589648
+	Emilie Smoak,emiliesmoak@msn.com,1952-03-08,+3670407688
+	Louella Utecht,louellautecht@yahoo.com,1972-02-28,+3670942982
+	...
+
+First task to generate a Yaml configuration for mETL. This configuration file is contains the fields and types, transformation steps and source and target data. Write the following into the terminal. `config.yml` will be configuration file's name, and the example file's type is `CSV`.
+
+	$ metl-generate csv config.yml</pre>
+
+The script will give you information about the correct attributes what you have to fill out.
+
+	Usage: metl-generate [options] CONFIG_FILE SOURCE_TYPE
+
+	Options:
+	  -h, --help            show this help message and exit
+	  -l LIMIT, --limit=LIMIT
+	                        Create the configuration file with examining LIMIT
+	                        number of records.
+	  --delimiter=DELIMITER
+	  --quote=QUOTE         
+	  --skipRows=SKIPROWS   
+	  --headerRow=HEADERROW
+	  --resource=RESOURCE   
+	  --encoding=ENCODING   
+	  --username=USERNAME   
+	  --password=PASSWORD   
+	  --realm=REALM         
+	  --host=HOST 
+
+Have to add the following attributes for the generator script:
+
+* **headerRow**: File has a header in the first row.
+* **skipRows**: Because it has a header you should skip one row.
+* **resource**: File's path.
+
+Run the command with the attributes:
+
+	$ metl-generate --resource authors.csv --headerRow 0 --skipRows 1 csv config.yml</pre>
+
+Script will create the Yaml configuration which could be used by mETL. You could write the configuration manually but `metl-generate` will examine the rows and determine the correct field's type and mapping.
+
+	source:
+	  fields:
+	  - map: Phone
+	    name: Phone
+	    type: BigInteger
+	  - map: Email
+	    name: Email
+	    type: String
+	  - map: Birth
+	    name: Birth
+	    type: DateTime
+	  - map: Author
+	    name: Author
+	    type: String
+	  headerRow: '0'
+	  resource: authors.csv
+	  skipRows: '1'
+	  source: CSV
+	target:
+	  silence: false
+	  type: Static
+ 
+Modify the `target` because currently it will write out the information into the stdout. You have to add the database target.
+
+	...
+	target:
+	  url: postgresql://username:password@localhost:5432/database
+	  table: authors
+	  createTable: true
+  
+Script will create the table and load data into the PostgreSQL database automatically. Run the following command the start the process:
+
+	$ metl config.yml
+	
+It's done. mETL knows many source and target types and supports transformations and manupulations as well.
+
+<a id="changelog"></a>
 # Change Log
 
 ### Version 1.0
@@ -127,111 +245,7 @@
 <img src="docs/logo.png" width="200">
 </center>
 
-# Overview
-
-mETL is an ETL tool which has been especially designed to load elective data necessary for CEU. Obviously, the program can be used in a more general way, it can be used to load practically any kind of data. The program was written in Python, taking into maximum consideration the optimal memory usage after having assessed the Brewery tool’s capabilities. 
-
-### Presentations
-
-1. [Extract, Transform, Load in Python](https://speakerdeck.com/bfaludi/extract-transform-load-in-python) - Bence Faludi (@bfaludi), Budapest.py Meetup
-
-	Our solutions to create a new Python ETL tool from scratch.
-
-2. [mETL - just another ETL tool?](https://speakerdeck.com/bpdatabase/metl-just-another-etl-tool-molnar-daniel-mito) - Dániel Molnár (@soobrosa), Budapest Database Meetup
-
-	A practical rimer on how to make your life easier on ETL processes - even without writing loader code.
-
-
-### Tutorials
-
-1. [Novice level exercises](https://github.com/bfaludi/mETL-tutorials)
-
-
-# Thirty-seconds tutorial
-
-First of all let's see the most common problem. Want to load data into database from a text or binary file. Our example file is called <span>authors.csv</span> and file's structure is the following:
-
-	Author,Email,Birth,Phone
-	Duane Boyer,duaneboyer@yahoo.com,1918-05-01,+3670636943
-	Jonah Bazile,jonahbazile@live.com,1971-10-05,+3670464615
-	William Teeple,williamteeple@gmail.com,1995-07-26,+3670785797
-	Junior Thach,juniorthach@msn.com,1941-08-10,+3630589648
-	Emilie Smoak,emiliesmoak@msn.com,1952-03-08,+3670407688
-	Louella Utecht,louellautecht@yahoo.com,1972-02-28,+3670942982
-	...
-
-First task to generate a Yaml configuration for mETL. This configuration file is contains the fields and types, transformation steps and source and target data. Write the following into the terminal. `config.yml` will be configuration file's name, and the example file's type is `CSV`.
-
-	$ metl-generate csv config.yml</pre>
-
-The script will give you information about the correct attributes what you have to fill out.
-
-	Usage: metl-generate [options] CONFIG_FILE SOURCE_TYPE
-
-	Options:
-	  -h, --help            show this help message and exit
-	  -l LIMIT, --limit=LIMIT
-	                        Create the configuration file with examining LIMIT
-	                        number of records.
-	  --delimiter=DELIMITER
-	  --quote=QUOTE         
-	  --skipRows=SKIPROWS   
-	  --headerRow=HEADERROW
-	  --resource=RESOURCE   
-	  --encoding=ENCODING   
-	  --username=USERNAME   
-	  --password=PASSWORD   
-	  --realm=REALM         
-	  --host=HOST 
-
-Have to add the following attributes for the generator script:
-
-* **headerRow**: File has a header in the first row.
-* **skipRows**: Because it has a header you should skip one row.
-* **resource**: File's path.
-
-Run the command with the attributes:
-
-	$ metl-generate --resource authors.csv --headerRow 0 --skipRows 1 csv config.yml</pre>
-
-Script will create the Yaml configuration which could be used by mETL. You could write the configuration manually but `metl-generate` will examine the rows and determine the correct field's type and mapping.
-
-	source:
-	  fields:
-	  - map: Phone
-	    name: Phone
-	    type: BigInteger
-	  - map: Email
-	    name: Email
-	    type: String
-	  - map: Birth
-	    name: Birth
-	    type: DateTime
-	  - map: Author
-	    name: Author
-	    type: String
-	  headerRow: '0'
-	  resource: authors.csv
-	  skipRows: '1'
-	  source: CSV
-	target:
-	  silence: false
-	  type: Static
- 
-Modify the `target` because currently it will write out the information into the stdout. You have to add the database target.
-
-	...
-	target:
-	  url: postgresql://username:password@localhost:5432/database
-	  table: authors
-	  createTable: true
-  
-Script will create the table and load data into the PostgreSQL database automatically. Run the following command the start the process:
-
-	$ metl config.yml
-	
-It's done. mETL knows many source and target types and supports transformations and manupulations as well.
-
+<a id="documentation"></a>
 # Documentation
 
 ## Capabilities
