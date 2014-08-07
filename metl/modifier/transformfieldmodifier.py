@@ -19,18 +19,20 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, <see http://www.gnu.org/licenses/>.
 """
 
-import metl.modifier.base, tarr.compiler, tarr.data
+import metl.modifier.base
+from metl.tarr.compiler import Program, RETURN_TRUE
+from metl.tarr.data import Data
 
 class TransformFieldModifier( metl.modifier.base.Modifier ):
 
     init = ['fieldNames','transforms']
-    
+
     # void
     def __init__( self, reader, fieldNames, transforms = None, *args, **kwargs ):
 
         self.fields      = fieldNames if type( fieldNames ) == list else [ fieldNames ]
         self.transforms  = transforms
-       
+
         super( TransformFieldModifier, self ).__init__( reader, *args, **kwargs )
 
     # list
@@ -42,8 +44,8 @@ class TransformFieldModifier( metl.modifier.base.Modifier ):
     def modify( self, record ):
 
         for field_name in self.fields:
-            tarr.compiler.Program( self.getTransforms() + [ tarr.compiler.RETURN_TRUE ] ).run( 
-                tarr.data.Data( field_name, record.getField( field_name ) ) 
+            Program( self.getTransforms() + [ RETURN_TRUE ] ).run(
+                Data( field_name, record.getField( field_name ) )
             ).payload
 
         return record

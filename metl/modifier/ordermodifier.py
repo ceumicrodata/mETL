@@ -19,12 +19,12 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, <see http://www.gnu.org/licenses/>.
 """
 
-import metl.modifier.base, tarr.compiler, tarr.data, operator
+import metl.modifier.base, operator
 
 class OrderModifier( metl.modifier.base.Modifier ):
 
     init = ['fieldNamesAndOrder']
-    
+
     # void
     def __init__( self, reader, fieldNamesAndOrder, *args, **kwargs ):
 
@@ -47,9 +47,9 @@ class OrderModifier( metl.modifier.base.Modifier ):
 
         for prefItem in self.fieldNamesAndOrder:
             fieldName, order = prefItem.popitem()
-            
+
             records.sort(
-                key = operator.itemgetter( fieldName ), 
+                key = operator.itemgetter( fieldName ),
                 reverse = order.upper() != 'ASC'
             )
 

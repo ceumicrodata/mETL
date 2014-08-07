@@ -1,6 +1,6 @@
 import unittest
-import tarr.compiler_base as m
-from tarr.compiler_base import (
+import metl.tarr.compiler_base as m
+from metl.tarr.compiler_base import (
     Instruction, BranchingInstruction,
     RETURN_TRUE, RETURN_FALSE,
     DEF, IF, ELSE, ELIF, ENDIF,

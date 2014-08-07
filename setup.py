@@ -25,9 +25,6 @@ setup(
     author = 'Bence Faludi',
     author_email = 'b.faludi@mito.hu',
     license = 'GPL',
-    dependency_links = [
-        'https://github.com/ceumicrodata/tarr/archive/tarr-0.1.1.zip'
-    ],
     install_requires = [
         'python-dateutil',
         'xlrd',
@@ -37,7 +34,6 @@ setup(
         'sqlalchemy>=0.8',
         'xlwt',
         'nltk',
-        'tarr',
         'xlutils',
         'xmlsquash',
         'gspread',

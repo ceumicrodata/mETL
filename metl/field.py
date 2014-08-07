@@ -19,8 +19,9 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, <see http://www.gnu.org/licenses/>.
 """
 
-import tarr.data, tarr.compiler
 from metl.exception import *
+from metl.tarr.compiler import Program, RETURN_TRUE
+from metl.tarr.data import Data
 
 class Field( object ):
 
@@ -38,7 +39,7 @@ class Field( object ):
         self.log              = False
         self.defaultValue     = defaultValue
         self.nullable         = nullable
-        
+
         self.field_type.setNullable( self.nullable )
         self.field_final_type.setNullable( self.nullable )
 
@@ -179,8 +180,8 @@ class Field( object ):
     def run( self ):
 
         if self.getTransforms():
-            tarr.compiler.Program( self.getTransforms() + [ tarr.compiler.RETURN_TRUE ] ).run( 
-                tarr.data.Data( self.getName(), self ) 
+            Program( self.getTransforms() + [ RETURN_TRUE ] ).run(
+                Data( self.getName(), self )
             ).payload
 
         if self.getType() != self.field_final_type:

@@ -1,7 +1,7 @@
 import unittest
-import tarr.compiler as m
-from tarr.data import Data
-import tarr.tests.test_compiler_base
+from metl.tarr import compiler as m
+from metl.tarr.data import Data
+from . import test_compiler_base
 
 
 Noop = m.Instruction()
@@ -132,13 +132,13 @@ subgraph "cluster_su\"bprogram" {
 }''')
 
 
-class Test_Program(tarr.tests.test_compiler_base.Test_Program):
+class Test_Program(test_compiler_base.Test_Program):
 
     # verify, that the functionality of the parent is intact
     # - Liskov's substitution principle
 
     # NOTE: this test class will pull in all tests from
-    #  tarr.test_compiler_base.Test_Program but run with
+    #  test_compiler_base.Test_Program but run with
     # the compiler.Program class, not with compiler_base.Program class
 
     PROGRAM_CLASS = m.Program

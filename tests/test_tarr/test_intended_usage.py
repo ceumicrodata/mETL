@@ -1,7 +1,7 @@
 import unittest
-from tarr.data import Data
-import tarr
-from tarr.compiler import IF, ELSE, ENDIF, RETURN_TRUE, Program
+from metl.tarr.data import Data
+from metl import tarr
+from metl.tarr.compiler import IF, ELSE, ENDIF, RETURN_TRUE, Program
 
 
 @tarr.branch
