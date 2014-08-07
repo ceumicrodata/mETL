@@ -29,6 +29,10 @@ mETL is an ETL tool which has been especially designed to load elective data nec
 
 	A practical rimer on how to make your life easier on ETL processes - even without writing loader code.
 
+3. [Extract, Transform, Load using mETL](https://speakerdeck.com/bfaludi/extract-transform-load-using-metl) - Bence Faludi (@bfaludi), PyData '14, Berlin
+
+	Presentation was published at PyData '14 conference in Berlin. Novice level training to help you learn and use mETL in your daily work. You can check the [video](https://www.youtube.com/watch?v=NOGXdKbB-gQ) as well.
+
 
 ### Tutorials
 
