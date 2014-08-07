@@ -50,7 +50,7 @@ First of all let's see the most common problem. Want to load data into database 
 
 First task to generate a Yaml configuration for mETL. This configuration file is contains the fields and types, transformation steps and source and target data. Write the following into the terminal. `config.yml` will be configuration file's name, and the example file's type is `CSV`.
 
-	$ metl-generate csv config.yml</pre>
+	$ metl-generate csv config.yml
 
 The script will give you information about the correct attributes what you have to fill out.
 
@@ -80,7 +80,7 @@ Have to add the following attributes for the generator script:
 
 Run the command with the attributes:
 
-	$ metl-generate --resource authors.csv --headerRow 0 --skipRows 1 csv config.yml</pre>
+	$ metl-generate --resource authors.csv --headerRow 0 --skipRows 1 csv config.yml
 
 Script will create the Yaml configuration which could be used by mETL. You could write the configuration manually but `metl-generate` will examine the rows and determine the correct field's type and mapping.
 
