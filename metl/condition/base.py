@@ -19,9 +19,10 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, <see http://www.gnu.org/licenses/>.
 """
 
-import tarr.compiler_base, metl.tarrdispatcher
+from metl.tarr.compiler_base import BranchingInstruction
+import metl.tarrdispatcher
 
-class Condition( metl.tarrdispatcher.TARRDispatcher, tarr.compiler_base.BranchingInstruction ):
+class Condition( metl.tarrdispatcher.TARRDispatcher, BranchingInstruction ):
 
     # bool
     def getResult( self, field ):

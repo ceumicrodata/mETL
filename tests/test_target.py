@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, <see http://www.gnu.org/licenses/>.
 """
 
-import unittest, tarr, metl.filter.base, hashlib, os, sys
+import unittest, metl.filter.base, hashlib, os, sys
 from metl.manager import Manager
 from metl.configparser import ConfigParser
 from metl.config import Config
@@ -112,7 +112,7 @@ class Test_Target( unittest.TestCase ):
 
         self.getHashForFile('tests/config/test_db_target_with_fn.yml', delete = False )
 
-        s = DatabaseSource( FieldSet([ 
+        s = DatabaseSource( FieldSet([
             Field( 'lat', FloatFieldType() )
         ]))
         s.setResource( url = 'sqlite:///tests/target', table = 'result' )
@@ -182,7 +182,7 @@ class Test_Target( unittest.TestCase ):
         self.assertEqual(
             [ r.getValues() for r in s.getRecords() ],
             [
-                {'SERIAL_NUMBER': 1, 'LIST': [u'1st', u'2nd', u'3rd'], 'VALUE': [1, 2, 3, 4, 5, [6, 7]]}, 
+                {'SERIAL_NUMBER': 1, 'LIST': [u'1st', u'2nd', u'3rd'], 'VALUE': [1, 2, 3, 4, 5, [6, 7]]},
                 {'SERIAL_NUMBER': 2, 'LIST': [u'3rd', u'2nd', u'1st'], 'VALUE': {u'second': 2, u'third': [1, 2, 3], u'first': 1}}
             ]
         )

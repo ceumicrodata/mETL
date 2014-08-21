@@ -19,9 +19,10 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, <see http://www.gnu.org/licenses/>.
 """
 
-import tarr.compiler_base, metl.tarrdispatcher
+import metl.tarrdispatcher
+from metl.tarr.compiler_base import Instruction
 
-class Transform( metl.tarrdispatcher.TARRDispatcher, tarr.compiler_base.Instruction ):
+class Transform( metl.tarrdispatcher.TARRDispatcher, Instruction ):
 
     # type
     def transform( self, field ):
