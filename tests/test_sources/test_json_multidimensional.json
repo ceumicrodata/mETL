@@ -1,0 +1,43 @@
+{
+  "area_id": 3,
+  "inner": { 
+    "items": [
+      {
+         "district_id":3,
+         "lat":47.5487066254,
+         "lng":19.0546094353,
+         "maxlat":47.5600603189,
+         "maxlng":19.0613420893,
+         "minlat":47.5373529319,
+         "minlng":19.0478767813,
+         "nev":"Óbudaisziget",
+         "terkod":120,
+         "varosresz_id":1
+      },
+      {
+         "district_id":13,
+         "lat":47.5268950165,
+         "lng":19.0483855528,
+         "maxlat":47.538752266,
+         "maxlng":19.0549274826,
+         "minlat":47.5150377669,
+         "minlng":19.0418436231,
+         "nev":"Margitsziget",
+         "terkod":104,
+         "varosresz_id":2
+      },
+      {
+         "district_id":3,
+         "lat":47.5997870304,
+         "lng":19.0518387075,
+         "maxlat":47.6100823818,
+         "maxlng":19.0753258914,
+         "minlat":47.589491679,
+         "minlng":19.0283515235,
+         "nev":"Békásmegyer",
+         "terkod":12,
+         "varosresz_id":3
+      }
+    ] 
+  }
+}

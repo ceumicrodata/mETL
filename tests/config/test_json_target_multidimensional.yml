@@ -1,0 +1,18 @@
+source:
+  source: JSON
+  resource: tests/test_sources/test_json_multidimensional.json
+  rootIterator: inner/items
+  fields:
+    - name: area_id
+      map: /area_id
+    - name: name
+      map: nev
+    - name: district_id
+    - name: lat
+    - name: lng
+
+target:
+  type: JSON
+  resource: tests/target
+  rootIterator: items
+  compact: false

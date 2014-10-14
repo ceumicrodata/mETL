@@ -2,7 +2,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '1.0.2'
+version = '1.0.3'
 
 setup(
     name = 'mETL',
@@ -37,7 +37,8 @@ setup(
         'xlutils',
         'xmlsquash',
         'gspread',
-        'py2neo'
+        'py2neo',
+        'dm'
     ],
     test_suite = "tests"
 )
