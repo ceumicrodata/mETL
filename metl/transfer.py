@@ -30,12 +30,13 @@ from sqlalchemy.ext.declarative import declarative_base
 class Transfer( object ):
 
     # void
-    def __init__( self, source_uri, target_uri, tables = None, truncate = None, run_before = None, run_after = None ):
+    def __init__( self, source_uri, target_uri, dispacher = None, tables = None, truncate = None, run_before = None, run_after = None ):
 
         self.run_before = run_before
         self.run_after = run_after
         self.source_uri = source_uri
         self.target_uri = target_uri
+        self.dispacher = dispacher
 
         self.reConnectToSource()
         self.source_tables = self.getTableList( self.source_meta )
@@ -62,7 +63,7 @@ class Transfer( object ):
             for table in self.target_meta.sorted_tables \
             if table.name in self.common_target_tables ]
 
-        self.target_database = DatabaseTarget.DISPATCH.get( target_uri[:target_uri.find(':')].lower(), DatabaseTarget.DISPATCH['default'] )( self )
+        self.target_database = DatabaseTarget.DISPATCH.get( dispacher or target_uri[:target_uri.find(':')].lower(), DatabaseTarget.DISPATCH['default'] )( self )
         self.counter = 1
 
     # void

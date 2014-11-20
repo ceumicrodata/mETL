@@ -390,6 +390,7 @@ def metl_transfer( argv = sys.argv ):
         source_uri = config['sourceURI'],
         target_uri = config['targetURI'],
         tables = config.get( 'tables' ),
+        dispacher = config.get('dispacher'),
         run_before = config.get( 'runBefore' ),
         run_after = config.get( 'runAfter' ),
         truncate = config.get( 'truncate' )
