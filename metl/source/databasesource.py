@@ -23,7 +23,7 @@ import metl.source.base, sqlalchemy, os, re
 
 class DatabaseSource( metl.source.base.Source ):
 
-    resource_init = ['url','schema','table','statement','resource','params']
+    resource_init = ['url','schema','table','statement','resource','params','encoding']
 
    # void
     def __init__( self, fieldset, **kwargs ):
@@ -35,15 +35,17 @@ class DatabaseSource( metl.source.base.Source ):
         self.statement     = None
         self.db_connection = None
         self.db_closable   = None
+        self.encoding      = None
 
         super( DatabaseSource, self ).__init__( fieldset, **kwargs )
 
     # void
-    def setResource( self, url, resource = None, schema = None, table = None, statement = None, params = None ):
+    def setResource( self, url, resource = None, encoding = None, schema = None, table = None, statement = None, params = None ):
 
         res_dict = {
             'url': url,
             'resource': resource,
+            'encoding': encoding,
             'schema': schema,
             'table': table,
             'statement': statement,
@@ -63,7 +65,7 @@ class DatabaseSource( metl.source.base.Source ):
 
         statement = None
         if self.res_dict['resource'] is not None and self.res_dict['statement'] is None and self.res_dict['table'] is None:
-            fp, closable = metl.source.base.openResource( os.path.abspath( self.res_dict['resource'] ), 'r' )
+            fp, closable = metl.source.base.openResource( os.path.abspath( self.res_dict['resource'] ), 'r', self.res_dict['encoding'] )
             statement = fp.read()
             if closable:
                 fp.close()

@@ -134,6 +134,7 @@ It's done. mETL knows many source and target types and supports transformations 
 - .0.2: Tarr dependency fix
 - .0.3: Added [dm](https://github.com/bfaludi/dm) package dependency. From now, everyone can use the standalone mETL's fieldmap.
 - .0.4: Added dispacher option for metl-transfer
+- .0.5: Added encoding option for Database source.
 
 ### Version 0.1.8
 - .0: Minor, but usefull changes
