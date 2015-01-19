@@ -67,11 +67,11 @@ class Test_Target( unittest.TestCase ):
 
     def test_json_target( self ):
 
-        self.assertEqual( self.getHashForFile('tests/config/test_json_target.yml', delete = False), '403792a11551a52a395d20268229f1b9' )
+        self.assertEqual( self.getHashForFile('tests/config/test_json_target.yml'), '20d82e08d94290457c957233ea2ef685' )
 
     def test_json_target_multidimensional( self ):
 
-        self.assertEqual( self.getHashForFile('tests/config/test_json_target_multidimensional.yml' ), '4ae7ac4e80b9db1078486d2f311ccfc6' )
+        self.assertEqual( self.getHashForFile('tests/config/test_json_target_multidimensional.yml'), '89941a3a1fc274115c83671681f6b29a' )
 
     def test_yaml_target( self ):
 

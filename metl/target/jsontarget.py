@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, <see http://www.gnu.org/licenses/>.
 """
 
-import metl.target.base, demjson
+import metl.target.base, json
 
 class JSONTarget( metl.target.base.FileTarget ):
 
@@ -46,15 +46,17 @@ class JSONTarget( metl.target.base.FileTarget ):
     def finalize( self ):
 
         base = self.records if self.rootIterator is None else { self.rootIterator: self.records }
-        if self.compact:
-            self.file_pointer.write( 
-                demjson.encode( base ) 
+        if not self.compact:
+            json.dump( 
+                base, 
+                self.file_pointer, 
+                sort_keys = False, 
+                indent = 4, 
+                separators = (',', ' : ') 
             )
 
         else:
-            self.file_pointer.write(
-                demjson.JSON( compactly = False ).encode( base )
-            )
+            json.dump( base, self.file_pointer )
 
         return super( JSONTarget, self ).finalize()
 

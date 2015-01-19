@@ -135,6 +135,7 @@ It's done. mETL knows many source and target types and supports transformations 
 - .0.3: Added [dm](https://github.com/bfaludi/dm) package dependency. From now, everyone can use the standalone mETL's fieldmap.
 - .0.4: Added dispacher option for metl-transfer
 - .0.5: Added encoding option for Database source.
+- .0.6: JSON target works from json library instead of demjson. Gives better performance.
 
 ### Version 0.1.8
 - .0: Minor, but usefull changes
