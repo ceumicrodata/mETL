@@ -17,7 +17,7 @@
 <a id="overview"></a>
 # Overview
 
-mETL is an ETL tool which has been especially designed to load elective data necessary for CEU. Obviously, the program can be used in a more general way, it can be used to load practically any kind of data. The program was written in Python, taking into maximum consideration the optimal memory usage after having assessed the Brewery tool’s capabilities. 
+mETL is an ETL tool which has been especially designed to load elective data necessary for CEU. Obviously, the program can be used in a more general way, it can be used to load practically any kind of data. The program was written in Python, taking into maximum consideration the optimal memory usage after having assessed the Brewery tool’s capabilities.
 
 ### Presentations
 
@@ -31,8 +31,11 @@ mETL is an ETL tool which has been especially designed to load elective data nec
 
 3. [Extract, Transform, Load using mETL](https://speakerdeck.com/bfaludi/extract-transform-load-using-metl) - Bence Faludi (@bfaludi), PyData '14, Berlin
 
-	Presentation was published at PyData '14 conference in Berlin. Novice level training to help you learn and use mETL in your daily work. You can check the [video](https://www.youtube.com/watch?v=NOGXdKbB-gQ) as well.
+	> Presentation was published at PyData '14 conference in Berlin. Novice level training to help you learn and use mETL in your daily work. [video](https://www.youtube.com/watch?v=NOGXdKbB-gQ)
+	
+4. [Extract, Transform, Load using mETL](https://speakerdeck.com/bfaludi/extract-transform-load-using-metl-1) - Bence Faludi (@bfaludi), PyCon Sei, Florince
 
+	> We are using this tool in production for many of our clients and It is really stable and reliable. The project has a few contributors all around the world right now and I hope many developer will join soon. I want to introduce you this tool. In this presentation I will show you the functionality and the common use cases. Furthermore I will talk about other ETL tools in Python. [video](https://www.youtube.com/watch?v=5fe3wBMsmMg)
 
 ### Tutorials
 
@@ -136,6 +139,7 @@ It's done. mETL knows many source and target types and supports transformations 
 - .0.4: Added dispacher option for metl-transfer
 - .0.5: Added encoding option for Database source.
 - .0.6: JSON target works from json library instead of demjson. Gives better performance.
+- .0.7: Fix an error when you want to use schema for PostgreSQL.
 
 ### Version 0.1.8
 - .0: Minor, but usefull changes

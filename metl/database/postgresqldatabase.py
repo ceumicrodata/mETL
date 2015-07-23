@@ -84,7 +84,8 @@ class PostgresqlDatabase( metl.database.alchemydatabase.AlchemyDatabase ):
     def alternateInsert( self, buffer ):
 
         self.cursor.copy_expert(
-            "COPY \"%(table)s\" (%(columns)s) FROM STDIN WITH CSV NULL 'None' QUOTE '`' ESCAPE '`' DELIMITER ','" % {
+            "COPY \"%(schema)s\".\"%(table)s\" (%(columns)s) FROM STDIN WITH CSV NULL 'None' QUOTE '`' ESCAPE '`' DELIMITER ','" % {
+                'schema': self.target.getSchemaName() or 'public',
                 'table': self.target.getTableName(),
                 'columns': u', '.join([ '"%s"' % ( c ) for c in self.getColumnNames() ])
             },
