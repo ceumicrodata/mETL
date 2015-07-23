@@ -2360,6 +2360,7 @@ An example of a YAML configuration:
 Target type used to write into graph database. Parameters of its initialization:
 
 - **bufferSize**: Size of record to be written at the same time.
+- **timeout**: Timeout (in seconds) for each batch of queries, the size of which is determined by **bufferSize**. If not given it uses the default value.
 
 Further parameters to define the target place:
 
@@ -2367,6 +2368,7 @@ Further parameters to define the target place:
 - **resourceType**: The type of data we want to write. Can have `Node` and `Relation` values.
 - **label**: Label to be used for the loaded data. It is always mandatory to give, even if for Neo4j it is not necessary.
 - **truncateLabel**: To delete the already existing records with the same labels at the beginning of the load. It does not delete by default.
+- **username** and **password**: Authentication details for Neo4j database, only required if Neo4j is secured.
 
 If we choose `Relation` resourceType, the following parameters are mandatory as well:
 
