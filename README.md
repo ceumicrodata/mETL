@@ -754,7 +754,7 @@ An example of a YAML configuration:
 
 Source type mainly used for testing, in which the configuration file contains the records. Has only one parameter:
 
-- **sourceRecords**: List of data in arbitary order.
+- **sourceRecords**: List of data in arbitrary order.
 
 Example from above:
 
