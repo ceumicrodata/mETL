@@ -35,7 +35,7 @@ mETL is an ETL tool which has been especially designed to load elective data nec
 	
 4. [Extract, Transform, Load using mETL](https://speakerdeck.com/bfaludi/extract-transform-load-using-metl-1) - Bence Faludi (@bfaludi), PyCon Sei, Florince
 
-	> We are using this tool in production for many of our clients and It is really stable and reliable. The project has a few contributors all around the world right now and I hope many developer will join soon. I want to introduce you this tool. In this presentation I will show you the functionality and the common use cases. Furthermore I will talk about other ETL tools in Python. [video](https://www.youtube.com/watch?v=5fe3wBMsmMg)
+	> We are using this tool in production for many of our clients and It is really stable and reliable. The project has a few contributors all around the world right now and I hope many developers will join soon. I want to introduce you this tool. In this presentation I will show you the functionality and the common use cases. Furthermore, I will talk about other ETL tools in Python. [video](https://www.youtube.com/watch?v=5fe3wBMsmMg)
 
 ### Tutorials
 
@@ -44,7 +44,7 @@ mETL is an ETL tool which has been especially designed to load elective data nec
 <a id="thirtysecondstutorial"></a>
 # Thirty-seconds tutorial
 
-First of all let's see the most common problem. Want to load data into database from a text or binary file. Our example file is called <span>authors.csv</span> and file's structure is the following:
+First of all, let's see the most common problem. Want to load data into database from a text or binary file. Our example file is called <span>authors.csv</span> and file's structure is the following:
 
 	Author,Email,Birth,Phone
 	Duane Boyer,duaneboyer@yahoo.com,1918-05-01,+3670636943
@@ -55,7 +55,7 @@ First of all let's see the most common problem. Want to load data into database 
 	Louella Utecht,louellautecht@yahoo.com,1972-02-28,+3670942982
 	...
 
-First task to generate a Yaml configuration for mETL. This configuration file is contains the fields and types, transformation steps and source and target data. Write the following into the terminal. `config.yml` will be configuration file's name, and the example file's type is `CSV`.
+First task to generate a Yaml configuration for mETL. This configuration file contains the fields and types, transformation steps and source and target data. Write the following into the terminal. `config.yml` will be configuration file's name, and the example file's type is `CSV`.
 
 	$ metl-generate csv config.yml
 
@@ -125,7 +125,7 @@ Script will create the table and load data into the PostgreSQL database automati
 
 	$ metl config.yml
 	
-It's done. mETL knows many source and target types and supports transformations and manupulations as well.
+It's done. mETL knows many source and target types and supports transformations and manipulations as well.
 
 <a id="changelog"></a>
 # Change Log
@@ -3043,4 +3043,3 @@ The configuration file is the following:
 Listing of `tables` is not mandatory, if they are not listed, then all of the tables from the source database will be copied to the target database. With the truncate option, given tables can be cleared in the target database before loading, while SQL ccommands can be run with `runAfter` and `runBefore`
 
 **Important to note that the tables must exist** in the target database, the transfer does not create them.
-
