@@ -33,7 +33,7 @@ setup(
         'pyyaml',
         'sqlalchemy>=0.8',
         'xlwt',
-        'nltk==3.0',
+        'nltk==3.4.5',
         'xlutils',
         'xmlsquash',
         'gspread',
