@@ -24,26 +24,33 @@ https://pypi.python.org/pypi/brewery/0.8.0
 
 import metl.target.base, json, re, random
 from metl.exception import *
-from py2neo import cypher
+from py2neo import authenticate, Graph
+from py2neo.packages.httpstream import http
+
 
 class Neo4jTarget( metl.target.base.Target ):
 
-    init = ['bufferSize']
-    resource_init = ['url','label','resourceType','truncateLabel','fieldNameLeft','fieldNameRight','keyNameLeft','keyNameRight','labelLeft','labelRight']
+    init = ['bufferSize','timeout']
+    resource_init = ['url','username','password','label','resourceType','truncateLabel',\
+            'fieldNameLeft','fieldNameRight','keyNameLeft','keyNameRight','labelLeft','labelRight']
 
     # void
-    def __init__( self, reader, bufferSize = None, *argw, **kwargs ):
+    def __init__( self, reader, bufferSize = None, timeout = None, *argw, **kwargs ):
 
-        self.session = None
+        self.graph = None
         self.bufferSize = bufferSize or int( random.random()*10000+5000 )
         self.db_insert_buffer = []
         self.db_update_buffer = []
+
+        if timeout and timeout > 0:
+            http.socket_timeout = timeout
 
         super( Neo4jTarget, self ).__init__( reader, *argw, **kwargs )
 
     # void
     def setResource( self, url, label, resourceType, truncateLabel = False, \
-            fieldNameLeft = None, fieldNameRight = None, labelLeft = None, labelRight = None, keyNameLeft = None, keyNameRight = None ):
+            fieldNameLeft = None, fieldNameRight = None, labelLeft = None, labelRight = None, \
+            keyNameLeft = None, keyNameRight = None, username = None, password = None ):
 
         if resourceType.lower() not in ('node','relation'):
             raise ParameterError('resourceType must be node or relation')
@@ -58,8 +65,10 @@ class Neo4jTarget( metl.target.base.Target ):
         self.labelRight = labelRight
         self.keyNameLeft = keyNameLeft
         self.keyNameRight = keyNameRight
+        self.username = username
+        self.password = password
 
-        if resourceType.lower() == 'relation' and ( self.fieldNameLeft is None or self.fieldNameRight is None or self.keyNameLeft is None or self.keyNameRight is None ):
+        if self.resourceType == 'relation' and ( self.fieldNameLeft is None or self.fieldNameRight is None or self.keyNameLeft is None or self.keyNameRight is None ):
             raise ParameterError('fieldNameLeft, fieldNameRight, keyNameLeft, keyNameRight are required when using Relation resource type')
 
         self.execute = self.executeNode if resourceType.lower() == 'node' else self.executeRelation
@@ -69,11 +78,12 @@ class Neo4jTarget( metl.target.base.Target ):
     # void
     def initialize( self ):
 
-        self.session = cypher.Session( self.url )
-        self.regexp  = re.compile( ur'\"([^"]*?)\"\:' )
+        authenticate( self.url.split('/', 3)[2], self.username, self.password )        # 'http://server:port/more...' => 'server:port'
+        self.graph = Graph( self.url + '/db/data/' )
+        self.regexp = re.compile( ur'\"([^"]*?)\"\:' )
 
         if self.truncateLabel and self.resourceType == 'node':
-            tx = self.session.create_transaction()
+            tx = self.graph.cypher.begin()
             cmd1 = 'MATCH (n:`%s`)-[r]-() DELETE n, r' % ( self.label )
             tx.append( cmd1 )
             cmd2 = 'MATCH (c:`%s`) DELETE c' % ( self.label )
@@ -81,7 +91,7 @@ class Neo4jTarget( metl.target.base.Target ):
             tx.commit()
 
         elif self.truncateLabel and self.resourceType == 'relation':
-            tx = self.session.create_transaction()
+            tx = self.graph.cypher.begin()
             cmd = 'MATCH (a)-[r:`%s`]-(b) DELETE r' % ( self.label )
             tx.append( cmd )
             tx.commit()
@@ -96,7 +106,7 @@ class Neo4jTarget( metl.target.base.Target ):
         if self.resourceType == 'node':
             keys = self.getFieldSetPrototypeCopy().getKeyFieldList()
             if len( keys ) != 0:
-                tx = self.session.create_transaction()
+                tx = self.graph.cypher.begin()
                 for fieldName in keys:
                     tx.append(
                         """
@@ -137,9 +147,9 @@ class Neo4jTarget( metl.target.base.Target ):
         }
 
     # unicode
-    def getCreateRelationCommand( self, b, key ):
+    def getCreateRelationCommand( self, b ):
 
-        return u'MATCH (a%(label_l)s), (b%(label_r)s) WHERE a.`%(key_l)s` = "%(val_l)s" AND b.`%(key_l)s` = "%(val_r)s" CREATE (a)-[:`%(label)s` %(data)s]->(b)' % {
+        return u'MATCH (a%(label_l)s), (b%(label_r)s) WHERE a.`%(key_l)s` = "%(val_l)s" AND b.`%(key_r)s` = "%(val_r)s" CREATE (a)-[:`%(label)s` %(data)s]->(b)' % {
             'label_l': u':`%s`' % ( self.labelLeft ) if self.labelLeft is not None else u'',
             'label_r': u':`%s`' % ( self.labelRight ) if self.labelRight is not None else u'',
             'label': self.label,
@@ -158,7 +168,7 @@ class Neo4jTarget( metl.target.base.Target ):
     # void
     def executeNode( self ):
 
-        tx = self.session.create_transaction()
+        tx = self.graph.cypher.begin()
 
         for b, key in self.db_insert_buffer:
             cmd = self.getCreateNodeCommand( b, key )
@@ -172,10 +182,10 @@ class Neo4jTarget( metl.target.base.Target ):
     # void
     def executeRelation( self ):
 
-        tx = self.session.create_transaction()
+        tx = self.graph.cypher.begin()
 
         for b, key in self.db_insert_buffer:
-            cmd = self.getCreateRelationCommand( b, key )
+            cmd = self.getCreateRelationCommand( b )
             tx.append( cmd )
 
         tx.commit()
@@ -186,6 +196,9 @@ class Neo4jTarget( metl.target.base.Target ):
     # void
     def writeRecord( self, record ):
 
-        self.db_insert_buffer.append( ( record.getValues( without_none = True, class_to_string = True ), record.getKey() ) )
+        b = record.getValues( without_none = True, class_to_string = True )
+        if self.resourceType == 'node' or (( self.fieldNameLeft in b ) and ( self.fieldNameRight in b )):
+            self.db_insert_buffer.append( ( b, record.getKey() ) )
+
         if len( self.db_insert_buffer ) + len( self.db_update_buffer ) >= self.bufferSize:
             self.execute()

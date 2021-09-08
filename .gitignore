@@ -35,3 +35,7 @@ nosetests.xml
 .pydevproject
 .DS_Store
 *.pyc
+
+# JetBrains (PyCharm/IDEA)
+*.iml
+.idea
